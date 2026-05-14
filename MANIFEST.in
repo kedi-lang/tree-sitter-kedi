@@ -1,0 +1,12 @@
+include LICENSE
+include README.md
+include grammar.js
+include tree-sitter.json
+include package.json
+include package-lock.json
+
+recursive-include queries *.scm
+recursive-include src *.c *.h *.json
+recursive-include test/corpus *.txt
+recursive-include bindings/python/tree_sitter_kedi *.c *.py *.pyi py.typed
+recursive-include bindings/python/tree_sitter_kedi/queries *.scm
