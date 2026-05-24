@@ -552,6 +552,16 @@
     "type": "param",
     "named": true,
     "fields": {
+      "default": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "inline_python_expr",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -933,6 +943,16 @@
     "type": "type_field",
     "named": true,
     "fields": {
+      "default": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "inline_python_expr",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,

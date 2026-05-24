@@ -128,6 +128,7 @@ module.exports = grammar({
       seq(
         field("name", $.identifier),
         optional(seq(":", field("type", $.type_expr))),
+        optional(seq("=", field("default", $.inline_python_expr))),
       ),
 
     block: ($) =>
@@ -169,6 +170,7 @@ module.exports = grammar({
       seq(
         field("name", $.identifier),
         optional(seq(":", field("type", $.type_expr))),
+        optional(seq("=", field("default", $.inline_python_expr))),
       ),
 
     // ============================================================

@@ -113,3 +113,30 @@ Procedure with multiple typed params (no return type)
         value: (template_expr
           (python_expr_segment
             (inline_python_expr code: (python_inline_body))))))))
+
+
+==================
+Procedure parameters with defaults
+==================
+
+@proc(id: int = `0`, label = `"draft"`):
+  = <`str(id) + label`>
+
+---
+
+(source_file
+  (procedure_def
+    name: (identifier)
+    params: (param_list
+      (param
+        name: (identifier)
+        type: (type_expr (type_ref name: (identifier)))
+        default: (inline_python_expr code: (python_inline_body)))
+      (param
+        name: (identifier)
+        default: (inline_python_expr code: (python_inline_body))))
+    body: (block
+      (return_stmt
+        value: (template_expr
+          (python_expr_segment
+            (inline_python_expr code: (python_inline_body))))))))

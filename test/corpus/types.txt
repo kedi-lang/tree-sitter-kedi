@@ -136,3 +136,24 @@ Backtick (TypePython) escape hatch
       type: (type_expr
         (type_python code: (python_inline_body))))
     rhs: (inline_python_expr code: (python_inline_body))))
+
+
+==================
+Type fields with defaults
+==================
+
+~Person(name: str, salary: int = `0`)
+
+---
+
+(source_file
+  (type_def
+    name: (identifier)
+    fields: (type_field_list
+      (type_field
+        name: (identifier)
+        type: (type_expr (type_ref name: (identifier))))
+      (type_field
+        name: (identifier)
+        type: (type_expr (type_ref name: (identifier)))
+        default: (inline_python_expr code: (python_inline_body))))))
