@@ -10,6 +10,9 @@
 
 (line_comment) @comment.line
 (block_comment) @comment.block
+(procedure_def
+  body: (block
+    . (block_comment) @variable))
 
 ; ----------------------------------------------------------------
 ; Operators / punctuation
