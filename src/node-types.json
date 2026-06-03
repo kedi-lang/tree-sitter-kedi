@@ -92,6 +92,14 @@
         "named": true
       },
       {
+        "type": "module_export",
+        "named": true
+      },
+      {
+        "type": "module_import",
+        "named": true
+      },
+      {
         "type": "procedure_def",
         "named": true
       },
@@ -479,6 +487,79 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "module_export",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "module_export_body",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "module_export_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "module_export_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "module_export_name",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "module_import",
+    "named": true,
+    "fields": {
+      "module": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "module_import_note",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -1120,6 +1201,10 @@
     "named": false
   },
   {
+    "type": "*",
+    "named": false
+  },
+  {
     "type": ",",
     "named": false
   },
@@ -1181,8 +1266,16 @@
     "named": false
   },
   {
+    "type": "export",
+    "named": false
+  },
+  {
     "type": "identifier",
     "named": true
+  },
+  {
+    "type": "import",
+    "named": false
   },
   {
     "type": "line_comment",
@@ -1192,6 +1285,10 @@
   {
     "type": "metric",
     "named": false
+  },
+  {
+    "type": "module_import_note",
+    "named": true
   },
   {
     "type": "optimize",

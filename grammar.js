@@ -96,6 +96,8 @@ module.exports = grammar({
       choice(
         $.procedure_def,
         $.type_def,
+        $.module_import,
+        $.module_export,
         $.validation_block,
         $.assign_stmt,
         $.assign_block_stmt,
@@ -105,6 +107,41 @@ module.exports = grammar({
         $.backtick_line_stmt,
         $.template_line,
       ),
+
+    module_import: ($) =>
+      seq(
+        ">",
+        "import",
+        ":",
+        field("module", $.identifier),
+        optional($.module_import_note),
+        $._newline,
+      ),
+
+    module_import_note: ($) => token.immediate(/[ \t]*\([^)\n]*\)/),
+
+    module_export: ($) =>
+      choice(
+        seq(
+          ">",
+          "export",
+          ":",
+          "*",
+          $._newline,
+        ),
+        seq(
+          ">",
+          "export",
+          ":",
+          $._newline,
+          field("body", $.module_export_body),
+        ),
+      ),
+
+    module_export_body: ($) =>
+      seq($._indent, repeat1(choice($.module_export_name, $._newline)), $._dedent),
+
+    module_export_name: ($) => seq(field("name", $.identifier), $._newline),
 
     // ============================================================
     // Procedures

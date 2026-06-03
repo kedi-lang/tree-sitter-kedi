@@ -18,7 +18,7 @@
 ; Operators / punctuation
 ; ----------------------------------------------------------------
 
-["@" "~" "=" ":" "(" ")" "[" "]" "<" ">" "," "|" "->"] @punctuation.delimiter
+["@" "~" "=" ":" "(" ")" "[" "]" "<" ">" "," "|" "->" "*"] @punctuation.delimiter
 ["```"] @punctuation.special
 "`" @punctuation.special
 
@@ -27,6 +27,8 @@
 ; ----------------------------------------------------------------
 
 (validation_keyword) @keyword
+"import" @keyword
+"export" @keyword
 "auto" @keyword
 "optimize" @keyword
 "case" @keyword
@@ -40,6 +42,8 @@
 
 (procedure_def name: (identifier) @function)
 (type_def name: (identifier) @type.definition)
+(module_import module: (identifier) @namespace)
+(module_export_name name: (identifier) @variable)
 (param name: (identifier) @variable.parameter)
 (type_field name: (identifier) @property)
 
