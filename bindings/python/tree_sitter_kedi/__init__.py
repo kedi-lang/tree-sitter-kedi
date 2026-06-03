@@ -9,6 +9,12 @@ Usage:
     tree = parser.parse(open("program.kedi", "rb").read())
 """
 
-from ._binding import language
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+
+    def language() -> Any: ...
+else:
+    from ._binding import language
 
 __all__ = ["language"]

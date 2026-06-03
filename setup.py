@@ -13,7 +13,16 @@ extension declaration (which pyproject.toml currently doesn't ergonomically
 support as a single TOML stanza).
 """
 
-from setuptools import Extension, setup
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+
+    class Extension:
+        def __init__(self, *args: Any, **kwargs: Any) -> None: ...
+
+    def setup(*args: Any, **kwargs: Any) -> None: ...
+else:
+    from setuptools import Extension, setup
 
 setup(
     ext_modules=[
