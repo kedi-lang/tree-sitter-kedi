@@ -27,8 +27,8 @@
 ; ----------------------------------------------------------------
 
 (validation_keyword) @keyword
-"import" @keyword
-"export" @keyword
+"import" @operator
+"export" @operator
 "auto" @keyword
 "optimize" @keyword
 "case" @keyword
