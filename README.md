@@ -31,8 +31,8 @@ without requiring code generation.
 Built as a Python wheel via `setuptools`:
 
 ```sh
-pip install -e .
-python -c "import tree_sitter_kedi; from tree_sitter import Language, Parser; \
+uv sync --dev
+uv run python -c "import tree_sitter_kedi; from tree_sitter import Language, Parser; \
            Parser(Language(tree_sitter_kedi.language()))"
 ```
 
