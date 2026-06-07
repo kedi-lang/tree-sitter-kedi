@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
 
     def language() -> Any: ...
+
 else:
     from ._binding import language
 

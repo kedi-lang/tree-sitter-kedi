@@ -21,6 +21,7 @@ if TYPE_CHECKING:
         def __init__(self, *args: Any, **kwargs: Any) -> None: ...
 
     def setup(*args: Any, **kwargs: Any) -> None: ...
+
 else:
     from setuptools import Extension, setup
 
