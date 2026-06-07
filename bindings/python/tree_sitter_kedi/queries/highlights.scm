@@ -44,6 +44,7 @@
 (type_def name: (identifier) @type.definition)
 (module_import module: (identifier) @namespace)
 (module_export_name name: (identifier) @variable)
+(assign_target name: (identifier) @variable)
 (param name: (identifier) @variable.parameter)
 (type_field name: (identifier) @property)
 
