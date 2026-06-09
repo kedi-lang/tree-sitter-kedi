@@ -201,6 +201,31 @@ Escapes inside template text
 
 
 ==================
+Template block with multiline continuation (>>)
+==================
+
+>> What's the [capital] of Turkey?
+What's the [population: int] of <capital>?
+
+---
+
+(source_file
+  (template_block_stmt
+    head: (template_expr
+      (text_segment)
+      (output_segment name: (identifier))
+      (text_segment))
+    continuation: (template_expr
+      (text_segment)
+      (output_segment
+        name: (identifier)
+        type: (type_expr (type_ref name: (identifier))))
+      (text_segment)
+      (input_segment name: (identifier))
+      (text_segment))))
+
+
+==================
 Top-level assignment and top-level return
 ==================
 

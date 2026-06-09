@@ -32,6 +32,13 @@
 module.exports = grammar({
   name: "kedi",
 
+  // `template_block_stmt` continuation lines and `[name] = …` assignments
+  // share a `[` prefix; disambiguation needs the `=` after the target.
+  conflicts: ($) => [
+    [$.template_block_stmt],
+    [$.template_block_stmt, $.assign_stmt],
+  ],
+
   // IMPORTANT: this list's order must match `enum TokenType` in src/scanner.c.
   //
   // Single-backtick and triple-backtick are NOT externals: tree-sitter's
@@ -105,6 +112,7 @@ module.exports = grammar({
         $.return_block_stmt,
         $.python_block,
         $.backtick_line_stmt,
+        $.template_block_stmt,
         $.template_line,
       ),
 
@@ -183,6 +191,7 @@ module.exports = grammar({
         $.return_block_stmt,
         $.python_block,
         $.backtick_line_stmt,
+        $.template_block_stmt,
         $.template_line,
       ),
 
@@ -318,6 +327,24 @@ module.exports = grammar({
     // ============================================================
     // Template lines and segments
     // ============================================================
+    // `>>` opens a template block. Continuation lines at the same
+    // indent are additional template_expr rows executed statefully in
+    // one run (shared env between outputs). Bare template_line (no
+    // `>>`) is deprecated at procedure/top level but kept for
+    // `> optimize:` / `> auto:` bodies and legacy sources.
+    template_block_stmt: ($) =>
+      seq(
+        ">>",
+        field("head", $.template_expr),
+        repeat(
+          seq(
+            $._newline,
+            field("continuation", $.template_expr),
+          ),
+        ),
+        $._newline,
+      ),
+
     template_line: ($) => seq($.template_expr, $._newline),
 
     template_expr: ($) => repeat1($._segment),

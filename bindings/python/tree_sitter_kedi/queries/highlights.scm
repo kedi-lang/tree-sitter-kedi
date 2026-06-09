@@ -18,6 +18,9 @@
 ; Operators / punctuation
 ; ----------------------------------------------------------------
 
+(template_block_stmt
+  ">>" @keyword)
+
 ["@" "~" "=" ":" "(" ")" "[" "]" "<" ">" "," "|" "->" "*"] @punctuation.delimiter
 ["```"] @punctuation.special
 "`" @punctuation.special
@@ -54,7 +57,8 @@
 
 (input_segment name: (identifier) @variable)
 (call_segment name: (identifier) @function.call)
-(output_segment name: (identifier) @variable.builtin)
+(output_segment
+  name: (identifier) @variable.builtin)
 (text_segment) @string
 
 ; ----------------------------------------------------------------
