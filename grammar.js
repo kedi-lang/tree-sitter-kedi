@@ -327,11 +327,11 @@ module.exports = grammar({
     // ============================================================
     // Template lines and segments
     // ============================================================
-    // `>>` opens a template block. Continuation lines at the same
-    // indent are additional template_expr rows executed statefully in
-    // one run (shared env between outputs). Bare template_line (no
-    // `>>`) is deprecated at procedure/top level but kept for
-    // `> optimize:` / `> auto:` bodies and legacy sources.
+    // `>>` opens a template block. Continuation rows at the same indent
+    // (no leading `>>`) are part of that block until a non-template
+    // statement or a new `>>` line. Bare template_line outside a block
+    // is invalid at procedure/top level; only `> optimize:` / `> auto:`
+    // bodies may use bare template rows.
     template_block_stmt: ($) =>
       seq(
         ">>",
