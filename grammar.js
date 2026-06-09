@@ -106,6 +106,9 @@ module.exports = grammar({
         $.module_import,
         $.module_export,
         $.validation_block,
+        $.model_directive,
+        $.profile_directive,
+        $.use_directive,
         $.assign_stmt,
         $.assign_block_stmt,
         $.return_stmt,
@@ -185,6 +188,8 @@ module.exports = grammar({
         $.type_def_stmt,
         $.auto_directive,
         $.optimize_directive,
+        $.model_directive,
+        $.use_directive,
         $.assign_stmt,
         $.assign_block_stmt,
         $.return_stmt,
@@ -444,6 +449,46 @@ module.exports = grammar({
 
     optimize_body: ($) =>
       seq($._indent, repeat1(choice($.template_line, $._newline)), $._dedent),
+
+    // ============================================================
+    // Agent profile directives
+    //
+    //   > model: haiku
+    //   > model: `models['light']`
+    //   > profile: profile_name:
+    //     > model: opus
+    //   > use: profile_name
+    // ============================================================
+    model_directive: ($) =>
+      seq(
+        ">",
+        "model",
+        ":",
+        field(
+          "value",
+          choice($.inline_python_expr, alias($._model_plain_value, $.model_plain_value)),
+        ),
+        $._newline,
+      ),
+
+    _model_plain_value: ($) => token.immediate(/[^\n`]+/),
+
+    profile_directive: ($) =>
+      seq(
+        ">",
+        "profile",
+        ":",
+        field("name", $.identifier),
+        ":",
+        $._newline,
+        field("body", $.profile_body),
+      ),
+
+    profile_body: ($) =>
+      seq($._indent, repeat1(choice($.model_directive, $._newline)), $._dedent),
+
+    use_directive: ($) =>
+      seq(">", "use", ":", field("name", $.identifier), $._newline),
 
     // ============================================================
     // Validation blocks (Phase 4)
