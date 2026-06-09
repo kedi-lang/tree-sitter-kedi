@@ -34,6 +34,9 @@
 "export" @operator
 "auto" @keyword
 "optimize" @keyword
+"model" @keyword
+"profile" @keyword
+"use" @keyword
 "case" @keyword
 "data" @keyword
 "test_data" @keyword
@@ -81,6 +84,13 @@
 (eval_metric dataset: (identifier) @variable)
 
 (optimize_directive name: (identifier) @label)
+(profile_directive name: (identifier) @label)
+(use_directive name: (identifier) @label)
+
+(model_directive
+  value: (model_plain_value) @string)
+(model_directive
+  value: (inline_python_expr) @string.special)
 
 ; ----------------------------------------------------------------
 ; Python source embedded in Kedi (these regions get a Python
