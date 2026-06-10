@@ -785,6 +785,10 @@
         {
           "type": "model_directive",
           "named": true
+        },
+        {
+          "type": "use_directive",
+          "named": true
         }
       ]
     }
@@ -1246,6 +1250,67 @@
   },
   {
     "type": "use_directive",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "use_directive_body",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "use_directive_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "use_tool_backtick",
+          "named": true
+        },
+        {
+          "type": "use_tool_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "use_tool_backtick",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "use_tool_name",
     "named": true,
     "fields": {
       "name": {

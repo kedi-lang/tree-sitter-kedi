@@ -485,10 +485,29 @@ module.exports = grammar({
       ),
 
     profile_body: ($) =>
-      seq($._indent, repeat1(choice($.model_directive, $._newline)), $._dedent),
+      seq(
+        $._indent,
+        repeat1(choice($.model_directive, $.use_directive, $._newline)),
+        $._dedent,
+      ),
 
     use_directive: ($) =>
-      seq(">", "use", ":", field("name", $.identifier), $._newline),
+      choice(
+        seq(">", "use", ":", field("name", $.identifier), $._newline),
+        seq(">", "use", ":", $._newline, field("body", $.use_directive_body)),
+      ),
+
+    use_directive_body: ($) =>
+      seq(
+        $._indent,
+        repeat1(choice($.use_tool_name, $.use_tool_backtick, $._newline)),
+        $._dedent,
+      ),
+
+    use_tool_name: ($) => seq(field("name", $.identifier), $._newline),
+
+    use_tool_backtick: ($) =>
+      seq("`", field("name", $.identifier), "`", $._newline),
 
     // ============================================================
     // Validation blocks (Phase 4)
