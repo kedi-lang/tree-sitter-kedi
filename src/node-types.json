@@ -920,6 +920,11 @@
     }
   },
   {
+    "type": "system_angle_segment",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "system_body",
     "named": true,
     "fields": {},
@@ -969,7 +974,7 @@
       "required": true,
       "types": [
         {
-          "type": "input_segment",
+          "type": "system_angle_segment",
           "named": true
         },
         {

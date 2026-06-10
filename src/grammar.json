@@ -1622,13 +1622,17 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "input_segment"
+          "name": "system_angle_segment"
         },
         {
           "type": "SYMBOL",
           "name": "text_segment"
         }
       ]
+    },
+    "system_angle_segment": {
+      "type": "SYMBOL",
+      "name": "_system_angle_segment"
     },
     "profile_directive": {
       "type": "SEQ",
@@ -2360,6 +2364,10 @@
     {
       "type": "SYMBOL",
       "name": "_fenced_newline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_system_angle_segment"
     }
   ],
   "inline": [],

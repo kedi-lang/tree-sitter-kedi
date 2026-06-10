@@ -60,6 +60,7 @@ module.exports = grammar({
     $._text_in_call,
     $._fenced_body,
     $._fenced_newline,
+    $._system_angle_segment,
   ],
 
   // Extras run between tokens. We include:
@@ -502,7 +503,9 @@ module.exports = grammar({
 
     system_expr: ($) => repeat1($._system_segment),
 
-    _system_segment: ($) => choice($.input_segment, $.text_segment),
+    _system_segment: ($) => choice($.system_angle_segment, $.text_segment),
+
+    system_angle_segment: ($) => $._system_angle_segment,
 
     profile_directive: ($) =>
       seq(

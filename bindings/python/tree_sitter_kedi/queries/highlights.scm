@@ -61,6 +61,7 @@
 
 ; Segment captures apply anywhere (template_line, template_block, returns, …).
 (input_segment name: (identifier) @variable)
+(system_angle_segment) @variable
 (call_segment name: (identifier) @function.call)
 (output_segment
   name: (identifier) @variable.builtin)

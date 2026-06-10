@@ -46,6 +46,7 @@ enum TokenType {
     // DEDENT when the close fence brings us back to the procedure's
     // body indent).
     KEDI_FENCED_NEWLINE,
+    KEDI_SYSTEM_ANGLE_SEGMENT,
 };
 
 #define KEDI_INDENT_STACK_MAX 64
@@ -300,6 +301,26 @@ static bool scan_text_run(TSLexer *lexer, bool in_call) {
     return seen_text;
 }
 
+static bool scan_system_angle_segment(TSLexer *lexer) {
+    if (lexer->lookahead != '<') return false;
+    advance(lexer);
+    bool saw_body = false;
+    while (lexer->lookahead != 0 && lexer->lookahead != '\n') {
+        if (lexer->lookahead == '>') {
+            advance(lexer);
+            lexer->mark_end(lexer);
+            return true;
+        }
+        saw_body = true;
+        advance(lexer);
+    }
+    if (saw_body) {
+        lexer->mark_end(lexer);
+        return true;
+    }
+    return false;
+}
+
 // Scan the body of a fenced Python block.
 //
 // Entry contract: the caller is the grammar rule `python_code: $._fenced_body`
@@ -458,7 +479,17 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
         }
     }
 
-    // 5. TEXT / TEXT_IN_CALL.
+    // 6. SYSTEM_ANGLE_SEGMENT: system instructions support only
+    //    `<name>` substitutions plus the special literal `<``>` marker.
+    //    The CST walker validates which form was used.
+    if (valid_symbols[KEDI_SYSTEM_ANGLE_SEGMENT]) {
+        if (scan_system_angle_segment(lexer)) {
+            lexer->result_symbol = KEDI_SYSTEM_ANGLE_SEGMENT;
+            return true;
+        }
+    }
+
+    // 7. TEXT / TEXT_IN_CALL.
     //
     // valid_symbols is the union across all active GLR states, so we may
     // see both TEXT and TEXT_IN_CALL set at once (e.g. initial state).
