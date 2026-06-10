@@ -35,6 +35,7 @@
 "auto" @keyword
 "optimize" @keyword
 "model" @keyword
+"system" @keyword
 "profile" @keyword
 "use" @keyword
 "case" @keyword
@@ -92,6 +93,10 @@
 (model_directive
   value: (model_plain_value) @string)
 (model_directive
+  value: (inline_python_expr) @string.special)
+(system_directive
+  value: (model_plain_value) @string)
+(system_directive
   value: (inline_python_expr) @string.special)
 
 ; ----------------------------------------------------------------

@@ -107,6 +107,7 @@ module.exports = grammar({
         $.module_export,
         $.validation_block,
         $.model_directive,
+        $.system_directive,
         $.profile_directive,
         $.use_directive,
         $.assign_stmt,
@@ -189,6 +190,7 @@ module.exports = grammar({
         $.auto_directive,
         $.optimize_directive,
         $.model_directive,
+        $.system_directive,
         $.use_directive,
         $.assign_stmt,
         $.assign_block_stmt,
@@ -455,8 +457,11 @@ module.exports = grammar({
     //
     //   > model: haiku
     //   > model: `models['light']`
+    //   > system: You are concise.
+    //   > system: `system_prompts['concise']`
     //   > profile: profile_name:
     //     > model: opus
+    //     > system: You are concise.
     //   > use: profile_name
     // ============================================================
     model_directive: ($) =>
@@ -464,14 +469,22 @@ module.exports = grammar({
         ">",
         "model",
         ":",
-        field(
-          "value",
-          choice($.inline_python_expr, alias($._model_plain_value, $.model_plain_value)),
-        ),
+        optional(/[ \t]+/),
+        field("value", choice($.inline_python_expr, alias($._model_plain_value, $.model_plain_value))),
         $._newline,
       ),
 
-    _model_plain_value: ($) => token.immediate(/[^\n`]+/),
+    _model_plain_value: ($) => token(/[^\n`]+/),
+
+    system_directive: ($) =>
+      seq(
+        ">",
+        "system",
+        ":",
+        optional(/[ \t]+/),
+        field("value", choice($.inline_python_expr, alias($._model_plain_value, $.model_plain_value))),
+        $._newline,
+      ),
 
     profile_directive: ($) =>
       seq(
@@ -487,7 +500,7 @@ module.exports = grammar({
     profile_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.model_directive, $.use_directive, $._newline)),
+        repeat1(choice($.model_directive, $.system_directive, $.use_directive, $._newline)),
         $._dedent,
       ),
 

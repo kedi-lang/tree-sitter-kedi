@@ -70,6 +70,10 @@
         "named": true
       },
       {
+        "type": "system_directive",
+        "named": true
+      },
+      {
         "type": "template_block_stmt",
         "named": true
       },
@@ -133,6 +137,10 @@
       },
       {
         "type": "return_stmt",
+        "named": true
+      },
+      {
+        "type": "system_directive",
         "named": true
       },
       {
@@ -787,6 +795,10 @@
           "named": true
         },
         {
+          "type": "system_directive",
+          "named": true
+        },
+        {
           "type": "use_directive",
           "named": true
         }
@@ -905,6 +917,26 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "system_directive",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "inline_python_expr",
+            "named": true
+          },
+          {
+            "type": "model_plain_value",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -1509,6 +1541,10 @@
   {
     "type": "python_inline_body",
     "named": true
+  },
+  {
+    "type": "system",
+    "named": false
   },
   {
     "type": "test_data",
