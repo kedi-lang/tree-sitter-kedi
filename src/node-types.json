@@ -920,19 +920,75 @@
     }
   },
   {
+    "type": "system_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "system_line",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "system_directive",
     "named": true,
     "fields": {
-      "value": {
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "system_body",
+            "named": true
+          }
+        ]
+      },
+      "head": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "system_expr",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "system_expr",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "input_segment",
+          "named": true
+        },
+        {
+          "type": "text_segment",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "system_line",
+    "named": true,
+    "fields": {
+      "line": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "inline_python_expr",
-            "named": true
-          },
-          {
-            "type": "model_plain_value",
+            "type": "system_expr",
             "named": true
           }
         ]

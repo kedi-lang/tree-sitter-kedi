@@ -458,7 +458,9 @@ module.exports = grammar({
     //   > model: haiku
     //   > model: `models['light']`
     //   > system: You are concise.
-    //   > system: `system_prompts['concise']`
+    //   > system:
+    //     You are concise.
+    //     Prefer answers for <audience>.
     //   > profile: profile_name:
     //     > model: opus
     //     > system: You are concise.
@@ -477,14 +479,30 @@ module.exports = grammar({
     _model_plain_value: ($) => token(/[^\n`]+/),
 
     system_directive: ($) =>
-      seq(
-        ">",
-        "system",
-        ":",
-        optional(/[ \t]+/),
-        field("value", choice($.inline_python_expr, alias($._model_plain_value, $.model_plain_value))),
-        $._newline,
+      choice(
+        seq(
+          ">",
+          "system",
+          ":",
+          optional(/[ \t]+/),
+          field("head", $.system_expr),
+          $._newline,
+        ),
+        seq(">", "system", ":", $._newline, field("body", $.system_body)),
       ),
+
+    system_body: ($) =>
+      seq(
+        $._indent,
+        repeat1(choice($.system_line, $._newline)),
+        $._dedent,
+      ),
+
+    system_line: ($) => seq(field("line", $.system_expr), $._newline),
+
+    system_expr: ($) => repeat1($._system_segment),
+
+    _system_segment: ($) => choice($.input_segment, $.text_segment),
 
     profile_directive: ($) =>
       seq(

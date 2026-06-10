@@ -94,10 +94,6 @@
   value: (model_plain_value) @string)
 (model_directive
   value: (inline_python_expr) @string.special)
-(system_directive
-  value: (model_plain_value) @string)
-(system_directive
-  value: (inline_python_expr) @string.special)
 
 ; ----------------------------------------------------------------
 ; Python source embedded in Kedi (these regions get a Python
