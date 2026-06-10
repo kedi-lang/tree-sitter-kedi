@@ -86,6 +86,8 @@
 (optimize_directive name: (identifier) @label)
 (profile_directive name: (identifier) @label)
 (use_directive name: (identifier) @label)
+(use_tool_name name: (identifier) @function.call)
+(use_tool_backtick name: (identifier) @function.call)
 
 (model_directive
   value: (model_plain_value) @string)

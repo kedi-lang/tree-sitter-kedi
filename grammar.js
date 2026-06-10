@@ -494,6 +494,7 @@ module.exports = grammar({
     use_directive: ($) =>
       choice(
         seq(">", "use", ":", field("name", $.identifier), $._newline),
+        seq(">", "use", ":", "`", field("name", $.identifier), "`", $._newline),
         seq(">", "use", ":", $._newline, field("body", $.use_directive_body)),
       ),
 

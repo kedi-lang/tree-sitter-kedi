@@ -58,6 +58,7 @@
 ; Template segments
 ; ----------------------------------------------------------------
 
+; Segment captures apply anywhere (template_line, template_block, returns, …).
 (input_segment name: (identifier) @variable)
 (call_segment name: (identifier) @function.call)
 (output_segment
@@ -85,6 +86,8 @@
 (optimize_directive name: (identifier) @label)
 (profile_directive name: (identifier) @label)
 (use_directive name: (identifier) @label)
+(use_tool_name name: (identifier) @function.call)
+(use_tool_backtick name: (identifier) @function.call)
 
 (model_directive
   value: (model_plain_value) @string)
