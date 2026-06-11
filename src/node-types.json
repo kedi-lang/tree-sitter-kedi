@@ -46,6 +46,10 @@
         "named": true
       },
       {
+        "type": "effort_directive",
+        "named": true
+      },
+      {
         "type": "model_directive",
         "named": true
       },
@@ -105,6 +109,10 @@
       },
       {
         "type": "backtick_line_stmt",
+        "named": true
+      },
+      {
+        "type": "effort_directive",
         "named": true
       },
       {
@@ -387,6 +395,31 @@
     }
   },
   {
+    "type": "effort_directive",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "effort_plain_value",
+            "named": true
+          },
+          {
+            "type": "inline_python_expr",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "effort_plain_value",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "eval_data",
     "named": true,
     "fields": {
@@ -544,6 +577,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "model_plain_value",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "module_export",
@@ -790,6 +828,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "effort_directive",
+          "named": true
+        },
         {
           "type": "model_directive",
           "named": true
@@ -1559,6 +1601,10 @@
     "named": false
   },
   {
+    "type": "effort",
+    "named": false
+  },
+  {
     "type": "export",
     "named": false
   },
@@ -1582,10 +1628,6 @@
   {
     "type": "model",
     "named": false
-  },
-  {
-    "type": "model_plain_value",
-    "named": true
   },
   {
     "type": "module_import_note",

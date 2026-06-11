@@ -77,3 +77,45 @@ Optimize directive with template span
                 type: (type_expr (type_ref name: (identifier))))))))
       (return_stmt
         value: (inline_python_expr code: (python_inline_body))))))
+
+
+==================
+Agent effort directive
+==================
+
+> model: openrouter:google/gemini-3-flash-preview
+> effort: high
+> profile: careful:
+  > effort: max
+  > model: `model_name`
+> use: careful
+
+@answer():
+  > effort: low
+  >> done [value]
+
+---
+
+(source_file
+  (model_directive
+    value: (model_plain_value))
+  (effort_directive
+    value: (effort_plain_value))
+  (profile_directive
+    name: (identifier)
+    body: (profile_body
+      (effort_directive
+        value: (effort_plain_value))
+      (model_directive
+        value: (inline_python_expr code: (python_inline_body)))))
+  (use_directive
+    name: (identifier))
+  (procedure_def
+    name: (identifier)
+    body: (block
+      (effort_directive
+        value: (effort_plain_value))
+      (template_block_stmt
+        head: (template_expr
+          (text_segment)
+          (output_segment name: (identifier)))))))

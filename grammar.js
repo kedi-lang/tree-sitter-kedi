@@ -108,6 +108,7 @@ module.exports = grammar({
         $.module_export,
         $.validation_block,
         $.model_directive,
+        $.effort_directive,
         $.system_directive,
         $.profile_directive,
         $.use_directive,
@@ -191,6 +192,7 @@ module.exports = grammar({
         $.auto_directive,
         $.optimize_directive,
         $.model_directive,
+        $.effort_directive,
         $.system_directive,
         $.use_directive,
         $.assign_stmt,
@@ -458,6 +460,7 @@ module.exports = grammar({
     //
     //   > model: haiku
     //   > model: `models['light']`
+    //   > effort: low
     //   > system: You are concise.
     //   > system:
     //     You are concise.
@@ -478,6 +481,18 @@ module.exports = grammar({
       ),
 
     _model_plain_value: ($) => token(/[^\n`]+/),
+
+    effort_directive: ($) =>
+      seq(
+        ">",
+        "effort",
+        ":",
+        optional(/[ \t]+/),
+        field("value", choice($.inline_python_expr, alias($._effort_plain_value, $.effort_plain_value))),
+        $._newline,
+      ),
+
+    _effort_plain_value: ($) => token(/[^\n`]+/),
 
     system_directive: ($) =>
       choice(
@@ -521,7 +536,7 @@ module.exports = grammar({
     profile_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.model_directive, $.system_directive, $.use_directive, $._newline)),
+        repeat1(choice($.model_directive, $.effort_directive, $.system_directive, $.use_directive, $._newline)),
         $._dedent,
       ),
 
