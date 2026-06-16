@@ -37,6 +37,7 @@
 "model" @keyword
 "effort" @keyword
 "system" @keyword
+"mcp" @keyword
 "profile" @keyword
 "use" @keyword
 "case" @keyword
@@ -91,6 +92,7 @@
 (use_directive name: (identifier) @label)
 (use_tool_name name: (identifier) @function.call)
 (use_tool_backtick name: (identifier) @function.call)
+(mcp_field name: (identifier) @property)
 
 (model_directive
   value: (model_plain_value) @string)
@@ -100,6 +102,11 @@
 (effort_directive
   value: (effort_plain_value) @string)
 (effort_directive
+  value: (inline_python_expr) @string.special)
+
+(mcp_field
+  value: (mcp_plain_value) @string)
+(mcp_field
   value: (inline_python_expr) @string.special)
 
 ; ----------------------------------------------------------------

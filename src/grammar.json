@@ -56,6 +56,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "mcp_directive"
+        },
+        {
+          "type": "SYMBOL",
           "name": "profile_directive"
         },
         {
@@ -478,6 +482,10 @@
         {
           "type": "SYMBOL",
           "name": "system_directive"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "mcp_directive"
         },
         {
           "type": "SYMBOL",
@@ -1704,6 +1712,126 @@
       "type": "SYMBOL",
       "name": "_system_angle_segment"
     },
+    "mcp_directive": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ">"
+        },
+        {
+          "type": "STRING",
+          "value": "mcp"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "mcp_body"
+          }
+        }
+      ]
+    },
+    "mcp_body": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_indent"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "mcp_field"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_newline"
+              }
+            ]
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_dedent"
+        }
+      ]
+    },
+    "mcp_field": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "[ \\t]+"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "inline_python_expr"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_mcp_plain_value"
+                },
+                "named": true,
+                "value": "mcp_plain_value"
+              }
+            ]
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "_mcp_plain_value": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "[^\\n`#]+"
+      }
+    },
     "profile_directive": {
       "type": "SEQ",
       "members": [
@@ -1768,6 +1896,10 @@
               {
                 "type": "SYMBOL",
                 "name": "system_directive"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "mcp_directive"
               },
               {
                 "type": "SYMBOL",

@@ -50,6 +50,10 @@
         "named": true
       },
       {
+        "type": "mcp_directive",
+        "named": true
+      },
+      {
         "type": "model_directive",
         "named": true
       },
@@ -113,6 +117,10 @@
       },
       {
         "type": "effort_directive",
+        "named": true
+      },
+      {
+        "type": "mcp_directive",
         "named": true
       },
       {
@@ -559,6 +567,67 @@
     }
   },
   {
+    "type": "mcp_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "mcp_field",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "mcp_directive",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "mcp_body",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "mcp_field",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "inline_python_expr",
+            "named": true
+          },
+          {
+            "type": "mcp_plain_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "model_directive",
     "named": true,
     "fields": {
@@ -830,6 +899,10 @@
       "types": [
         {
           "type": "effort_directive",
+          "named": true
+        },
+        {
+          "type": "mcp_directive",
           "named": true
         },
         {
@@ -1620,6 +1693,14 @@
     "type": "line_comment",
     "named": true,
     "extra": true
+  },
+  {
+    "type": "mcp",
+    "named": false
+  },
+  {
+    "type": "mcp_plain_value",
+    "named": true
   },
   {
     "type": "metric",

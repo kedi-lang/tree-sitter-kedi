@@ -110,6 +110,7 @@ module.exports = grammar({
         $.model_directive,
         $.effort_directive,
         $.system_directive,
+        $.mcp_directive,
         $.profile_directive,
         $.use_directive,
         $.assign_stmt,
@@ -194,6 +195,7 @@ module.exports = grammar({
         $.model_directive,
         $.effort_directive,
         $.system_directive,
+        $.mcp_directive,
         $.use_directive,
         $.assign_stmt,
         $.assign_block_stmt,
@@ -522,6 +524,27 @@ module.exports = grammar({
 
     system_angle_segment: ($) => $._system_angle_segment,
 
+    mcp_directive: ($) =>
+      seq(">", "mcp", ":", $._newline, field("body", $.mcp_body)),
+
+    mcp_body: ($) =>
+      seq(
+        $._indent,
+        repeat1(choice($.mcp_field, $._newline)),
+        $._dedent,
+      ),
+
+    mcp_field: ($) =>
+      seq(
+        field("name", $.identifier),
+        ":",
+        optional(/[ \t]+/),
+        field("value", choice($.inline_python_expr, alias($._mcp_plain_value, $.mcp_plain_value))),
+        $._newline,
+      ),
+
+    _mcp_plain_value: ($) => token(/[^\n`#]+/),
+
     profile_directive: ($) =>
       seq(
         ">",
@@ -536,7 +559,7 @@ module.exports = grammar({
     profile_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.model_directive, $.effort_directive, $.system_directive, $.use_directive, $._newline)),
+        repeat1(choice($.model_directive, $.effort_directive, $.system_directive, $.mcp_directive, $.use_directive, $._newline)),
         $._dedent,
       ),
 
