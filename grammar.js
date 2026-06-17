@@ -4,26 +4,7 @@
  * @author Mert Sırakaya <mert@kedi-lang.org>
  * @license Apache-2.0
  *
- * Kedi is a typed DSL for LLM orchestration. This grammar replaces the
- * legacy hand-written parser at src/kedi/lang/parser/ in the parent repo.
- *
- * Phase 2 surface area:
- *   - procedure_def, params, type_def, type_field, type_expr hierarchy
- *     (type_ref / type_apply / type_union / type_python).
- *   - assign_stmt, return_stmt, template_line, inline_python_expr,
- *     backtick_line_stmt.
- *   - Template segments: text, input, output, call, python_expr.
- *   - Call argument list with nested inputs, calls, python exprs, and
- *     raw text-in-call (handled by the external scanner so it stops on
- *     unescaped `,` and `)`).
- *
- * Deferred:
- *   - Triple-backtick fenced Python blocks → Phase 3.
- *   - `> auto:` and `> optimize:` directives → Phase 4.
- *   - `@test:` and `@eval:` validation blocks → Phase 4.
- *
- * See /home/yigit/.claude/plans/i-have-added-tree-sitter-effervescent-marshmallow.md
- * for the full design.
+ * Kedi is a typed DSL for LLM orchestration.
  */
 
 /// <reference types="tree-sitter-cli/dsl" />
@@ -261,9 +242,6 @@ module.exports = grammar({
 
     // ============================================================
     // Assignment & return
-    //
-    // Backtick-fenced Python blocks (Phase 3) are NOT yet handled here;
-    // the inline_python_expr alternative covers single-line `code`.
     // ============================================================
     assign_stmt: ($) =>
       seq(
@@ -291,7 +269,7 @@ module.exports = grammar({
     backtick_line_stmt: ($) => seq($.inline_python_expr, $._newline),
 
     // ============================================================
-    // Fenced Python blocks (Phase 3)
+    // Fenced Python blocks
     //
     // A fenced block opens and closes with a line whose stripped content
     // is exactly "```". The body content (between the two fences) is
@@ -306,8 +284,8 @@ module.exports = grammar({
     // after the close fence triggers indent-stack tracking on the next
     // statement line.
     //
-    // Common-indent dedenting of body content is handled by the Phase 6
-    // CST→AST walker, NOT by the scanner — the raw bytes are preserved
+    // Common-indent dedenting of body content is handled by the CST→AST
+    // walker, NOT by the scanner — the raw bytes are preserved
     // here so editors can inject a Python parser into `python_code`.
     // ============================================================
     python_block: ($) =>
@@ -418,7 +396,7 @@ module.exports = grammar({
     python_expr_segment: ($) => seq("<", $.inline_python_expr, ">"),
 
     // ============================================================
-    // Directives inside procedure bodies (Phase 4)
+    // Directives inside procedure bodies
     //
     //   > auto:
     //     <indented free-text spec for an AI-generated procedure>
@@ -583,7 +561,7 @@ module.exports = grammar({
       seq("`", field("name", $.identifier), "`", $._newline),
 
     // ============================================================
-    // Validation blocks (Phase 4)
+    // Validation blocks
     //
     //   @test: <procedure_name>:
     //     > case: <name>:

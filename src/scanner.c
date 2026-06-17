@@ -221,7 +221,7 @@ static inline bool is_unconditional_text_stop(int32_t c) {
 // Behaviour:
 //   - Leading whitespace is absorbed (tree-sitter cannot interleave
 //     extras between a failed external-scanner call and a retry, so we
-//     consume the indentation here and the Phase 6 CST→AST walker trims
+//     consume the indentation here and the CST→AST walker trims
 //     it off each TextSegment).
 //   - `@`, `~`, `=` at the very first non-whitespace position cause the
 //     scan to return false so the grammar can dispatch procedure_def /
@@ -419,14 +419,14 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
     //    next token, extras never get a chance and parsing stalls.
     //    Absorbing the trailing WS into the NEWLINE token here is
     //    safe (it has no syntactic significance) and matches the
-    //    pre-refactor parser's `line.rstrip()` semantics.
+    //    `line.rstrip()` semantics.
     // Trailing-WS absorption: when NEWLINE is the ONLY valid external
     // token (i.e. we're sitting right after a `:` or similar in a
     // tightly constrained state), tree-sitter's extras layer can't
     // consume `[ \t]` between us and the `\n` — there is no
     // subsequent non-NEWLINE token to anchor extras matching against.
     // Pre-consuming the trailing horizontal whitespace as part of the
-    // NEWLINE token mirrors the pre-refactor parser's `line.rstrip()`
+    // NEWLINE token mirrors `line.rstrip()`
     // and unblocks parsing of inputs like ``@f(): \n``.
     if (valid_symbols[KEDI_NEWLINE] &&
         !valid_symbols[KEDI_TEXT] &&
