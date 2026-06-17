@@ -92,6 +92,7 @@ module.exports = grammar({
         $.effort_directive,
         $.system_directive,
         $.mcp_directive,
+        $.settings_directive,
         $.profile_directive,
         $.use_directive,
         $.assign_stmt,
@@ -177,6 +178,7 @@ module.exports = grammar({
         $.effort_directive,
         $.system_directive,
         $.mcp_directive,
+        $.settings_directive,
         $.use_directive,
         $.assign_stmt,
         $.assign_block_stmt,
@@ -523,6 +525,27 @@ module.exports = grammar({
 
     _mcp_plain_value: ($) => token(/[^\n`#]+/),
 
+    settings_directive: ($) =>
+      seq(">", "settings", ":", $._newline, field("body", $.settings_body)),
+
+    settings_body: ($) =>
+      seq(
+        $._indent,
+        repeat1(choice($.settings_field, $._newline)),
+        $._dedent,
+      ),
+
+    settings_field: ($) =>
+      seq(
+        field("name", $.identifier),
+        ":",
+        optional(/[ \t]+/),
+        field("value", choice($.inline_python_expr, alias($._settings_plain_value, $.settings_plain_value))),
+        $._newline,
+      ),
+
+    _settings_plain_value: ($) => token(/[^\n`#]+/),
+
     profile_directive: ($) =>
       seq(
         ">",
@@ -537,7 +560,7 @@ module.exports = grammar({
     profile_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.model_directive, $.effort_directive, $.system_directive, $.mcp_directive, $.use_directive, $._newline)),
+        repeat1(choice($.model_directive, $.effort_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.use_directive, $._newline)),
         $._dedent,
       ),
 

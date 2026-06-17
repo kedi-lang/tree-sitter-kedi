@@ -78,6 +78,10 @@
         "named": true
       },
       {
+        "type": "settings_directive",
+        "named": true
+      },
+      {
         "type": "system_directive",
         "named": true
       },
@@ -153,6 +157,10 @@
       },
       {
         "type": "return_stmt",
+        "named": true
+      },
+      {
+        "type": "settings_directive",
         "named": true
       },
       {
@@ -628,6 +636,11 @@
     }
   },
   {
+    "type": "mcp_plain_value",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "model_directive",
     "named": true,
     "fields": {
@@ -910,6 +923,10 @@
           "named": true
         },
         {
+          "type": "settings_directive",
+          "named": true
+        },
+        {
           "type": "system_directive",
           "named": true
         },
@@ -1017,6 +1034,72 @@
         ]
       }
     }
+  },
+  {
+    "type": "settings_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "settings_field",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "settings_directive",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "settings_body",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "settings_field",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "inline_python_expr",
+            "named": true
+          },
+          {
+            "type": "settings_plain_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "settings_plain_value",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "source_file",
@@ -1699,10 +1782,6 @@
     "named": false
   },
   {
-    "type": "mcp_plain_value",
-    "named": true
-  },
-  {
     "type": "metric",
     "named": false
   },
@@ -1725,6 +1804,10 @@
   {
     "type": "python_inline_body",
     "named": true
+  },
+  {
+    "type": "settings",
+    "named": false
   },
   {
     "type": "system",

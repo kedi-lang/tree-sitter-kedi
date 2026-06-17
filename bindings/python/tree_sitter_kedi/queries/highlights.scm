@@ -38,6 +38,7 @@
 "effort" @keyword
 "system" @keyword
 "mcp" @keyword
+"settings" @keyword
 "profile" @keyword
 "use" @keyword
 "case" @keyword
@@ -93,6 +94,7 @@
 (use_tool_name name: (identifier) @function.call)
 (use_tool_backtick name: (identifier) @function.call)
 (mcp_field name: (identifier) @property)
+(settings_field name: (identifier) @property)
 
 (model_directive
   value: (model_plain_value) @string)
@@ -107,6 +109,11 @@
 (mcp_field
   value: (mcp_plain_value) @string)
 (mcp_field
+  value: (inline_python_expr) @string.special)
+
+(settings_field
+  value: (settings_plain_value) @string)
+(settings_field
   value: (inline_python_expr) @string.special)
 
 ; ----------------------------------------------------------------
