@@ -21,7 +21,8 @@
 (template_block_stmt
   ">>" @keyword)
 
-["@" "~" "=" ":" "(" ")" "[" "]" "<" ">" "," "|" "->" "*"] @punctuation.delimiter
+["@" "~" ">"] @punctuation.special
+["=" ":" "(" ")" "[" "]" "<" "," "|" "->" "*"] @punctuation.delimiter
 ["```"] @punctuation.special
 "`" @punctuation.special
 
