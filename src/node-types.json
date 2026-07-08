@@ -1353,7 +1353,7 @@
             "named": false
           },
           {
-            "type": "type_expr",
+            "type": "type_arg",
             "named": true
           }
         ]
@@ -1368,6 +1368,29 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "type_arg",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "_type_expr_term",
+          "named": true
+        },
+        {
+          "type": "type_python",
+          "named": true
+        },
+        {
+          "type": "type_string",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -1816,6 +1839,10 @@
   {
     "type": "test_data",
     "named": false
+  },
+  {
+    "type": "type_string",
+    "named": true
   },
   {
     "type": "use",

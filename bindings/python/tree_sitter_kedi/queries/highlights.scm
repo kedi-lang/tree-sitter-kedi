@@ -77,6 +77,7 @@
 
 (type_ref name: (identifier) @type)
 (type_apply name: (identifier) @type)
+(type_string) @string
 
 ; ----------------------------------------------------------------
 ; Validation suite names (after `@test:` / `@eval:`)

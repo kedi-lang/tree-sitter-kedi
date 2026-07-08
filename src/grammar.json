@@ -700,6 +700,23 @@
         }
       ]
     },
+    "type_arg": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "type_python"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type_string"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_type_expr_term"
+        }
+      ]
+    },
     "type_union": {
       "type": "PREC_LEFT",
       "value": 1,
@@ -752,7 +769,7 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "type_expr"
+                "name": "type_arg"
               },
               {
                 "type": "REPEAT",
@@ -765,7 +782,7 @@
                     },
                     {
                       "type": "SYMBOL",
-                      "name": "type_expr"
+                      "name": "type_arg"
                     }
                   ]
                 }
@@ -807,6 +824,22 @@
           "value": "`"
         }
       ]
+    },
+    "type_string": {
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "\"([^\"\\\\\\n]|\\\\.)*\""
+          },
+          {
+            "type": "PATTERN",
+            "value": "'([^'\\\\\\n]|\\\\.)*'"
+          }
+        ]
+      }
     },
     "assign_stmt": {
       "type": "SEQ",

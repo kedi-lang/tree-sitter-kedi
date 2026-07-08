@@ -224,6 +224,8 @@ module.exports = grammar({
 
     _type_expr_term: ($) => choice($.type_union, $.type_apply, $.type_ref),
 
+    type_arg: ($) => choice($.type_python, $.type_string, $._type_expr_term),
+
     type_union: ($) =>
       prec.left(
         1,
@@ -234,13 +236,15 @@ module.exports = grammar({
       seq(
         field("name", $.identifier),
         "[",
-        field("args", sep1($.type_expr, ",")),
+        field("args", sep1($.type_arg, ",")),
         "]",
       ),
 
     type_ref: ($) => field("name", $.identifier),
 
     type_python: ($) => seq("`", field("code", $.python_inline_body), "`"),
+
+    type_string: (_$) => token(choice(/"([^"\\\n]|\\.)*"/, /'([^'\\\n]|\\.)*'/)),
 
     // ============================================================
     // Assignment & return
