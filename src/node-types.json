@@ -30,6 +30,14 @@
     "named": true,
     "subtypes": [
       {
+        "type": "adapter_directive",
+        "named": true
+      },
+      {
+        "type": "agent_directive",
+        "named": true
+      },
+      {
         "type": "assign_block_stmt",
         "named": true
       },
@@ -107,6 +115,14 @@
     "type": "_top_item",
     "named": true,
     "subtypes": [
+      {
+        "type": "adapter_directive",
+        "named": true
+      },
+      {
+        "type": "agent_directive",
+        "named": true
+      },
       {
         "type": "assign_block_stmt",
         "named": true
@@ -206,6 +222,51 @@
         "named": true
       }
     ]
+  },
+  {
+    "type": "adapter_directive",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "adapter_plain_value",
+            "named": true
+          },
+          {
+            "type": "inline_python_expr",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "adapter_plain_value",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "agent_directive",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "adapter_plain_value",
+            "named": true
+          },
+          {
+            "type": "inline_python_expr",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "assign_block_stmt",
@@ -910,6 +971,14 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "adapter_directive",
+          "named": true
+        },
+        {
+          "type": "agent_directive",
+          "named": true
+        },
         {
           "type": "effort_directive",
           "named": true
@@ -1760,6 +1829,14 @@
   },
   {
     "type": "```",
+    "named": false
+  },
+  {
+    "type": "adapter",
+    "named": false
+  },
+  {
+    "type": "agent",
     "named": false
   },
   {

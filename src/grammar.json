@@ -44,6 +44,14 @@
         },
         {
           "type": "SYMBOL",
+          "name": "agent_directive"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "adapter_directive"
+        },
+        {
+          "type": "SYMBOL",
           "name": "model_directive"
         },
         {
@@ -474,6 +482,14 @@
         {
           "type": "SYMBOL",
           "name": "optimize_directive"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "agent_directive"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "adapter_directive"
         },
         {
           "type": "SYMBOL",
@@ -1546,6 +1562,123 @@
         "value": "[^\\n`]+"
       }
     },
+    "agent_directive": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ">"
+        },
+        {
+          "type": "STRING",
+          "value": "agent"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "[ \\t]+"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "inline_python_expr"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_adapter_plain_value"
+                },
+                "named": true,
+                "value": "adapter_plain_value"
+              }
+            ]
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "adapter_directive": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ">"
+        },
+        {
+          "type": "STRING",
+          "value": "adapter"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "[ \\t]+"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "inline_python_expr"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_adapter_plain_value"
+                },
+                "named": true,
+                "value": "adapter_plain_value"
+              }
+            ]
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "_adapter_plain_value": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "[^\\n`]+"
+      }
+    },
     "effort_directive": {
       "type": "SEQ",
       "members": [
@@ -2046,6 +2179,14 @@
           "content": {
             "type": "CHOICE",
             "members": [
+              {
+                "type": "SYMBOL",
+                "name": "agent_directive"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "adapter_directive"
+              },
               {
                 "type": "SYMBOL",
                 "name": "model_directive"

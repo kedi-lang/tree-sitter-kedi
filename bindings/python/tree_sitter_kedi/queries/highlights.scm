@@ -35,6 +35,8 @@
 "export" @operator
 "auto" @keyword
 "optimize" @keyword
+"agent" @keyword
+"adapter" @keyword
 "model" @keyword
 "effort" @keyword
 "system" @keyword
@@ -92,6 +94,10 @@
 
 (optimize_directive name: (identifier) @label)
 (profile_directive name: (identifier) @label)
+(agent_directive
+  value: (adapter_plain_value) @label)
+(adapter_directive
+  value: (adapter_plain_value) @label)
 (use_directive name: (identifier) @label)
 (use_tool_name name: (identifier) @function.call)
 (use_tool_backtick name: (identifier) @function.call)
@@ -101,6 +107,12 @@
 (model_directive
   value: (model_plain_value) @string)
 (model_directive
+  value: (inline_python_expr) @string.special)
+
+(agent_directive
+  value: (inline_python_expr) @string.special)
+
+(adapter_directive
   value: (inline_python_expr) @string.special)
 
 (effort_directive

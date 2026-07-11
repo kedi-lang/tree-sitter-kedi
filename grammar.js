@@ -88,6 +88,8 @@ module.exports = grammar({
         $.module_import,
         $.module_export,
         $.validation_block,
+        $.agent_directive,
+        $.adapter_directive,
         $.model_directive,
         $.effort_directive,
         $.system_directive,
@@ -174,6 +176,8 @@ module.exports = grammar({
         $.type_def_stmt,
         $.auto_directive,
         $.optimize_directive,
+        $.agent_directive,
+        $.adapter_directive,
         $.model_directive,
         $.effort_directive,
         $.system_directive,
@@ -468,6 +472,28 @@ module.exports = grammar({
 
     _model_plain_value: ($) => token(/[^\n`]+/),
 
+    agent_directive: ($) =>
+      seq(
+        ">",
+        "agent",
+        ":",
+        optional(/[ \t]+/),
+        field("value", choice($.inline_python_expr, alias($._adapter_plain_value, $.adapter_plain_value))),
+        $._newline,
+      ),
+
+    adapter_directive: ($) =>
+      seq(
+        ">",
+        "adapter",
+        ":",
+        optional(/[ \t]+/),
+        field("value", choice($.inline_python_expr, alias($._adapter_plain_value, $.adapter_plain_value))),
+        $._newline,
+      ),
+
+    _adapter_plain_value: ($) => token(/[^\n`]+/),
+
     effort_directive: ($) =>
       seq(
         ">",
@@ -564,7 +590,7 @@ module.exports = grammar({
     profile_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.model_directive, $.effort_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.use_directive, $._newline)),
+        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.use_directive, $._newline)),
         $._dedent,
       ),
 
