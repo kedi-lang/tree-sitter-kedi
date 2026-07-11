@@ -15,10 +15,7 @@ module.exports = grammar({
 
   // `template_block_stmt` continuation lines and `[name] = …` assignments
   // share a `[` prefix; disambiguation needs the `=` after the target.
-  conflicts: ($) => [
-    [$.template_block_stmt],
-    [$.template_block_stmt, $.assign_stmt],
-  ],
+  conflicts: ($) => [[$.template_block_stmt]],
 
   // IMPORTANT: this list's order must match `enum TokenType` in src/scanner.c.
   //
@@ -99,6 +96,7 @@ module.exports = grammar({
         $.use_directive,
         $.assign_stmt,
         $.assign_block_stmt,
+        $.raw_invoke_stmt,
         $.return_stmt,
         $.return_block_stmt,
         $.python_block,
@@ -186,6 +184,7 @@ module.exports = grammar({
         $.use_directive,
         $.assign_stmt,
         $.assign_block_stmt,
+        $.raw_invoke_stmt,
         $.return_stmt,
         $.return_block_stmt,
         $.python_block,
@@ -258,6 +257,14 @@ module.exports = grammar({
         $.assign_target,
         "=",
         field("rhs", choice($.inline_python_expr, $.template_expr)),
+        $._newline,
+      ),
+
+    raw_invoke_stmt: ($) =>
+      seq(
+        field("target", $.assign_target),
+        "<<",
+        field("prompt", $.template_expr),
         $._newline,
       ),
 

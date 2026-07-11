@@ -20,6 +20,8 @@
 
 (template_block_stmt
   ">>" @keyword)
+(raw_invoke_stmt
+  "<<" @keyword)
 
 ["@" "~" ">"] @punctuation.special
 ["=" ":" "(" ")" "[" "]" "<" "," "|" "->" "*"] @punctuation.delimiter

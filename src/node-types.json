@@ -78,6 +78,10 @@
         "named": true
       },
       {
+        "type": "raw_invoke_stmt",
+        "named": true
+      },
+      {
         "type": "return_block_stmt",
         "named": true
       },
@@ -165,6 +169,10 @@
       },
       {
         "type": "python_block",
+        "named": true
+      },
+      {
+        "type": "raw_invoke_stmt",
         "named": true
       },
       {
@@ -1069,6 +1077,32 @@
     }
   },
   {
+    "type": "raw_invoke_stmt",
+    "named": true,
+    "fields": {
+      "prompt": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "template_expr",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assign_target",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "return_block_stmt",
     "named": true,
     "fields": {
@@ -1797,6 +1831,10 @@
   },
   {
     "type": "<",
+    "named": false
+  },
+  {
+    "type": "<<",
     "named": false
   },
   {
