@@ -98,6 +98,11 @@
 (profile_directive name: (identifier) @label)
 (agent_directive
   value: (adapter_plain_value) @label)
+(agent_field name: (identifier) @label)
+(agent_field
+  value: (agent_command_plain_value) @string)
+(agent_field
+  value: (inline_python_expr) @string.special)
 (adapter_directive
   value: (adapter_plain_value) @label)
 (use_directive name: (identifier) @label)

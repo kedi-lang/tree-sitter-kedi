@@ -480,12 +480,37 @@ module.exports = grammar({
     _model_plain_value: ($) => token(/[^\n`]+/),
 
     agent_directive: ($) =>
+      choice(
+        seq(
+          ">",
+          "agent",
+          ":",
+          optional(/[ \t]+/),
+          field("value", choice($.inline_python_expr, alias($._adapter_plain_value, $.adapter_plain_value))),
+          $._newline,
+        ),
+        seq(
+          ">",
+          "agent",
+          ":",
+          $._newline,
+          field("body", $.agent_body),
+        ),
+      ),
+
+    agent_body: ($) =>
       seq(
-        ">",
-        "agent",
+        $._indent,
+        repeat1(choice($.agent_field, $._newline)),
+        $._dedent,
+      ),
+
+    agent_field: ($) =>
+      seq(
+        field("name", $.identifier),
         ":",
         optional(/[ \t]+/),
-        field("value", choice($.inline_python_expr, alias($._adapter_plain_value, $.adapter_plain_value))),
+        field("value", choice($.inline_python_expr, alias($._agent_command_plain_value, $.agent_command_plain_value))),
         $._newline,
       ),
 
@@ -500,6 +525,8 @@ module.exports = grammar({
       ),
 
     _adapter_plain_value: ($) => token(/[^\n`]+/),
+
+    _agent_command_plain_value: ($) => token(/[^\n`#]+/),
 
     effort_directive: ($) =>
       seq(
