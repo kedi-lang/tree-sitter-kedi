@@ -23,8 +23,8 @@
 (raw_invoke_stmt
   "<<" @keyword)
 
-["@" "~" ">"] @punctuation.special
-["=" ":" "(" ")" "[" "]" "<" "," "|" "->" "*"] @punctuation.delimiter
+["@" "~" "<" ">"] @punctuation.special
+["=" ":" "(" ")" "[" "]" "," "|" "->" "*"] @punctuation.delimiter
 ["```"] @punctuation.special
 "`" @punctuation.special
 
