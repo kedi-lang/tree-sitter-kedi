@@ -140,29 +140,10 @@
           }
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "module_import_note"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
           "type": "SYMBOL",
           "name": "_newline"
         }
       ]
-    },
-    "module_import_note": {
-      "type": "IMMEDIATE_TOKEN",
-      "content": {
-        "type": "PATTERN",
-        "value": "[ \\t]*\\([^)\\n]*\\)"
-      }
     },
     "module_export": {
       "type": "CHOICE",

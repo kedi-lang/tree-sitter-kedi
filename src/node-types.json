@@ -855,16 +855,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "module_import_note",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -1986,10 +1976,6 @@
   {
     "type": "model",
     "named": false
-  },
-  {
-    "type": "module_import_note",
-    "named": true
   },
   {
     "type": "optimize",

@@ -111,11 +111,8 @@ module.exports = grammar({
         "import",
         ":",
         field("module", $.identifier),
-        optional($.module_import_note),
         $._newline,
       ),
-
-    module_import_note: ($) => token.immediate(/[ \t]*\([^)\n]*\)/),
 
     module_export: ($) =>
       choice(
