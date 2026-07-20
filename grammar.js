@@ -447,7 +447,14 @@ module.exports = grammar({
       ),
 
     optimize_body: ($) =>
-      seq($._indent, repeat1(choice($.template_line, $._newline)), $._dedent),
+      seq(
+        $._indent,
+        choice(
+          $.template_block_stmt,
+          repeat1(choice($.template_line, $._newline)),
+        ),
+        $._dedent,
+      ),
 
     // ============================================================
     // Agent profile directives

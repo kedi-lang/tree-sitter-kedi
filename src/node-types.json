@@ -866,6 +866,10 @@
       "required": false,
       "types": [
         {
+          "type": "template_block_stmt",
+          "named": true
+        },
+        {
           "type": "template_line",
           "named": true
         }
