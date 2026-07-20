@@ -38,6 +38,10 @@
         "named": true
       },
       {
+        "type": "approval_directive",
+        "named": true
+      },
+      {
         "type": "assign_block_stmt",
         "named": true
       },
@@ -125,6 +129,10 @@
       },
       {
         "type": "agent_directive",
+        "named": true
+      },
+      {
+        "type": "approval_directive",
         "named": true
       },
       {
@@ -335,6 +343,31 @@
         ]
       }
     }
+  },
+  {
+    "type": "approval_directive",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "approval_plain_value",
+            "named": true
+          },
+          {
+            "type": "inline_python_expr",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "approval_plain_value",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "assign_block_stmt",
@@ -1039,6 +1072,10 @@
         },
         {
           "type": "agent_directive",
+          "named": true
+        },
+        {
+          "type": "approval_directive",
           "named": true
         },
         {
@@ -1929,6 +1966,10 @@
   },
   {
     "type": "agent",
+    "named": false
+  },
+  {
+    "type": "approval",
     "named": false
   },
   {

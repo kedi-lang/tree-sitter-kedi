@@ -41,6 +41,7 @@
 "adapter" @keyword
 "model" @keyword
 "effort" @keyword
+"approval" @keyword
 "system" @keyword
 "mcp" @keyword
 "settings" @keyword
@@ -125,6 +126,11 @@
 (effort_directive
   value: (effort_plain_value) @string)
 (effort_directive
+  value: (inline_python_expr) @string.special)
+
+(approval_directive
+  value: (approval_plain_value) @string)
+(approval_directive
   value: (inline_python_expr) @string.special)
 
 (mcp_field
