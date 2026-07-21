@@ -215,8 +215,7 @@ static inline bool is_unconditional_text_stop(int32_t c) {
            c == '#';
 }
 
-// Scan a TEXT or TEXT_IN_CALL token. Returns true iff at least one
-// non-whitespace character was consumed.
+// Scan a TEXT or TEXT_IN_CALL token. Returns true iff text was consumed.
 //
 // Behaviour:
 //   - Leading whitespace is absorbed (tree-sitter cannot interleave
@@ -233,6 +232,7 @@ static inline bool is_unconditional_text_stop(int32_t c) {
 //   - Backslash escapes (`\\X`) are consumed as two-character units.
 static bool scan_text_run(TSLexer *lexer, bool in_call) {
     bool seen_text = false;
+    bool saw_whitespace = false;
     for (;;) {
         int32_t c = lexer->lookahead;
         if (c == 0 && is_eof(lexer)) break;
@@ -240,6 +240,7 @@ static bool scan_text_run(TSLexer *lexer, bool in_call) {
 
         if (c == ' ' || c == '\t') {
             advance(lexer);
+            saw_whitespace = true;
             continue;
         }
 
@@ -298,7 +299,12 @@ static bool scan_text_run(TSLexer *lexer, bool in_call) {
         advance(lexer);
         seen_text = true;
     }
-    return seen_text;
+    // A trailing whitespace run after a segment must be emitted as text
+    // when TEXT is valid on another GLR stack. Otherwise the NEWLINE
+    // scanner cannot consume it and valid template returns such as
+    // `= <value>   ` leave an ERROR node. Runtime rendering already trims
+    // unescaped terminal whitespace, so preserving it in the CST is safe.
+    return seen_text || (saw_whitespace && lexer->lookahead == '\n');
 }
 
 static bool scan_system_angle_segment(TSLexer *lexer) {

@@ -136,6 +136,29 @@ Python expression segment in template
 
 
 ==================
+Bare Python expression segment in template
+==================
+
+@show():
+  Review `"def add(a: int) -> int: return a"`.
+  = ok
+
+---
+
+(source_file
+  (procedure_def
+    name: (identifier)
+    body: (block
+      (template_line
+        (template_expr
+          (text_segment)
+          (inline_python_expr code: (python_inline_body))
+          (text_segment)))
+      (return_stmt
+        value: (template_expr (text_segment))))))
+
+
+==================
 Output placeholder with no type annotation
 ==================
 

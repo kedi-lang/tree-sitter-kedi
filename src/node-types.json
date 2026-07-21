@@ -8,6 +8,10 @@
         "named": true
       },
       {
+        "type": "inline_python_expr",
+        "named": true
+      },
+      {
         "type": "input_segment",
         "named": true
       },
@@ -1176,7 +1180,7 @@
         "required": true,
         "types": [
           {
-            "type": "template_expr",
+            "type": "template_prompt_expr",
             "named": true
           }
         ]
@@ -1442,7 +1446,7 @@
         "required": true,
         "types": [
           {
-            "type": "template_expr",
+            "type": "template_prompt_expr",
             "named": true
           }
         ]
@@ -1474,6 +1478,21 @@
       "types": [
         {
           "type": "template_expr",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "template_prompt_expr",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "_segment",
           "named": true
         }
       ]

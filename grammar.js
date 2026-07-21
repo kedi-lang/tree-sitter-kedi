@@ -263,7 +263,7 @@ module.exports = grammar({
       seq(
         field("target", $.assign_target),
         "<<",
-        field("prompt", $.template_expr),
+        field("prompt", $.template_prompt_expr),
         $._newline,
       ),
 
@@ -341,7 +341,7 @@ module.exports = grammar({
     template_block_stmt: ($) =>
       seq(
         ">>",
-        field("head", $.template_expr),
+        field("head", $.template_prompt_expr),
         repeat(
           seq(
             $._newline,
@@ -353,13 +353,45 @@ module.exports = grammar({
 
     template_line: ($) => seq($.template_expr, $._newline),
 
-    template_expr: ($) => repeat1($._segment),
+    // In an assignment or return a sole `python` expression remains a
+    // native value. Bare expressions therefore enter a regular template
+    // expression only alongside another segment. `>>` and `<<` have an
+    // unambiguous prompt introducer and use template_prompt_expr instead.
+    template_expr: ($) =>
+      choice(
+        repeat1(
+          choice(
+            $.input_segment,
+            $.call_segment,
+            $.python_expr_segment,
+            $.output_segment,
+            $.text_segment,
+          ),
+        ),
+        seq(
+          repeat1(
+            choice(
+              $.input_segment,
+              $.call_segment,
+              $.python_expr_segment,
+              $.output_segment,
+              $.text_segment,
+            ),
+          ),
+          $.inline_python_expr,
+          repeat($._segment),
+        ),
+        seq($.inline_python_expr, repeat1($._segment)),
+      ),
+
+    template_prompt_expr: ($) => repeat1($._segment),
 
     _segment: ($) =>
       choice(
         $.input_segment,
         $.call_segment,
         $.python_expr_segment,
+        $.inline_python_expr,
         $.output_segment,
         $.text_segment,
       ),
