@@ -1436,7 +1436,7 @@
         "required": false,
         "types": [
           {
-            "type": "template_expr",
+            "type": "template_prompt_expr",
             "named": true
           }
         ]

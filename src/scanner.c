@@ -132,11 +132,8 @@ static bool drain_pending(Scanner *s, TSLexer *lexer, const bool *valid_symbols)
 // single-line `#` comment, or a `###` block-comment fence line.
 //
 // On UINT32_MAX, the lexer is positioned at the '\n' (or EOF) ending
-// the (skipped) line. The outer NEWLINE loop then consumes the '\n' and
-// tries the next line; any chars consumed by this function after the
-// scanner's mark_end land in the inter-token "padding" and are mopped
-// up by the extras rules (`[ \t]`, `/\n/`, `line_comment`,
-// `block_comment`).
+// the skipped line. The scanner exposes a physical blank line only while a
+// template expression is expected; structural contexts skip it like comments.
 //
 // For `###` block-comment fences we deliberately do NOT advance through
 // the body. The body content is multi-line and contains arbitrary
@@ -145,14 +142,18 @@ static bool drain_pending(Scanner *s, TSLexer *lexer, const bool *valid_symbols)
 // in extras spans the entire `###...###` region in one match — we just
 // need to ensure tree-sitter has a chance to run that regex when the
 // next token attempt fires.
-static uint32_t skip_leading_ws(TSLexer *lexer) {
+static uint32_t skip_leading_ws(TSLexer *lexer, bool *is_blank_line) {
+    *is_blank_line = false;
     uint32_t col = 0;
     for (;;) {
         if (lexer->lookahead == ' ') { col += 1; advance(lexer); continue; }
         if (lexer->lookahead == '\t') { col += KEDI_TAB_WIDTH; advance(lexer); continue; }
         break;
     }
-    if (lexer->lookahead == '\n') return UINT32_MAX;
+    if (lexer->lookahead == '\n') {
+        *is_blank_line = true;
+        return UINT32_MAX;
+    }
     if (lexer->lookahead == 0 && is_eof(lexer)) return UINT32_MAX;
     if (lexer->lookahead != '#') return col;
 
@@ -215,7 +216,15 @@ static inline bool is_unconditional_text_stop(int32_t c) {
            c == '#';
 }
 
-// Scan a TEXT or TEXT_IN_CALL token. Returns true iff text was consumed.
+typedef enum {
+    TEXT_SCAN_NONE,
+    TEXT_SCAN_TEXT,
+    TEXT_SCAN_BLANK_LINE,
+} TextScanResult;
+
+// Scan a TEXT or TEXT_IN_CALL token. A whitespace-only physical line is
+// reported separately so the caller can emit the `_newline` token that keeps
+// block grammars synchronized without treating indentation as prompt text.
 //
 // Behaviour:
 //   - Leading whitespace is absorbed (tree-sitter cannot interleave
@@ -230,29 +239,35 @@ static inline bool is_unconditional_text_stop(int32_t c) {
 //   - Unconditional stops: `<`, `[`, `` ` ``, `>`, `]`, `\n`, `#`.
 //   - In call-argument context, additional stops on `,` and `)`.
 //   - Backslash escapes (`\\X`) are consumed as two-character units.
-static bool scan_text_run(TSLexer *lexer, bool in_call) {
+static TextScanResult scan_text_run(TSLexer *lexer, bool in_call, bool newline_valid) {
     bool seen_text = false;
-    bool saw_whitespace = false;
     for (;;) {
         int32_t c = lexer->lookahead;
         if (c == 0 && is_eof(lexer)) break;
+        if (c == '\n') {
+            if (!seen_text && newline_valid) {
+                advance(lexer);
+                lexer->mark_end(lexer);
+                return TEXT_SCAN_BLANK_LINE;
+            }
+            break;
+        }
         if (is_unconditional_text_stop(c)) break;
 
         if (c == ' ' || c == '\t') {
             advance(lexer);
-            saw_whitespace = true;
             continue;
         }
 
         if (c == '@' || c == '~' || c == '=') {
-            if (!seen_text) return false;
+            if (!seen_text) return TEXT_SCAN_NONE;
             advance(lexer);
             seen_text = true;
             continue;
         }
 
         if (in_call && (c == ',' || c == ')')) {
-            if (!seen_text) return false;
+            if (!seen_text) return TEXT_SCAN_NONE;
             break;
         }
 
@@ -299,12 +314,9 @@ static bool scan_text_run(TSLexer *lexer, bool in_call) {
         advance(lexer);
         seen_text = true;
     }
-    // A trailing whitespace run after a segment must be emitted as text
-    // when TEXT is valid on another GLR stack. Otherwise the NEWLINE
-    // scanner cannot consume it and valid template returns such as
-    // `= <value>   ` leave an ERROR node. Runtime rendering already trims
-    // unescaped terminal whitespace, so preserving it in the CST is safe.
-    return seen_text || (saw_whitespace && lexer->lookahead == '\n');
+    // Whitespace-only lines are blank lines, never template text. Horizontal
+    // whitespace is an extra and remains valid after a real text segment.
+    return seen_text ? TEXT_SCAN_TEXT : TEXT_SCAN_NONE;
 }
 
 static bool scan_system_angle_segment(TSLexer *lexer) {
@@ -413,7 +425,19 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
         return false;
     }
 
-    // 3. NEWLINE: consume '\n', mark_end so the token spans just the
+    // 3. FENCED_NEWLINE: consume a single '\n' without indent-stack
+    //    updates. It must win over a normal NEWLINE when both are
+    //    provisionally valid after an opening fence: the regular path
+    //    would otherwise turn a fenced return block into an empty inline
+    //    expression.
+    if (lexer->lookahead == '\n' && valid_symbols[KEDI_FENCED_NEWLINE]) {
+        advance(lexer);
+        lexer->mark_end(lexer);
+        lexer->result_symbol = KEDI_FENCED_NEWLINE;
+        return true;
+    }
+
+    // 4. NEWLINE: consume '\n', mark_end so the token spans just the
     //    '\n', then look ahead past blank/comment-only lines to compute
     //    the next line's indent column.
     //
@@ -451,11 +475,25 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
         advance(lexer);
         lexer->mark_end(lexer);
         for (;;) {
-            uint32_t new_col = skip_leading_ws(lexer);
+            bool is_blank_line = false;
+            uint32_t new_col = skip_leading_ws(lexer, &is_blank_line);
             if (new_col != UINT32_MAX) {
                 apply_indent_change(s, new_col);
                 lexer->result_symbol = KEDI_NEWLINE;
                 return true;
+            }
+            if (is_blank_line) {
+                // Template bodies may need to retain a physical blank line
+                // as a continuation delimiter. At structural boundaries,
+                // though, source_file / validation rules already received
+                // the preceding newline; emitting another one here corrupts
+                // transitions such as a test block followed by a procedure.
+                if (valid_symbols[KEDI_TEXT] || valid_symbols[KEDI_TEXT_IN_CALL]) {
+                    lexer->result_symbol = KEDI_NEWLINE;
+                    return true;
+                }
+                advance(lexer);
+                continue;
             }
             if (is_eof(lexer)) {
                 s->pending = (int16_t)-(int16_t)(s->indent_depth - 1);
@@ -464,17 +502,6 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
             }
             advance(lexer);  // consume the trailing '\n' of a blank/comment line
         }
-    }
-
-    // 4. FENCED_NEWLINE: consume a single '\n' without indent-stack
-    //    updates. Emitted only between an opening "```" and the body
-    //    (or, equivalently, anywhere the grammar requests this token
-    //    instead of the regular NEWLINE).
-    if (lexer->lookahead == '\n' && valid_symbols[KEDI_FENCED_NEWLINE]) {
-        advance(lexer);
-        lexer->mark_end(lexer);
-        lexer->result_symbol = KEDI_FENCED_NEWLINE;
-        return true;
     }
 
     // 5. FENCED_BODY: scan raw body bytes between open and close fences.
@@ -505,7 +532,19 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
     bool call_valid = valid_symbols[KEDI_TEXT_IN_CALL];
     if (text_valid || call_valid) {
         bool call_mode = call_valid && !text_valid;
-        if (scan_text_run(lexer, call_mode)) {
+        TextScanResult text_result = scan_text_run(lexer, call_mode, valid_symbols[KEDI_NEWLINE]);
+        if (text_result == TEXT_SCAN_BLANK_LINE) {
+            bool is_blank_line = false;
+            uint32_t new_col = skip_leading_ws(lexer, &is_blank_line);
+            if (new_col != UINT32_MAX) {
+                apply_indent_change(s, new_col);
+            } else if (is_eof(lexer)) {
+                s->pending = (int16_t)-(int16_t)(s->indent_depth - 1);
+            }
+            lexer->result_symbol = KEDI_NEWLINE;
+            return true;
+        }
+        if (text_result == TEXT_SCAN_TEXT) {
             lexer->result_symbol = call_mode ? KEDI_TEXT_IN_CALL : KEDI_TEXT;
             return true;
         }

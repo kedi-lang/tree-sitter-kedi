@@ -345,7 +345,7 @@ module.exports = grammar({
         repeat(
           seq(
             $._newline,
-            field("continuation", $.template_expr),
+            field("continuation", $.template_prompt_expr),
           ),
         ),
         $._newline,

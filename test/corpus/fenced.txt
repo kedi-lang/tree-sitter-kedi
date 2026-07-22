@@ -16,8 +16,27 @@ class Poly:
   (python_block
     code: (python_code))
   (return_stmt
-    value: (template_expr (text_segment))))
+    value: (template_expr
+      (text_segment))))
 
+==================
+Whitespace-only line after prelude is blank
+==================
+
+```
+value = 3
+```
+  
+= `value`
+
+---
+
+(source_file
+  (python_block
+    code: (python_code))
+  (return_stmt
+    value: (inline_python_expr
+      code: (python_inline_body))))
 
 ==================
 Assignment with fenced Python block RHS
@@ -40,17 +59,24 @@ Assignment with fenced Python block RHS
         type: (type_expr
           (type_apply
             name: (identifier)
-            args: (type_expr (type_ref name: (identifier)))))))
-    return_type: (type_expr (type_ref name: (identifier)))
+            args: (type_arg
+              (type_ref
+                name: (identifier)))))))
+    return_type: (type_expr
+      (type_ref
+        name: (identifier)))
     body: (block
       (assign_block_stmt
         (assign_target
           name: (identifier)
-          type: (type_expr (type_ref name: (identifier))))
+          type: (type_expr
+            (type_ref
+              name: (identifier))))
         code: (python_code))
       (return_stmt
-        value: (template_expr (input_segment name: (identifier)))))))
-
+        value: (template_expr
+          (input_segment
+            name: (identifier)))))))
 
 ==================
 Return statement with fenced Python block
@@ -66,11 +92,12 @@ Return statement with fenced Python block
 (source_file
   (procedure_def
     name: (identifier)
-    return_type: (type_expr (type_ref name: (identifier)))
+    return_type: (type_expr
+      (type_ref
+        name: (identifier)))
     body: (block
       (return_block_stmt
         code: (python_code)))))
-
 
 ==================
 Fenced body absorbs specials and embedded newlines
@@ -89,7 +116,6 @@ w = a@b~c=d
   (python_block
     code: (python_code)))
 
-
 ==================
 Empty fenced body
 ==================
@@ -105,8 +131,8 @@ Empty fenced body
   (python_block
     code: (python_code))
   (return_stmt
-    value: (template_expr (text_segment))))
-
+    value: (template_expr
+      (text_segment))))
 
 ==================
 Multiple fenced blocks
@@ -128,10 +154,14 @@ Multiple fenced blocks
     name: (identifier)
     body: (block
       (assign_block_stmt
-        (assign_target name: (identifier))
+        (assign_target
+          name: (identifier))
         code: (python_code))
       (assign_block_stmt
-        (assign_target name: (identifier))
+        (assign_target
+          name: (identifier))
         code: (python_code))
       (return_stmt
-        value: (template_expr (input_segment name: (identifier)))))))
+        value: (template_expr
+          (input_segment
+            name: (identifier)))))))

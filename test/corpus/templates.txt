@@ -11,19 +11,23 @@ Plain template line with one output
 (source_file
   (procedure_def
     name: (identifier)
-    params: (param_list (param name: (identifier)))
+    params: (param_list
+      (param
+        name: (identifier)))
     body: (block
       (template_line
         (template_expr
           (text_segment)
           (output_segment
             name: (identifier)
-            type: (type_expr (type_ref name: (identifier))))
+            type: (type_expr
+              (type_ref
+                name: (identifier))))
           (text_segment)))
       (return_stmt
         value: (template_expr
-          (input_segment name: (identifier)))))))
-
+          (input_segment
+            name: (identifier)))))))
 
 ==================
 Call segment with var argument
@@ -38,23 +42,28 @@ Call segment with var argument
 (source_file
   (procedure_def
     name: (identifier)
-    params: (param_list (param name: (identifier)))
+    params: (param_list
+      (param
+        name: (identifier)))
     body: (block
       (assign_stmt
         (assign_target
           name: (identifier)
-          type: (type_expr (type_ref name: (identifier))))
+          type: (type_expr
+            (type_ref
+              name: (identifier))))
         rhs: (template_expr
           (call_segment
             name: (identifier)
             args: (call_arg_list
               (call_arg
                 (template_arg
-                  (input_segment name: (identifier))))))))
+                  (input_segment
+                    name: (identifier))))))))
       (return_stmt
         value: (template_expr
-          (input_segment name: (identifier)))))))
-
+          (input_segment
+            name: (identifier)))))))
 
 ==================
 Call with literal text argument and nested call
@@ -69,10 +78,13 @@ Call with literal text argument and nested call
 (source_file
   (procedure_def
     name: (identifier)
-    params: (param_list (param name: (identifier)))
+    params: (param_list
+      (param
+        name: (identifier)))
     body: (block
       (assign_stmt
-        (assign_target name: (identifier))
+        (assign_target
+          name: (identifier))
         rhs: (template_expr
           (call_segment
             name: (identifier)
@@ -84,11 +96,15 @@ Call with literal text argument and nested call
                     args: (call_arg_list
                       (call_arg
                         (template_arg
-                          (input_segment name: (identifier))))))))
-              (call_arg (template_arg (text_in_call_segment)))))))
+                          (input_segment
+                            name: (identifier))))))))
+              (call_arg
+                (template_arg
+                  (text_in_call_segment)))))))
       (return_stmt
-        value: (template_expr (input_segment name: (identifier)))))))
-
+        value: (template_expr
+          (input_segment
+            name: (identifier)))))))
 
 ==================
 Call argument can be a mini template with output placeholder
@@ -107,8 +123,8 @@ Call argument can be a mini template with output placeholder
           (call_arg
             (template_arg
               (text_in_call_segment)
-              (output_segment name: (identifier)))))))))
-
+              (output_segment
+                name: (identifier)))))))))
 
 ==================
 Python expression segment in template
@@ -123,17 +139,20 @@ Python expression segment in template
 (source_file
   (procedure_def
     name: (identifier)
-    params: (param_list (param name: (identifier)))
+    params: (param_list
+      (param
+        name: (identifier)))
     body: (block
       (template_line
         (template_expr
           (text_segment)
           (python_expr_segment
-            (inline_python_expr code: (python_inline_body)))
+            (inline_python_expr
+              code: (python_inline_body)))
           (text_segment)))
       (return_stmt
-        value: (template_expr (text_segment))))))
-
+        value: (template_expr
+          (text_segment))))))
 
 ==================
 Bare Python expression segment in template
@@ -152,11 +171,12 @@ Bare Python expression segment in template
       (template_line
         (template_expr
           (text_segment)
-          (inline_python_expr code: (python_inline_body))
+          (inline_python_expr
+            code: (python_inline_body))
           (text_segment)))
       (return_stmt
-        value: (template_expr (text_segment))))))
-
+        value: (template_expr
+          (text_segment))))))
 
 ==================
 Output placeholder with no type annotation
@@ -175,10 +195,12 @@ Output placeholder with no type annotation
       (template_line
         (template_expr
           (text_segment)
-          (output_segment name: (identifier))))
+          (output_segment
+            name: (identifier))))
       (return_stmt
-        value: (template_expr (input_segment name: (identifier)))))))
-
+        value: (template_expr
+          (input_segment
+            name: (identifier)))))))
 
 ==================
 Assign target distinguishable from template line starting with output
@@ -195,13 +217,15 @@ Assign target distinguishable from template line starting with output
     name: (identifier)
     body: (block
       (assign_stmt
-        (assign_target name: (identifier))
-        rhs: (template_expr (text_segment)))
+        (assign_target
+          name: (identifier))
+        rhs: (template_expr
+          (text_segment)))
       (template_line
         (template_expr
-          (output_segment name: (identifier))
+          (output_segment
+            name: (identifier))
           (text_segment))))))
-
 
 ==================
 Escapes inside template text
@@ -218,10 +242,74 @@ Escapes inside template text
     name: (identifier)
     body: (block
       (template_line
-        (template_expr (text_segment)))
+        (template_expr
+          (text_segment)))
       (return_stmt
-        value: (template_expr (text_segment))))))
+        value: (template_expr
+          (text_segment))))))
 
+==================
+Template prompt accepts mixed bare inline Python
+==================
+
+@demo(value: str) -> str:
+  >> Prefix `value` suffix [answer]
+  = <answer>
+
+---
+
+(source_file
+  (procedure_def
+    name: (identifier)
+    params: (param_list
+      (param
+        name: (identifier)
+        type: (type_expr
+          (type_ref
+            name: (identifier)))))
+    return_type: (type_expr
+      (type_ref
+        name: (identifier)))
+    body: (block
+      (template_block_stmt
+        head: (template_prompt_expr
+          (text_segment)
+          (inline_python_expr
+            code: (python_inline_body))
+          (text_segment)
+          (output_segment
+            name: (identifier))))
+      (return_stmt
+        value: (template_expr
+          (input_segment
+            name: (identifier)))))))
+
+==================
+Trailing spaces after prompt and return are ignored
+==================
+
+@demo() -> str:
+  >> Hello [answer]   
+  = <answer>   
+
+---
+
+(source_file
+  (procedure_def
+    name: (identifier)
+    return_type: (type_expr
+      (type_ref
+        name: (identifier)))
+    body: (block
+      (template_block_stmt
+        head: (template_prompt_expr
+          (text_segment)
+          (output_segment
+            name: (identifier))))
+      (return_stmt
+        value: (template_expr
+          (input_segment
+            name: (identifier)))))))
 
 ==================
 Template block with multiline continuation (>>)
@@ -234,19 +322,84 @@ What's the [population: int] of <capital>?
 
 (source_file
   (template_block_stmt
-    head: (template_expr
+    head: (template_prompt_expr
       (text_segment)
-      (output_segment name: (identifier))
+      (output_segment
+        name: (identifier))
       (text_segment))
-    continuation: (template_expr
+    continuation: (template_prompt_expr
       (text_segment)
       (output_segment
         name: (identifier)
-        type: (type_expr (type_ref name: (identifier))))
+        type: (type_expr
+          (type_ref
+            name: (identifier))))
       (text_segment)
-      (input_segment name: (identifier))
+      (input_segment
+        name: (identifier))
       (text_segment))))
 
+==================
+Template block continuation accepts bare inline Python
+==================
+
+@demo(value: str) -> str:
+  >> Prefix
+  `value`
+  suffix
+  = done
+
+---
+
+(source_file
+  (procedure_def
+    name: (identifier)
+    params: (param_list
+      (param
+        name: (identifier)
+        type: (type_expr
+          (type_ref
+            name: (identifier)))))
+    return_type: (type_expr
+      (type_ref
+        name: (identifier)))
+    body: (block
+      (template_block_stmt
+        head: (template_prompt_expr
+          (text_segment))
+        continuation: (template_prompt_expr
+          (inline_python_expr
+            code: (python_inline_body)))
+        continuation: (template_prompt_expr
+          (text_segment)))
+      (return_stmt
+        value: (template_expr
+          (text_segment))))))
+
+==================
+Whitespace-only procedure line is blank
+==================
+
+@demo():
+  >> Hello [answer]
+  
+  = <answer>
+
+---
+
+(source_file
+  (procedure_def
+    name: (identifier)
+    body: (block
+      (template_block_stmt
+        head: (template_prompt_expr
+          (text_segment)
+          (output_segment
+            name: (identifier))))
+      (return_stmt
+        value: (template_expr
+          (input_segment
+            name: (identifier)))))))
 
 ==================
 Top-level assignment and top-level return
@@ -261,11 +414,15 @@ Top-level assignment and top-level return
   (assign_stmt
     (assign_target
       name: (identifier)
-      type: (type_expr (type_ref name: (identifier))))
-    rhs: (template_expr (text_segment)))
+      type: (type_expr
+        (type_ref
+          name: (identifier))))
+    rhs: (template_expr
+      (text_segment)))
   (return_stmt
-    value: (template_expr (input_segment name: (identifier)))))
-
+    value: (template_expr
+      (input_segment
+        name: (identifier)))))
 
 ==================
 Top-level backtick-line statement (side effect)
@@ -277,4 +434,5 @@ Top-level backtick-line statement (side effect)
 
 (source_file
   (backtick_line_stmt
-    (inline_python_expr code: (python_inline_body))))
+    (inline_python_expr
+      code: (python_inline_body))))

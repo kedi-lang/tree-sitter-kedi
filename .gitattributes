@@ -1,0 +1,2 @@
+# Tree-sitter corpus inputs deliberately exercise whitespace-only source lines.
+test/corpus/*.txt whitespace=-trailing-space

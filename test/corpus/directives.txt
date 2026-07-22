@@ -17,18 +17,24 @@ Auto directive in procedure body
     params: (param_list
       (param
         name: (identifier)
-        type: (type_expr (type_ref name: (identifier)))))
-    return_type: (type_expr (type_ref name: (identifier)))
+        type: (type_expr
+          (type_ref
+            name: (identifier)))))
+    return_type: (type_expr
+      (type_ref
+        name: (identifier)))
     body: (block
       (auto_directive
         body: (auto_body
           (template_line
-            (template_expr (text_segment)))
+            (template_expr
+              (text_segment)))
           (template_line
-            (template_expr (text_segment)))))))
+            (template_expr
+              (text_segment)))))))
   (return_stmt
-    value: (template_expr (text_segment))))
-
+    value: (template_expr
+      (text_segment))))
 
 ==================
 Optimize directive with template span
@@ -51,8 +57,12 @@ Optimize directive with template span
     params: (param_list
       (param
         name: (identifier)
-        type: (type_expr (type_ref name: (identifier)))))
-    return_type: (type_expr (type_ref name: (identifier)))
+        type: (type_expr
+          (type_ref
+            name: (identifier)))))
+    return_type: (type_expr
+      (type_ref
+        name: (identifier)))
     body: (block
       (optimize_directive
         name: (identifier)
@@ -60,24 +70,77 @@ Optimize directive with template span
           (template_line
             (template_expr
               (text_segment)
-              (input_segment name: (identifier))))
+              (input_segment
+                name: (identifier))))
           (template_line
-            (template_expr (text_segment)))
+            (template_expr
+              (text_segment)))
           (template_line
             (template_expr
               (text_segment)
               (output_segment
                 name: (identifier)
-                type: (type_expr (type_ref name: (identifier))))))
+                type: (type_expr
+                  (type_ref
+                    name: (identifier))))))
           (template_line
             (template_expr
               (text_segment)
               (output_segment
                 name: (identifier)
-                type: (type_expr (type_ref name: (identifier))))))))
+                type: (type_expr
+                  (type_ref
+                    name: (identifier))))))))
       (return_stmt
-        value: (inline_python_expr code: (python_inline_body))))))
+        value: (inline_python_expr
+          code: (python_inline_body))))))
 
+==================
+Optimize body allows whitespace-only blank lines
+==================
+
+@solve(items: str) -> int:
+  > optimize: solver:
+    Items: <items>
+    
+    Total: [value: int]
+
+  = `value`
+
+---
+
+(source_file
+  (procedure_def
+    name: (identifier)
+    params: (param_list
+      (param
+        name: (identifier)
+        type: (type_expr
+          (type_ref
+            name: (identifier)))))
+    return_type: (type_expr
+      (type_ref
+        name: (identifier)))
+    body: (block
+      (optimize_directive
+        name: (identifier)
+        body: (optimize_body
+          (template_line
+            (template_expr
+              (text_segment)
+              (input_segment
+                name: (identifier))))
+          (template_line
+            (template_expr
+              (text_segment)
+              (output_segment
+                name: (identifier)
+                type: (type_expr
+                  (type_ref
+                    name: (identifier))))))))
+      (return_stmt
+        value: (inline_python_expr
+          code: (python_inline_body))))))
 
 ==================
 Agent effort directive
@@ -107,7 +170,8 @@ Agent effort directive
       (effort_directive
         value: (effort_plain_value))
       (model_directive
-        value: (inline_python_expr code: (python_inline_body)))))
+        value: (inline_python_expr
+          code: (python_inline_body)))))
   (use_directive
     name: (identifier))
   (procedure_def
@@ -116,6 +180,7 @@ Agent effort directive
       (effort_directive
         value: (effort_plain_value))
       (template_block_stmt
-        head: (template_expr
+        head: (template_prompt_expr
           (text_segment)
-          (output_segment name: (identifier)))))))
+          (output_segment
+            name: (identifier)))))))

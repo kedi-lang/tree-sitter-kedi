@@ -10,14 +10,18 @@ Type definition with mixed annotated and bare fields
   (type_def
     name: (identifier)
     fields: (type_field_list
-      (type_field name: (identifier))
+      (type_field
+        name: (identifier))
       (type_field
         name: (identifier)
-        type: (type_expr (type_ref name: (identifier))))
+        type: (type_expr
+          (type_ref
+            name: (identifier))))
       (type_field
         name: (identifier)
-        type: (type_expr (type_ref name: (identifier)))))))
-
+        type: (type_expr
+          (type_ref
+            name: (identifier)))))))
 
 ==================
 Generic type via type_apply
@@ -37,16 +41,20 @@ Generic type via type_apply
         type: (type_expr
           (type_apply
             name: (identifier)
-            args: (type_expr (type_ref name: (identifier)))))))
+            args: (type_arg
+              (type_ref
+                name: (identifier)))))))
     return_type: (type_expr
       (type_apply
         name: (identifier)
-        args: (type_expr (type_ref name: (identifier)))))
+        args: (type_arg
+          (type_ref
+            name: (identifier)))))
     body: (block
       (return_stmt
         value: (template_expr
-          (input_segment name: (identifier)))))))
-
+          (input_segment
+            name: (identifier)))))))
 
 ==================
 Nested generic type
@@ -65,11 +73,12 @@ Nested generic type
         type: (type_expr
           (type_apply
             name: (identifier)
-            args: (type_expr
+            args: (type_arg
               (type_apply
                 name: (identifier)
-                args: (type_expr (type_ref name: (identifier)))))))))))
-
+                args: (type_arg
+                  (type_ref
+                    name: (identifier)))))))))))
 
 ==================
 Dict type takes two args
@@ -88,9 +97,12 @@ Dict type takes two args
         type: (type_expr
           (type_apply
             name: (identifier)
-            args: (type_expr (type_ref name: (identifier)))
-            args: (type_expr (type_ref name: (identifier)))))))))
-
+            args: (type_arg
+              (type_ref
+                name: (identifier)))
+            args: (type_arg
+              (type_ref
+                name: (identifier)))))))))
 
 ==================
 Union type via pipe
@@ -109,17 +121,21 @@ Union type via pipe
         name: (identifier)
         type: (type_expr
           (type_union
-            left: (type_ref name: (identifier))
-            right: (type_ref name: (identifier))))))
+            left: (type_ref
+              name: (identifier))
+            right: (type_ref
+              name: (identifier))))))
     return_type: (type_expr
       (type_union
-        left: (type_ref name: (identifier))
-        right: (type_ref name: (identifier))))
+        left: (type_ref
+          name: (identifier))
+        right: (type_ref
+          name: (identifier))))
     body: (block
       (return_stmt
         value: (template_expr
-          (input_segment name: (identifier)))))))
-
+          (input_segment
+            name: (identifier)))))))
 
 ==================
 Backtick (TypePython) escape hatch
@@ -134,9 +150,10 @@ Backtick (TypePython) escape hatch
     (assign_target
       name: (identifier)
       type: (type_expr
-        (type_python code: (python_inline_body))))
-    rhs: (inline_python_expr code: (python_inline_body))))
-
+        (type_python
+          code: (python_inline_body))))
+    rhs: (inline_python_expr
+      code: (python_inline_body))))
 
 ==================
 Type fields with defaults
@@ -152,8 +169,13 @@ Type fields with defaults
     fields: (type_field_list
       (type_field
         name: (identifier)
-        type: (type_expr (type_ref name: (identifier))))
+        type: (type_expr
+          (type_ref
+            name: (identifier))))
       (type_field
         name: (identifier)
-        type: (type_expr (type_ref name: (identifier)))
-        default: (inline_python_expr code: (python_inline_body))))))
+        type: (type_expr
+          (type_ref
+            name: (identifier)))
+        default: (inline_python_expr
+          code: (python_inline_body))))))

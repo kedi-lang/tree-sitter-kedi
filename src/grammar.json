@@ -1138,7 +1138,7 @@
                 "name": "continuation",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "template_expr"
+                  "name": "template_prompt_expr"
                 }
               }
             ]
