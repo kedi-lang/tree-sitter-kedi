@@ -741,6 +741,22 @@
     }
   },
   {
+    "type": "max_agents_directive",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "positive_integer",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "mcp_body",
     "named": true,
     "fields": {},
@@ -1087,6 +1103,10 @@
           "named": true
         },
         {
+          "type": "max_agents_directive",
+          "named": true
+        },
+        {
           "type": "mcp_directive",
           "named": true
         },
@@ -1096,6 +1116,10 @@
         },
         {
           "type": "settings_directive",
+          "named": true
+        },
+        {
+          "type": "subagent_directive",
           "named": true
         },
         {
@@ -1313,6 +1337,22 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "subagent_directive",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -2030,6 +2070,10 @@
     "extra": true
   },
   {
+    "type": "max_agents",
+    "named": false
+  },
+  {
     "type": "mcp",
     "named": false
   },
@@ -2046,6 +2090,10 @@
     "named": false
   },
   {
+    "type": "positive_integer",
+    "named": true
+  },
+  {
     "type": "profile",
     "named": false
   },
@@ -2055,6 +2103,10 @@
   },
   {
     "type": "settings",
+    "named": false
+  },
+  {
+    "type": "subagent",
     "named": false
   },
   {

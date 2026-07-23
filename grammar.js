@@ -674,9 +674,17 @@ module.exports = grammar({
     profile_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.use_directive, $._newline)),
+        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.subagent_directive, $.max_agents_directive, $.use_directive, $._newline)),
         $._dedent,
       ),
+
+    subagent_directive: ($) =>
+      seq(">", "subagent", ":", field("name", $.identifier), $._newline),
+
+    max_agents_directive: ($) =>
+      seq(">", "max_agents", ":", field("value", $.positive_integer), $._newline),
+
+    positive_integer: (_) => /[1-9][0-9]*/,
 
     use_directive: ($) =>
       choice(

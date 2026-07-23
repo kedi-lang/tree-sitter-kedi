@@ -2532,6 +2532,14 @@
               },
               {
                 "type": "SYMBOL",
+                "name": "subagent_directive"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "max_agents_directive"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "use_directive"
               },
               {
@@ -2546,6 +2554,68 @@
           "name": "_dedent"
         }
       ]
+    },
+    "subagent_directive": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ">"
+        },
+        {
+          "type": "STRING",
+          "value": "subagent"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "max_agents_directive": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ">"
+        },
+        {
+          "type": "STRING",
+          "value": "max_agents"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "positive_integer"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "positive_integer": {
+      "type": "PATTERN",
+      "value": "[1-9][0-9]*"
     },
     "use_directive": {
       "type": "CHOICE",

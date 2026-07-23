@@ -45,6 +45,8 @@
 "system" @keyword
 "mcp" @keyword
 "settings" @keyword
+"subagent" @keyword
+"max_agents" @keyword
 "profile" @keyword
 "use" @keyword
 "case" @keyword
@@ -97,6 +99,8 @@
 
 (optimize_directive name: (identifier) @label)
 (profile_directive name: (identifier) @label)
+(subagent_directive name: (identifier) @label)
+(max_agents_directive value: (positive_integer) @number)
 (agent_directive
   value: (adapter_plain_value) @label)
 (agent_field name: (identifier) @label)

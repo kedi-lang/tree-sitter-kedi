@@ -184,3 +184,29 @@ Agent effort directive
           (text_segment)
           (output_segment
             name: (identifier)))))))
+
+==================
+Profile subagent directive
+==================
+
+> profile: planner:
+  > model: test
+> profile: implementor:
+  > subagent: planner
+  > max_agents: 5
+
+---
+
+(source_file
+  (profile_directive
+    name: (identifier)
+    body: (profile_body
+      (model_directive
+        value: (model_plain_value))))
+  (profile_directive
+    name: (identifier)
+    body: (profile_body
+      (subagent_directive
+        name: (identifier))
+      (max_agents_directive
+        value: (positive_integer)))))
