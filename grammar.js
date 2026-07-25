@@ -107,13 +107,31 @@ module.exports = grammar({
       ),
 
     module_import: ($) =>
-      seq(
-        ">",
-        "import",
-        ":",
-        field("module", $.identifier),
-        $._newline,
+      choice(
+        seq(
+          ">",
+          "import",
+          ":",
+          field("module", $.module_path),
+          $._newline,
+        ),
+        seq(
+          ">",
+          "import",
+          ":",
+          field("module", $.module_path),
+          ":",
+          $._newline,
+          field("body", $.module_import_body),
+        ),
       ),
+
+    module_path: ($) => seq($.identifier, repeat(seq("/", $.identifier))),
+
+    module_import_body: ($) =>
+      seq($._indent, repeat1(choice($.module_import_name, $._newline)), $._dedent),
+
+    module_import_name: ($) => seq(field("name", $.identifier), $._newline),
 
     module_export: ($) =>
       choice(

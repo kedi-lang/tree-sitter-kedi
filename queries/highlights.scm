@@ -60,7 +60,8 @@
 
 (procedure_def name: (identifier) @function)
 (type_def name: (identifier) @type.definition)
-(module_import module: (identifier) @namespace)
+(module_import module: (module_path) @namespace)
+(module_import_name name: (identifier) @variable)
 (module_export_name name: (identifier) @variable)
 (assign_target name: (identifier) @variable)
 (param name: (identifier) @variable.parameter)

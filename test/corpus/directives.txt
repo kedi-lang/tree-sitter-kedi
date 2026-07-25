@@ -1,4 +1,39 @@
 ==================
+Submodule and selective import
+==================
+
+> import: package/services:
+  fetch
+  Response
+
+---
+
+(source_file
+  (module_import
+    module: (module_path
+      (identifier)
+      (identifier))
+    body: (module_import_body
+      (module_import_name
+        name: (identifier))
+      (module_import_name
+        name: (identifier)))))
+
+==================
+Whole submodule import
+==================
+
+> import: package/services
+
+---
+
+(source_file
+  (module_import
+    module: (module_path
+      (identifier)
+      (identifier))))
+
+==================
 Auto directive in procedure body
 ==================
 
