@@ -1,4 +1,50 @@
 ==================
+Package manifest
+==================
+
+> package: kedi_http:
+  author: Mert Sirakaya
+  contact: mert@kedi-lang.org
+  version: 1.0
+  source: src/kedi_http
+  python: python@3.11-3.14
+  license: Apache-2.0
+  python_dependencies:
+    httpx>=0.27
+    pydantic>=2.0
+
+---
+
+(source_file
+  (package_directive
+    name: (identifier)
+    body: (package_body
+      (package_field
+        name: (identifier)
+        value: (package_plain_value))
+      (package_field
+        name: (identifier)
+        value: (package_plain_value))
+      (package_field
+        name: (identifier)
+        value: (package_plain_value))
+      (package_field
+        name: (identifier)
+        value: (package_plain_value))
+      (package_field
+        name: (identifier)
+        value: (package_plain_value))
+      (package_field
+        name: (identifier)
+        value: (package_plain_value))
+      (package_python_dependencies
+        body: (package_dependency_body
+          (package_dependency
+            value: (package_dependency_value))
+          (package_dependency
+            value: (package_dependency_value)))))))
+
+==================
 Submodule and selective import
 ==================
 

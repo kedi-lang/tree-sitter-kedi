@@ -82,6 +82,7 @@ module.exports = grammar({
       choice(
         $.procedure_def,
         $.type_def,
+        $.package_directive,
         $.module_import,
         $.module_export,
         $.validation_block,
@@ -105,6 +106,58 @@ module.exports = grammar({
         $.template_block_stmt,
         $.template_line,
       ),
+
+    package_directive: ($) =>
+      seq(
+        ">",
+        "package",
+        ":",
+        field("name", $.identifier),
+        ":",
+        $._newline,
+        field("body", $.package_body),
+      ),
+
+    package_body: ($) =>
+      seq(
+        $._indent,
+        repeat1(choice($.package_field, $.package_python_dependencies, $._newline)),
+        $._dedent,
+      ),
+
+    package_field: ($) =>
+      seq(
+        field("name", $.identifier),
+        ":",
+        optional(/[ \t]+/),
+        field("value", alias($._package_plain_value, $.package_plain_value)),
+        $._newline,
+      ),
+
+    package_python_dependencies: ($) =>
+      seq(
+        "python_dependencies",
+        ":",
+        $._newline,
+        field("body", $.package_dependency_body),
+      ),
+
+    package_dependency_body: ($) =>
+      seq(
+        $._indent,
+        repeat1(choice($.package_dependency, $._newline)),
+        $._dedent,
+      ),
+
+    package_dependency: ($) =>
+      seq(
+        field("value", alias($._package_dependency_value, $.package_dependency_value)),
+        $._newline,
+      ),
+
+    _package_plain_value: ($) => token(/[^\n#]+/),
+
+    _package_dependency_value: ($) => token(/[^\n#]+/),
 
     module_import: ($) =>
       choice(

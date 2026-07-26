@@ -172,6 +172,10 @@
         "named": true
       },
       {
+        "type": "package_directive",
+        "named": true
+      },
+      {
         "type": "procedure_def",
         "named": true
       },
@@ -1031,6 +1035,134 @@
         "types": [
           {
             "type": "type_expr",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "package_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "package_field",
+          "named": true
+        },
+        {
+          "type": "package_python_dependencies",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "package_dependency",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "package_dependency_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "package_dependency_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "package_dependency",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "package_dependency_value",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "package_directive",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "package_body",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "package_field",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "package_plain_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "package_plain_value",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "package_python_dependencies",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "package_dependency_body",
             "named": true
           }
         ]
@@ -2150,11 +2282,19 @@
     "named": false
   },
   {
+    "type": "package",
+    "named": false
+  },
+  {
     "type": "positive_integer",
     "named": true
   },
   {
     "type": "profile",
+    "named": false
+  },
+  {
+    "type": "python_dependencies",
     "named": false
   },
   {
