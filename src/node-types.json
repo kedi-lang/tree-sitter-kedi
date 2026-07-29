@@ -46,6 +46,10 @@
         "named": true
       },
       {
+        "type": "artifacts_directive",
+        "named": true
+      },
+      {
         "type": "assign_block_stmt",
         "named": true
       },
@@ -137,6 +141,10 @@
       },
       {
         "type": "approval_directive",
+        "named": true
+      },
+      {
+        "type": "artifacts_directive",
         "named": true
       },
       {
@@ -374,6 +382,72 @@
   },
   {
     "type": "approval_plain_value",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "artifacts_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "artifacts_field",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "artifacts_directive",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "artifacts_body",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "artifacts_field",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "artifacts_plain_value",
+            "named": true
+          },
+          {
+            "type": "inline_python_expr",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "artifacts_plain_value",
     "named": true,
     "fields": {}
   },
@@ -1284,6 +1358,10 @@
         },
         {
           "type": "approval_directive",
+          "named": true
+        },
+        {
+          "type": "artifacts_directive",
           "named": true
         },
         {
@@ -2221,6 +2299,10 @@
   },
   {
     "type": "approval",
+    "named": false
+  },
+  {
+    "type": "artifacts",
     "named": false
   },
   {

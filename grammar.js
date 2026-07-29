@@ -94,6 +94,7 @@ module.exports = grammar({
         $.system_directive,
         $.mcp_directive,
         $.settings_directive,
+        $.artifacts_directive,
         $.profile_directive,
         $.use_directive,
         $.assign_stmt,
@@ -251,6 +252,7 @@ module.exports = grammar({
         $.system_directive,
         $.mcp_directive,
         $.settings_directive,
+        $.artifacts_directive,
         $.use_directive,
         $.assign_stmt,
         $.assign_block_stmt,
@@ -731,6 +733,27 @@ module.exports = grammar({
 
     _settings_plain_value: ($) => token(/[^\n`#]+/),
 
+    artifacts_directive: ($) =>
+      seq(">", "artifacts", ":", $._newline, field("body", $.artifacts_body)),
+
+    artifacts_body: ($) =>
+      seq(
+        $._indent,
+        repeat1(choice($.artifacts_field, $._newline)),
+        $._dedent,
+      ),
+
+    artifacts_field: ($) =>
+      seq(
+        field("name", $.identifier),
+        ":",
+        optional(/[ \t]+/),
+        field("value", choice($.inline_python_expr, alias($._artifacts_plain_value, $.artifacts_plain_value))),
+        $._newline,
+      ),
+
+    _artifacts_plain_value: ($) => token(/[^\n`#]+/),
+
     profile_directive: ($) =>
       seq(
         ">",
@@ -745,7 +768,7 @@ module.exports = grammar({
     profile_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.subagent_directive, $.max_agents_directive, $.use_directive, $._newline)),
+        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.subagent_directive, $.max_agents_directive, $.use_directive, $._newline)),
         $._dedent,
       ),
 

@@ -122,6 +122,7 @@
 (use_tool_backtick name: (identifier) @function.call)
 (mcp_field name: (identifier) @property)
 (settings_field name: (identifier) @property)
+(artifacts_field name: (identifier) @property)
 
 (model_directive
   value: (model_plain_value) @string)
@@ -152,6 +153,11 @@
 (settings_field
   value: (settings_plain_value) @string)
 (settings_field
+  value: (inline_python_expr) @string.special)
+
+(artifacts_field
+  value: (artifacts_plain_value) @string)
+(artifacts_field
   value: (inline_python_expr) @string.special)
 
 ; ----------------------------------------------------------------

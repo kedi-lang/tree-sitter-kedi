@@ -80,6 +80,35 @@ Whole submodule import
       (identifier))))
 
 ==================
+Artifact policy directive
+==================
+
+> artifacts:
+  enabled: true
+  threshold: 100kb
+  idle_ttl: none
+  cleanup_interval: `timedelta(seconds=5)`
+
+---
+
+(source_file
+  (artifacts_directive
+    body: (artifacts_body
+      (artifacts_field
+        name: (identifier)
+        value: (artifacts_plain_value))
+      (artifacts_field
+        name: (identifier)
+        value: (artifacts_plain_value))
+      (artifacts_field
+        name: (identifier)
+        value: (artifacts_plain_value))
+      (artifacts_field
+        name: (identifier)
+        value: (inline_python_expr
+          code: (python_inline_body))))))
+
+==================
 Auto directive in procedure body
 ==================
 
