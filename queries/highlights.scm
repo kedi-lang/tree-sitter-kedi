@@ -46,6 +46,7 @@
 "system" @keyword
 "mcp" @keyword
 "settings" @keyword
+"artifacts" @keyword
 "subagent" @keyword
 "max_agents" @keyword
 "profile" @keyword
