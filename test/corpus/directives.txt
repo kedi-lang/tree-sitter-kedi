@@ -304,6 +304,7 @@ Profile subagent directive
 > profile: implementor:
   > subagent: planner
   > max_agents: 5
+  > workflow: dynamic
 
 ---
 
@@ -319,4 +320,6 @@ Profile subagent directive
       (subagent_directive
         name: (identifier))
       (max_agents_directive
-        value: (positive_integer)))))
+        value: (positive_integer))
+      (workflow_directive
+        value: (identifier)))))

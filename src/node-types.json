@@ -1395,6 +1395,10 @@
         {
           "type": "use_directive",
           "named": true
+        },
+        {
+          "type": "workflow_directive",
+          "named": true
         }
       ]
     }
@@ -2222,6 +2226,22 @@
     }
   },
   {
+    "type": "workflow_directive",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "(",
     "named": false
   },
@@ -2410,6 +2430,10 @@
   {
     "type": "validation_keyword",
     "named": true
+  },
+  {
+    "type": "workflow",
+    "named": false
   },
   {
     "type": "|",

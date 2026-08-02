@@ -768,7 +768,7 @@ module.exports = grammar({
     profile_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.subagent_directive, $.max_agents_directive, $.use_directive, $._newline)),
+        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $._newline)),
         $._dedent,
       ),
 
@@ -777,6 +777,9 @@ module.exports = grammar({
 
     max_agents_directive: ($) =>
       seq(">", "max_agents", ":", field("value", $.positive_integer), $._newline),
+
+    workflow_directive: ($) =>
+      seq(">", "workflow", ":", field("value", $.identifier), $._newline),
 
     positive_integer: (_) => /[1-9][0-9]*/,
 

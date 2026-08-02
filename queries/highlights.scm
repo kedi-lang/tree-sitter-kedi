@@ -49,6 +49,7 @@
 "artifacts" @keyword
 "subagent" @keyword
 "max_agents" @keyword
+"workflow" @keyword
 "profile" @keyword
 "use" @keyword
 "case" @keyword
@@ -109,6 +110,7 @@
 (profile_directive name: (identifier) @label)
 (subagent_directive name: (identifier) @label)
 (max_agents_directive value: (positive_integer) @number)
+(workflow_directive value: (identifier) @constant)
 (agent_directive
   value: (adapter_plain_value) @label)
 (agent_field name: (identifier) @label)

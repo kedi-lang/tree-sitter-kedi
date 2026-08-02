@@ -3003,6 +3003,10 @@
               },
               {
                 "type": "SYMBOL",
+                "name": "workflow_directive"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "use_directive"
               },
               {
@@ -3068,6 +3072,35 @@
           "content": {
             "type": "SYMBOL",
             "name": "positive_integer"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "workflow_directive": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ">"
+        },
+        {
+          "type": "STRING",
+          "value": "workflow"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
           }
         },
         {
