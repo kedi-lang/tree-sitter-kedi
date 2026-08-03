@@ -1090,6 +1090,22 @@
     }
   },
   {
+    "type": "output_directive",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_expr",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "output_segment",
     "named": true,
     "fields": {
@@ -1378,6 +1394,10 @@
         },
         {
           "type": "model_directive",
+          "named": true
+        },
+        {
+          "type": "output_directive",
           "named": true
         },
         {
@@ -2381,6 +2401,10 @@
   },
   {
     "type": "optimize",
+    "named": false
+  },
+  {
+    "type": "output",
     "named": false
   },
   {

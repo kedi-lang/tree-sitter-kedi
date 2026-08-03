@@ -301,6 +301,7 @@ Profile subagent directive
 
 > profile: planner:
   > model: test
+  > output: list[str]
 > profile: implementor:
   > subagent: planner
   > max_agents: 5
@@ -313,7 +314,14 @@ Profile subagent directive
     name: (identifier)
     body: (profile_body
       (model_directive
-        value: (model_plain_value))))
+        value: (model_plain_value))
+      (output_directive
+        type: (type_expr
+          (type_apply
+            name: (identifier)
+            args: (type_arg
+              (type_ref
+                name: (identifier))))))))
   (profile_directive
     name: (identifier)
     body: (profile_body

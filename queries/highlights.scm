@@ -47,6 +47,7 @@
 "mcp" @keyword
 "settings" @keyword
 "artifacts" @keyword
+"output" @keyword
 "subagent" @keyword
 "max_agents" @keyword
 "workflow" @keyword
