@@ -377,6 +377,32 @@ Template block continuation accepts bare inline Python
           (text_segment))))))
 
 ==================
+Template block preserves a blank continuation row
+==================
+
+>> First paragraph [answer].
+
+Second paragraph adds context.
+= <answer>
+
+---
+
+(source_file
+  (template_block_stmt
+    head: (template_prompt_expr
+      (text_segment)
+      (output_segment
+        name: (identifier))
+      (text_segment))
+    (template_blank_line)
+    continuation: (template_prompt_expr
+      (text_segment)))
+  (return_stmt
+    value: (template_expr
+      (input_segment
+        name: (identifier)))))
+
+==================
 Whitespace-only procedure line is blank
 ==================
 

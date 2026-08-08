@@ -1758,6 +1758,11 @@
     }
   },
   {
+    "type": "template_blank_line",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "template_block_stmt",
     "named": true,
     "fields": {
@@ -1781,6 +1786,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "template_blank_line",
+          "named": true
+        }
+      ]
     }
   },
   {

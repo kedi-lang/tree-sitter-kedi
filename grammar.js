@@ -415,14 +415,20 @@ module.exports = grammar({
       seq(
         ">>",
         field("head", $.template_prompt_expr),
+        $._newline,
         repeat(
           seq(
-            $._newline,
+            repeat($.template_blank_line),
             field("continuation", $.template_prompt_expr),
+            $._newline,
           ),
         ),
-        $._newline,
       ),
+
+    // A physical blank row within a `>>` block remains part of the prompt.
+    // Keeping it named lets the AST layer preserve `A\n\nB` exactly while
+    // still distinguishing it from statement indentation and comments.
+    template_blank_line: ($) => $._newline,
 
     template_line: ($) => seq($.template_expr, $._newline),
 

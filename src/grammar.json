@@ -1464,13 +1464,20 @@
           }
         },
         {
+          "type": "SYMBOL",
+          "name": "_newline"
+        },
+        {
           "type": "REPEAT",
           "content": {
             "type": "SEQ",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "_newline"
+                "type": "REPEAT",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "template_blank_line"
+                }
               },
               {
                 "type": "FIELD",
@@ -1479,15 +1486,19 @@
                   "type": "SYMBOL",
                   "name": "template_prompt_expr"
                 }
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_newline"
               }
             ]
           }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_newline"
         }
       ]
+    },
+    "template_blank_line": {
+      "type": "SYMBOL",
+      "name": "_newline"
     },
     "template_line": {
       "type": "SEQ",
