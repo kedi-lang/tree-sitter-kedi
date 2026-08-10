@@ -109,6 +109,34 @@ Artifact policy directive
           code: (python_inline_body))))))
 
 ==================
+Nested native compaction settings
+==================
+
+> settings:
+  temperature: 0.2
+  > compaction:
+    mode: native
+    threshold: `100_000`
+
+---
+
+(source_file
+  (settings_directive
+    body: (settings_body
+      (settings_field
+        name: (identifier)
+        value: (settings_plain_value))
+      (compaction_settings
+        body: (compaction_settings_body
+          (compaction_settings_field
+            name: (identifier)
+            value: (settings_plain_value))
+          (compaction_settings_field
+            name: (identifier)
+            value: (inline_python_expr
+              code: (python_inline_body))))))))
+
+==================
 Auto directive in procedure body
 ==================
 

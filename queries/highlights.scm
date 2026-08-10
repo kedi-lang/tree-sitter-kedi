@@ -46,6 +46,7 @@
 "system" @keyword
 "mcp" @keyword
 "settings" @keyword
+"compaction" @keyword
 "artifacts" @keyword
 "output" @keyword
 "subagent" @keyword
@@ -111,7 +112,9 @@
 (profile_directive name: (identifier) @label)
 (subagent_directive name: (identifier) @label)
 (max_agents_directive value: (positive_integer) @number)
-(workflow_directive value: (identifier) @constant)
+(workflow_directive
+  "workflow" @keyword
+  value: (identifier) @constant)
 (agent_directive
   value: (adapter_plain_value) @label)
 (agent_field name: (identifier) @label)
@@ -126,6 +129,9 @@
 (use_tool_backtick name: (identifier) @function.call)
 (mcp_field name: (identifier) @property)
 (settings_field name: (identifier) @property)
+(compaction_settings
+  "compaction" @keyword)
+(compaction_settings_field name: (identifier) @property)
 (artifacts_field name: (identifier) @property)
 
 (model_directive
@@ -157,6 +163,11 @@
 (settings_field
   value: (settings_plain_value) @string)
 (settings_field
+  value: (inline_python_expr) @string.special)
+
+(compaction_settings_field
+  value: (settings_plain_value) @string)
+(compaction_settings_field
   value: (inline_python_expr) @string.special)
 
 (artifacts_field
