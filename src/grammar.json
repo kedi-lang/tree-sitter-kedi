@@ -68,6 +68,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "history_directive"
+        },
+        {
+          "type": "SYMBOL",
           "name": "system_directive"
         },
         {
@@ -826,6 +830,10 @@
         {
           "type": "SYMBOL",
           "name": "approval_directive"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "history_directive"
         },
         {
           "type": "SYMBOL",
@@ -2410,6 +2418,59 @@
         "value": "[^\\n`]+"
       }
     },
+    "history_directive": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ">"
+        },
+        {
+          "type": "STRING",
+          "value": "history"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "[ \\t]+"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_history_plain_value"
+            },
+            "named": true,
+            "value": "history_plain_value"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "_history_plain_value": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "[^\\n`#]+"
+      }
+    },
     "system_directive": {
       "type": "CHOICE",
       "members": [
@@ -3104,6 +3165,10 @@
               {
                 "type": "SYMBOL",
                 "name": "approval_directive"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "history_directive"
               },
               {
                 "type": "SYMBOL",

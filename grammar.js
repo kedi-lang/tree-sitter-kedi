@@ -91,6 +91,7 @@ module.exports = grammar({
         $.model_directive,
         $.effort_directive,
         $.approval_directive,
+        $.history_directive,
         $.system_directive,
         $.mcp_directive,
         $.settings_directive,
@@ -249,6 +250,7 @@ module.exports = grammar({
         $.model_directive,
         $.effort_directive,
         $.approval_directive,
+        $.history_directive,
         $.system_directive,
         $.mcp_directive,
         $.settings_directive,
@@ -669,6 +671,18 @@ module.exports = grammar({
 
     _approval_plain_value: ($) => token(/[^\n`]+/),
 
+    history_directive: ($) =>
+      seq(
+        ">",
+        "history",
+        ":",
+        optional(/[ \t]+/),
+        field("value", alias($._history_plain_value, $.history_plain_value)),
+        $._newline,
+      ),
+
+    _history_plain_value: ($) => token(/[^\n`#]+/),
+
     system_directive: ($) =>
       choice(
         seq(
@@ -793,7 +807,7 @@ module.exports = grammar({
     profile_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $._newline)),
+        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.history_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $._newline)),
         $._dedent,
       ),
 

@@ -109,6 +109,44 @@ Artifact policy directive
           code: (python_inline_body))))))
 
 ==================
+History policy in lexical scopes
+==================
+
+> history: enabled
+
+> profile: isolated:
+  > history: disabled
+
+@remember():
+  > history: enabled
+  [answer] << Remember this value.
+  = `answer`
+
+---
+
+(source_file
+  (history_directive
+    value: (history_plain_value))
+  (profile_directive
+    name: (identifier)
+    body: (profile_body
+      (history_directive
+        value: (history_plain_value))))
+  (procedure_def
+    name: (identifier)
+    body: (block
+      (history_directive
+        value: (history_plain_value))
+      (raw_invoke_stmt
+        target: (assign_target
+          name: (identifier))
+        prompt: (template_prompt_expr
+          (text_segment)))
+      (return_stmt
+        value: (inline_python_expr
+          code: (python_inline_body))))))
+
+==================
 Nested native compaction settings
 ==================
 

@@ -70,6 +70,10 @@
         "named": true
       },
       {
+        "type": "history_directive",
+        "named": true
+      },
+      {
         "type": "mcp_directive",
         "named": true
       },
@@ -161,6 +165,10 @@
       },
       {
         "type": "effort_directive",
+        "named": true
+      },
+      {
+        "type": "history_directive",
         "named": true
       },
       {
@@ -848,6 +856,27 @@
     }
   },
   {
+    "type": "history_directive",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "history_plain_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "history_plain_value",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "inline_python_expr",
     "named": true,
     "fields": {
@@ -1443,6 +1472,10 @@
         },
         {
           "type": "effort_directive",
+          "named": true
+        },
+        {
+          "type": "history_directive",
           "named": true
         },
         {
@@ -2452,6 +2485,10 @@
   },
   {
     "type": "export",
+    "named": false
+  },
+  {
+    "type": "history",
     "named": false
   },
   {

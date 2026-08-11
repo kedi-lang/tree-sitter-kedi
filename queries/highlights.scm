@@ -115,6 +115,9 @@
 (workflow_directive
   "workflow" @keyword
   value: (identifier) @constant)
+(history_directive
+  "history" @keyword
+  value: (history_plain_value) @string)
 (agent_directive
   value: (adapter_plain_value) @label)
 (agent_field name: (identifier) @label)
