@@ -2523,10 +2523,6 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "compaction_settings"
-              },
-              {
-                "type": "SYMBOL",
                 "name": "_newline"
               }
             ]
@@ -2569,13 +2565,22 @@
           "type": "FIELD",
           "name": "value",
           "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_settings_plain_value"
-            },
-            "named": true,
-            "value": "settings_plain_value"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "inline_python_expr"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_settings_plain_value"
+                },
+                "named": true,
+                "value": "settings_plain_value"
+              }
+            ]
           }
         },
         {
@@ -2896,10 +2901,6 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "compaction_settings"
-              },
-              {
-                "type": "SYMBOL",
                 "name": "_newline"
               }
             ]
@@ -2908,119 +2909,6 @@
         {
           "type": "SYMBOL",
           "name": "_dedent"
-        }
-      ]
-    },
-    "compaction_settings": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": ">"
-        },
-        {
-          "type": "STRING",
-          "value": "compaction"
-        },
-        {
-          "type": "STRING",
-          "value": ":"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_newline"
-        },
-        {
-          "type": "FIELD",
-          "name": "body",
-          "content": {
-            "type": "SYMBOL",
-            "name": "compaction_settings_body"
-          }
-        }
-      ]
-    },
-    "compaction_settings_body": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_indent"
-        },
-        {
-          "type": "REPEAT1",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "compaction_settings_field"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_newline"
-              }
-            ]
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_dedent"
-        }
-      ]
-    },
-    "compaction_settings_field": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "FIELD",
-          "name": "name",
-          "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": ":"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "PATTERN",
-              "value": "[ \\t]+"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "FIELD",
-          "name": "value",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "inline_python_expr"
-              },
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_settings_plain_value"
-                },
-                "named": true,
-                "value": "settings_plain_value"
-              }
-            ]
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_newline"
         }
       ]
     },

@@ -689,7 +689,7 @@ module.exports = grammar({
     history_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.history_field, $.compaction_settings, $._newline)),
+        repeat1(choice($.history_field, $._newline)),
         $._dedent,
       ),
 
@@ -698,7 +698,7 @@ module.exports = grammar({
         field("name", $.identifier),
         ":",
         optional(/[ \t]+/),
-        field("value", alias($._settings_plain_value, $.settings_plain_value)),
+        field("value", choice($.inline_python_expr, alias($._settings_plain_value, $.settings_plain_value))),
         $._newline,
       ),
 
@@ -757,27 +757,8 @@ module.exports = grammar({
     settings_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.settings_field, $.compaction_settings, $._newline)),
+        repeat1(choice($.settings_field, $._newline)),
         $._dedent,
-      ),
-
-    compaction_settings: ($) =>
-      seq(">", "compaction", ":", $._newline, field("body", $.compaction_settings_body)),
-
-    compaction_settings_body: ($) =>
-      seq(
-        $._indent,
-        repeat1(choice($.compaction_settings_field, $._newline)),
-        $._dedent,
-      ),
-
-    compaction_settings_field: ($) =>
-      seq(
-        field("name", $.identifier),
-        ":",
-        optional(/[ \t]+/),
-        field("value", choice($.inline_python_expr, alias($._settings_plain_value, $.settings_plain_value))),
-        $._newline,
       ),
 
     settings_field: ($) =>

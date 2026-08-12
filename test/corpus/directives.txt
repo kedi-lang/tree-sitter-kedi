@@ -152,9 +152,8 @@ Expanded history and native compaction settings
 
 > history:
   enabled: true
-  > compaction:
-    mode: native
-    threshold: `100_000`
+  compaction_mode: native
+  compaction_threshold: `100_000`
 
 ---
 
@@ -164,15 +163,13 @@ Expanded history and native compaction settings
       (history_field
         name: (identifier)
         value: (settings_plain_value))
-      (compaction_settings
-        body: (compaction_settings_body
-          (compaction_settings_field
-            name: (identifier)
-            value: (settings_plain_value))
-          (compaction_settings_field
-            name: (identifier)
-            value: (inline_python_expr
-              code: (python_inline_body))))))))
+      (history_field
+        name: (identifier)
+        value: (settings_plain_value))
+      (history_field
+        name: (identifier)
+        value: (inline_python_expr
+          code: (python_inline_body))))))
 
 ==================
 Auto directive in procedure body

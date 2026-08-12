@@ -663,67 +663,6 @@
     }
   },
   {
-    "type": "compaction_settings",
-    "named": true,
-    "fields": {
-      "body": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "compaction_settings_body",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "compaction_settings_body",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "compaction_settings_field",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "compaction_settings_field",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "inline_python_expr",
-            "named": true
-          },
-          {
-            "type": "settings_plain_value",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "effort_directive",
     "named": true,
     "fields": {
@@ -864,10 +803,6 @@
       "required": false,
       "types": [
         {
-          "type": "compaction_settings",
-          "named": true
-        },
-        {
           "type": "history_field",
           "named": true
         }
@@ -918,6 +853,10 @@
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "inline_python_expr",
+            "named": true
+          },
           {
             "type": "settings_plain_value",
             "named": true
@@ -1704,10 +1643,6 @@
       "multiple": true,
       "required": false,
       "types": [
-        {
-          "type": "compaction_settings",
-          "named": true
-        },
         {
           "type": "settings_field",
           "named": true
@@ -2524,10 +2459,6 @@
   },
   {
     "type": "case",
-    "named": false
-  },
-  {
-    "type": "compaction",
     "named": false
   },
   {
