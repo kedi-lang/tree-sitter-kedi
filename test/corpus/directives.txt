@@ -147,11 +147,11 @@ History policy in lexical scopes
           code: (python_inline_body))))))
 
 ==================
-Nested native compaction settings
+Expanded history and native compaction settings
 ==================
 
-> settings:
-  temperature: 0.2
+> history:
+  enabled: true
   > compaction:
     mode: native
     threshold: `100_000`
@@ -159,9 +159,9 @@ Nested native compaction settings
 ---
 
 (source_file
-  (settings_directive
-    body: (settings_body
-      (settings_field
+  (history_directive
+    body: (history_body
+      (history_field
         name: (identifier)
         value: (settings_plain_value))
       (compaction_settings

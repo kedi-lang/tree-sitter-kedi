@@ -672,16 +672,35 @@ module.exports = grammar({
     _approval_plain_value: ($) => token(/[^\n`]+/),
 
     history_directive: ($) =>
-      seq(
-        ">",
-        "history",
-        ":",
-        optional(/[ \t]+/),
-        field("value", alias($._history_plain_value, $.history_plain_value)),
-        $._newline,
+      choice(
+        seq(
+          ">",
+          "history",
+          ":",
+          optional(/[ \t]+/),
+          field("value", alias($._history_plain_value, $.history_plain_value)),
+          $._newline,
+        ),
+        seq(">", "history", ":", $._newline, field("body", $.history_body)),
       ),
 
     _history_plain_value: ($) => token(/[^\n`#]+/),
+
+    history_body: ($) =>
+      seq(
+        $._indent,
+        repeat1(choice($.history_field, $.compaction_settings, $._newline)),
+        $._dedent,
+      ),
+
+    history_field: ($) =>
+      seq(
+        field("name", $.identifier),
+        ":",
+        optional(/[ \t]+/),
+        field("value", alias($._settings_plain_value, $.settings_plain_value)),
+        $._newline,
+      ),
 
     system_directive: ($) =>
       choice(

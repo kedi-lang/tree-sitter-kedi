@@ -118,6 +118,9 @@
 (history_directive
   "history" @keyword
   value: (history_plain_value) @string)
+(history_directive "history" @keyword)
+(history_field name: (identifier) @property)
+(history_field value: (settings_plain_value) @string)
 (agent_directive
   value: (adapter_plain_value) @label)
 (agent_field name: (identifier) @label)
