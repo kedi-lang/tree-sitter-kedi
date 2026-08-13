@@ -110,6 +110,10 @@
         "named": true
       },
       {
+        "type": "skills_directive",
+        "named": true
+      },
+      {
         "type": "system_directive",
         "named": true
       },
@@ -217,6 +221,10 @@
       },
       {
         "type": "settings_directive",
+        "named": true
+      },
+      {
+        "type": "skills_directive",
         "named": true
       },
       {
@@ -1493,6 +1501,10 @@
           "named": true
         },
         {
+          "type": "skills_directive",
+          "named": true
+        },
+        {
           "type": "subagent_directive",
           "named": true
         },
@@ -1698,6 +1710,82 @@
   },
   {
     "type": "settings_plain_value",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "skills_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "skills_field",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "skills_directive",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "skills_body",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "skills_plain_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "skills_field",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "inline_python_expr",
+            "named": true
+          },
+          {
+            "type": "settings_plain_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "skills_plain_value",
     "named": true,
     "fields": {}
   },
@@ -2536,6 +2624,10 @@
   },
   {
     "type": "settings",
+    "named": false
+  },
+  {
+    "type": "skills",
     "named": false
   },
   {

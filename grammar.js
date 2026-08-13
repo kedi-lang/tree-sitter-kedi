@@ -92,6 +92,7 @@ module.exports = grammar({
         $.effort_directive,
         $.approval_directive,
         $.history_directive,
+        $.skills_directive,
         $.system_directive,
         $.mcp_directive,
         $.settings_directive,
@@ -251,6 +252,7 @@ module.exports = grammar({
         $.effort_directive,
         $.approval_directive,
         $.history_directive,
+        $.skills_directive,
         $.system_directive,
         $.mcp_directive,
         $.settings_directive,
@@ -702,6 +704,37 @@ module.exports = grammar({
         $._newline,
       ),
 
+    skills_directive: ($) =>
+      choice(
+        seq(
+          ">",
+          "skills",
+          ":",
+          optional(/[ \t]+/),
+          field("value", alias($._skills_plain_value, $.skills_plain_value)),
+          $._newline,
+        ),
+        seq(">", "skills", ":", $._newline, field("body", $.skills_body)),
+      ),
+
+    _skills_plain_value: ($) => token(/[^\n`#]+/),
+
+    skills_body: ($) =>
+      seq(
+        $._indent,
+        repeat1(choice($.skills_field, $._newline)),
+        $._dedent,
+      ),
+
+    skills_field: ($) =>
+      seq(
+        field("name", $.identifier),
+        ":",
+        optional(/[ \t]+/),
+        field("value", choice($.inline_python_expr, alias($._settings_plain_value, $.settings_plain_value))),
+        $._newline,
+      ),
+
     system_directive: ($) =>
       choice(
         seq(
@@ -807,7 +840,7 @@ module.exports = grammar({
     profile_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.history_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $._newline)),
+        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.history_directive, $.skills_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $._newline)),
         $._dedent,
       ),
 

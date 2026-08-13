@@ -172,6 +172,63 @@ Expanded history and native compaction settings
           code: (python_inline_body))))))
 
 ==================
+Skills policy in lexical scopes
+==================
+
+> skills: enabled
+
+> profile: researcher:
+  > skills: disabled
+
+@review():
+  > skills:
+    enabled: true
+    cwd: workspace
+    max_skills: 12
+    include_registry: false
+    include_all: true
+    exclude_paths: `["~/.agents/skills"]`
+  = done
+
+---
+
+(source_file
+  (skills_directive
+    value: (skills_plain_value))
+  (profile_directive
+    name: (identifier)
+    body: (profile_body
+      (skills_directive
+        value: (skills_plain_value))))
+  (procedure_def
+    name: (identifier)
+    body: (block
+      (skills_directive
+        body: (skills_body
+          (skills_field
+            name: (identifier)
+            value: (settings_plain_value))
+          (skills_field
+            name: (identifier)
+            value: (settings_plain_value))
+          (skills_field
+            name: (identifier)
+            value: (settings_plain_value))
+          (skills_field
+            name: (identifier)
+            value: (settings_plain_value))
+          (skills_field
+            name: (identifier)
+            value: (settings_plain_value))
+          (skills_field
+            name: (identifier)
+            value: (inline_python_expr
+              code: (python_inline_body)))))
+      (return_stmt
+        value: (template_expr
+          (text_segment))))))
+
+==================
 Auto directive in procedure body
 ==================
 

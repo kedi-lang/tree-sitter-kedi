@@ -118,6 +118,15 @@
   "history" @keyword
   value: (history_plain_value) @string)
 (history_directive "history" @keyword)
+
+(skills_directive
+  ">" @operator)
+(skills_directive "skills" @keyword)
+(skills_plain_value) @constant.builtin
+(skills_field
+  name: (identifier) @property)
+(skills_field value: (settings_plain_value) @string)
+(skills_field value: (inline_python_expr) @string.special)
 (history_field name: (identifier) @property)
 (history_field value: (settings_plain_value) @string)
 (history_field value: (inline_python_expr) @string.special)
