@@ -66,6 +66,10 @@
         "named": true
       },
       {
+        "type": "codemode_directive",
+        "named": true
+      },
+      {
         "type": "effort_directive",
         "named": true
       },
@@ -165,6 +169,10 @@
       },
       {
         "type": "backtick_line_stmt",
+        "named": true
+      },
+      {
+        "type": "codemode_directive",
         "named": true
       },
       {
@@ -669,6 +677,82 @@
         ]
       }
     }
+  },
+  {
+    "type": "codemode_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "codemode_field",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "codemode_directive",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "codemode_body",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "codemode_plain_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "codemode_field",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "inline_python_expr",
+            "named": true
+          },
+          {
+            "type": "settings_plain_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "codemode_plain_value",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "effort_directive",
@@ -1470,6 +1554,10 @@
         },
         {
           "type": "artifacts_directive",
+          "named": true
+        },
+        {
+          "type": "codemode_directive",
           "named": true
         },
         {
@@ -2547,6 +2635,10 @@
   },
   {
     "type": "case",
+    "named": false
+  },
+  {
+    "type": "codemode",
     "named": false
   },
   {

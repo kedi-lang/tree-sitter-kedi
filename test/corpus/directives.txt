@@ -172,6 +172,50 @@ Expanded history and native compaction settings
           code: (python_inline_body))))))
 
 ==================
+CodeMode policy and limits in lexical scopes
+==================
+
+> codemode: enabled
+
+> profile: bounded:
+  > codemode:
+    enabled: true
+    max_nested_calls: 12
+    request_timeout: 30
+
+@inspect():
+  > codemode: disabled
+  = done
+
+---
+
+(source_file
+  (codemode_directive
+    value: (codemode_plain_value))
+  (profile_directive
+    name: (identifier)
+    body: (profile_body
+      (codemode_directive
+        body: (codemode_body
+          (codemode_field
+            name: (identifier)
+            value: (settings_plain_value))
+          (codemode_field
+            name: (identifier)
+            value: (settings_plain_value))
+          (codemode_field
+            name: (identifier)
+            value: (settings_plain_value))))))
+  (procedure_def
+    name: (identifier)
+    body: (block
+      (codemode_directive
+        value: (codemode_plain_value))
+      (return_stmt
+        value: (template_expr
+          (text_segment))))))
+
+==================
 Skills policy in lexical scopes
 ==================
 

@@ -43,6 +43,7 @@
 "model" @keyword
 "effort" @keyword
 "approval" @keyword
+"codemode" @keyword
 "system" @keyword
 "mcp" @keyword
 "settings" @keyword
@@ -127,6 +128,14 @@
   name: (identifier) @property)
 (skills_field value: (settings_plain_value) @string)
 (skills_field value: (inline_python_expr) @string.special)
+(codemode_directive
+  ">" @operator)
+(codemode_directive "codemode" @keyword)
+(codemode_plain_value) @constant.builtin
+(codemode_field
+  name: (identifier) @property)
+(codemode_field value: (settings_plain_value) @string)
+(codemode_field value: (inline_python_expr) @string.special)
 (history_field name: (identifier) @property)
 (history_field value: (settings_plain_value) @string)
 (history_field value: (inline_python_expr) @string.special)
