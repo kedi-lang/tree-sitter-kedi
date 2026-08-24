@@ -5,9 +5,9 @@
 //   - NEWLINE / INDENT / DEDENT: Python-style indent stack with tab-width = 4.
 //     Blank/comment-only lines are transparently consumed during the NEWLINE
 //     lookahead for indent calculation.
-//   - TEXT / TEXT_IN_CALL: a run of template-text characters terminated by
-//     an unescaped special. TEXT is used inside template_line; TEXT_IN_CALL
-//     additionally stops at `,` and `)` for `<func(...)>` argument context.
+//   - TEXT / TEXT_IN_CALL / CONDITION_TEXT: runs of template-text characters
+//     terminated by an unescaped special. CONDITION_TEXT additionally stops
+//     before a terminal `:` so deterministic control headers stay unambiguous.
 //   - FENCED_BODY: the raw byte content between a triple-backtick opener
 //     and its matching closer. Captured verbatim so editors can inject a
 //     Python parser into the region.
@@ -38,6 +38,7 @@ enum TokenType {
     KEDI_DEDENT,
     KEDI_TEXT,
     KEDI_TEXT_IN_CALL,
+    KEDI_CONDITION_TEXT,
     KEDI_FENCED_BODY,
     // Consumes a single '\n' WITHOUT updating the indent stack. Used by
     // the grammar between the opening "```" literal and the fenced
@@ -239,7 +240,12 @@ typedef enum {
 //   - Unconditional stops: `<`, `[`, `` ` ``, `>`, `]`, `\n`, `#`.
 //   - In call-argument context, additional stops on `,` and `)`.
 //   - Backslash escapes (`\\X`) are consumed as two-character units.
-static TextScanResult scan_text_run(TSLexer *lexer, bool in_call, bool newline_valid) {
+static TextScanResult scan_text_run(
+    TSLexer *lexer,
+    bool in_call,
+    bool condition_mode,
+    bool newline_valid
+) {
     bool seen_text = false;
     for (;;) {
         int32_t c = lexer->lookahead;
@@ -253,6 +259,23 @@ static TextScanResult scan_text_run(TSLexer *lexer, bool in_call, bool newline_v
             break;
         }
         if (is_unconditional_text_stop(c)) break;
+
+        if (condition_mode && c == ':') {
+            // A condition's final colon is structural. Mark the token end
+            // before looking ahead; tree-sitter rewinds speculative advances
+            // to this mark when we return the preceding CONDITION_TEXT.
+            if (!seen_text) return TEXT_SCAN_NONE;
+            lexer->mark_end(lexer);
+            advance(lexer);
+            while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+                advance(lexer);
+            }
+            if (lexer->lookahead == '\n' || (lexer->lookahead == 0 && is_eof(lexer))) {
+                return TEXT_SCAN_TEXT;
+            }
+            seen_text = true;
+            continue;
+        }
 
         if (c == ' ' || c == '\t') {
             advance(lexer);
@@ -461,6 +484,7 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
     if (valid_symbols[KEDI_NEWLINE] &&
         !valid_symbols[KEDI_TEXT] &&
         !valid_symbols[KEDI_TEXT_IN_CALL] &&
+        !valid_symbols[KEDI_CONDITION_TEXT] &&
         !valid_symbols[KEDI_FENCED_BODY] &&
         (lexer->lookahead == ' ' || lexer->lookahead == '\t')) {
         while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
@@ -488,7 +512,8 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
                 // though, source_file / validation rules already received
                 // the preceding newline; emitting another one here corrupts
                 // transitions such as a test block followed by a procedure.
-                if (valid_symbols[KEDI_TEXT] || valid_symbols[KEDI_TEXT_IN_CALL]) {
+                if (valid_symbols[KEDI_TEXT] || valid_symbols[KEDI_TEXT_IN_CALL] ||
+                    valid_symbols[KEDI_CONDITION_TEXT]) {
                     lexer->result_symbol = KEDI_NEWLINE;
                     return true;
                 }
@@ -522,7 +547,7 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
         }
     }
 
-    // 7. TEXT / TEXT_IN_CALL.
+    // 7. TEXT / TEXT_IN_CALL / CONDITION_TEXT.
     //
     // valid_symbols is the union across all active GLR states, so we may
     // see both TEXT and TEXT_IN_CALL set at once (e.g. initial state).
@@ -530,9 +555,16 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
     // itself is NOT valid.
     bool text_valid = valid_symbols[KEDI_TEXT];
     bool call_valid = valid_symbols[KEDI_TEXT_IN_CALL];
-    if (text_valid || call_valid) {
+    bool condition_valid = valid_symbols[KEDI_CONDITION_TEXT];
+    if (text_valid || call_valid || condition_valid) {
         bool call_mode = call_valid && !text_valid;
-        TextScanResult text_result = scan_text_run(lexer, call_mode, valid_symbols[KEDI_NEWLINE]);
+        bool condition_mode = condition_valid && !text_valid && !call_valid;
+        TextScanResult text_result = scan_text_run(
+            lexer,
+            call_mode,
+            condition_mode,
+            valid_symbols[KEDI_NEWLINE]
+        );
         if (text_result == TEXT_SCAN_BLANK_LINE) {
             bool is_blank_line = false;
             uint32_t new_col = skip_leading_ws(lexer, &is_blank_line);
@@ -545,7 +577,9 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
             return true;
         }
         if (text_result == TEXT_SCAN_TEXT) {
-            lexer->result_symbol = call_mode ? KEDI_TEXT_IN_CALL : KEDI_TEXT;
+            lexer->result_symbol = call_mode
+                ? KEDI_TEXT_IN_CALL
+                : (condition_mode ? KEDI_CONDITION_TEXT : KEDI_TEXT);
             return true;
         }
     }

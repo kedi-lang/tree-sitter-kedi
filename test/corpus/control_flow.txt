@@ -1,0 +1,195 @@
+==================
+Top-level if else and loop
+==================
+
+[score: int] = `72`
+> if: `score >= 60`:
+  [result] = passed
+> else:
+  [result] = failed
+
+> loop [n]: `range(1, 4)`:
+  `score += n`
+
+= <result>
+
+---
+
+(source_file
+  (assign_stmt
+    (assign_target
+      name: (identifier)
+      type: (type_expr
+        (type_ref
+          name: (identifier))))
+    rhs: (inline_python_expr
+      code: (python_inline_body)))
+  (if_stmt
+    condition: (inline_python_expr
+      code: (python_inline_body))
+    consequence: (block
+      (assign_stmt
+        (assign_target
+          name: (identifier))
+        rhs: (template_expr
+          (text_segment)))))
+  (else_clause
+    body: (block
+      (assign_stmt
+        (assign_target
+          name: (identifier))
+        rhs: (template_expr
+          (text_segment)))))
+  (loop_stmt
+    binder: (identifier)
+    iterable: (inline_python_expr
+      code: (python_inline_body))
+    body: (block
+      (backtick_line_stmt
+        (inline_python_expr
+          code: (python_inline_body)))))
+  (return_stmt
+    value: (template_expr
+      (input_segment
+        name: (identifier)))))
+
+==================
+Nested if binds else to the nearest owner
+==================
+
+@choose(outer: bool, inner: bool):
+  > if: `outer`:
+    > if: `inner`:
+      = both
+    > else:
+      = outer
+  > else:
+    = neither
+
+---
+
+(source_file
+  (procedure_def
+    name: (identifier)
+    params: (param_list
+      (param
+        name: (identifier)
+        type: (type_expr
+          (type_ref
+            name: (identifier))))
+      (param
+        name: (identifier)
+        type: (type_expr
+          (type_ref
+            name: (identifier)))))
+    body: (block
+      (if_stmt
+        condition: (inline_python_expr
+          code: (python_inline_body))
+        consequence: (block
+          (if_stmt
+            condition: (inline_python_expr
+              code: (python_inline_body))
+            consequence: (block
+              (return_stmt
+                value: (template_expr
+                  (text_segment)))))
+          (else_clause
+            body: (block
+              (return_stmt
+                value: (template_expr
+                  (text_segment)))))))
+      (else_clause
+        body: (block
+          (return_stmt
+            value: (template_expr
+              (text_segment))))))))
+
+==================
+Adjacent control-flow statements
+==================
+
+> if: `False`:
+  [value] = skipped
+> loop [n]: `range(2)`:
+  [value] = <n>
+
+---
+
+(source_file
+  (if_stmt
+    condition: (inline_python_expr
+      code: (python_inline_body))
+    consequence: (block
+      (assign_stmt
+        (assign_target
+          name: (identifier))
+        rhs: (template_expr
+          (text_segment)))))
+  (loop_stmt
+    binder: (identifier)
+    iterable: (inline_python_expr
+      code: (python_inline_body))
+    body: (block
+      (assign_stmt
+        (assign_target
+          name: (identifier))
+        rhs: (template_expr
+          (input_segment
+            name: (identifier)))))))
+
+==================
+Conditional loops and template conditions
+==================
+
+> if: <city> is in Turkey
+  [result] = yes
+> if: `ready`
+  [classified] = yes
+> loop: `remaining > 0`:
+  `remaining -= 1`
+> loop: <work> remains unfinished
+  [checked] = yes
+
+---
+
+(source_file
+  (if_stmt
+    condition: (condition_template_expr
+      (input_segment
+        name: (identifier))
+      (condition_text_segment))
+    consequence: (block
+      (assign_stmt
+        (assign_target
+          name: (identifier))
+        rhs: (template_expr
+          (text_segment)))))
+  (if_stmt
+    condition: (condition_template_expr
+      (inline_python_expr
+        code: (python_inline_body)))
+    consequence: (block
+      (assign_stmt
+        (assign_target
+          name: (identifier))
+        rhs: (template_expr
+          (text_segment)))))
+  (conditional_loop_stmt
+    condition: (inline_python_expr
+      code: (python_inline_body))
+    body: (block
+      (backtick_line_stmt
+        (inline_python_expr
+          code: (python_inline_body)))))
+  (conditional_loop_stmt
+    condition: (condition_template_expr
+      (input_segment
+        name: (identifier))
+      (condition_text_segment))
+    body: (block
+      (assign_stmt
+        (assign_target
+          name: (identifier))
+        rhs: (template_expr
+          (text_segment))))))

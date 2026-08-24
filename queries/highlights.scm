@@ -58,6 +58,9 @@
 "data" @keyword
 "test_data" @keyword
 "metric" @keyword
+"if" @keyword
+"else" @keyword
+"loop" @keyword
 
 ; ----------------------------------------------------------------
 ; Procedure and type-definition names
@@ -74,6 +77,7 @@
 (module_import_name name: (identifier) @variable)
 (module_export_name name: (identifier) @variable)
 (assign_target name: (identifier) @variable)
+(loop_stmt binder: (identifier) @variable)
 (param name: (identifier) @variable.parameter)
 (type_field name: (identifier) @property)
 
@@ -88,6 +92,8 @@
 (output_segment
   name: (identifier) @variable.builtin)
 (text_segment) @string
+(condition_text_segment) @string
+(condition_colon_segment) @string
 
 ; ----------------------------------------------------------------
 ; Type expressions

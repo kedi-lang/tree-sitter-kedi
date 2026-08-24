@@ -36,6 +36,7 @@ module.exports = grammar({
     $._dedent,
     $._text,
     $._text_in_call,
+    $._condition_text,
     $._fenced_body,
     $._fenced_newline,
     $._system_angle_segment,
@@ -101,6 +102,10 @@ module.exports = grammar({
         $.profile_directive,
         $.use_directive,
         $.assign_stmt,
+        $.if_stmt,
+        $.else_clause,
+        $.loop_stmt,
+        $.conditional_loop_stmt,
         $.assign_block_stmt,
         $.raw_invoke_stmt,
         $.return_stmt,
@@ -261,6 +266,10 @@ module.exports = grammar({
         $.artifacts_directive,
         $.use_directive,
         $.assign_stmt,
+        $.if_stmt,
+        $.else_clause,
+        $.loop_stmt,
+        $.conditional_loop_stmt,
         $.assign_block_stmt,
         $.raw_invoke_stmt,
         $.return_stmt,
@@ -362,6 +371,74 @@ module.exports = grammar({
       ),
 
     backtick_line_stmt: ($) => seq($.inline_python_expr, $._newline),
+
+    // ============================================================
+    // Deterministic control flow
+    // ============================================================
+    if_stmt: ($) =>
+      choice(
+        prec(
+          2,
+          seq(
+            ">",
+            "if",
+            ":",
+            field("condition", $.inline_python_expr),
+            ":",
+            $._newline,
+            field("consequence", $.block),
+          ),
+        ),
+        seq(
+          ">",
+          "if",
+          ":",
+          field("condition", $.condition_template_expr),
+          $._newline,
+          field("consequence", $.block),
+        ),
+      ),
+
+    else_clause: ($) =>
+      seq(">", "else", ":", $._newline, field("body", $.block)),
+
+    loop_stmt: ($) =>
+      seq(
+        ">",
+        "loop",
+        "[",
+        field("binder", $.identifier),
+        "]",
+        ":",
+        field("iterable", $.inline_python_expr),
+        ":",
+        $._newline,
+        field("body", $.block),
+      ),
+
+    conditional_loop_stmt: ($) =>
+      choice(
+        prec(
+          2,
+          seq(
+            ">",
+            "loop",
+            ":",
+            field("condition", $.inline_python_expr),
+            ":",
+            $._newline,
+            field("body", $.block),
+          ),
+        ),
+        seq(
+          ">",
+          "loop",
+          ":",
+          field("condition", $.condition_template_expr),
+          $._newline,
+          field("body", $.block),
+        ),
+      ),
 
     // ============================================================
     // Fenced Python blocks
@@ -470,6 +547,34 @@ module.exports = grammar({
       ),
 
     template_prompt_expr: ($) => repeat1($._segment),
+
+    // Claim conditions share Kedi's native template vocabulary. Output
+    // segments remain parseable here so the AST layer can report the
+    // precise K-CONDITION-OUTPUT diagnostic instead of a generic ERROR.
+    condition_template_expr: ($) =>
+      repeat1(
+        choice(
+          $._condition_segment,
+          // A colon is ordinary claim text only when another segment
+          // follows it. A terminal colon belongs exclusively to the
+          // deterministic ``> if/loop: `expr`:`` forms above.
+          seq($.condition_colon_segment, $._condition_segment),
+        ),
+      ),
+
+    _condition_segment: ($) =>
+      choice(
+        $.input_segment,
+        $.call_segment,
+        $.python_expr_segment,
+        $.inline_python_expr,
+        $.output_segment,
+        $.condition_text_segment,
+      ),
+
+    condition_text_segment: ($) => $._condition_text,
+
+    condition_colon_segment: ($) => token(seq(":", /[ \t]*/)),
 
     _segment: ($) =>
       choice(

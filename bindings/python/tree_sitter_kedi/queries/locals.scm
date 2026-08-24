@@ -34,6 +34,7 @@
 (type_field name: (identifier) @local.definition.field)
 (param name: (identifier) @local.definition.parameter)
 (assign_target name: (identifier) @local.definition.var)
+(loop_stmt binder: (identifier) @local.definition.var)
 (output_segment name: (identifier) @local.definition.var)
 
 ; ----------------------------------------------------------------
