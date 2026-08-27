@@ -92,6 +92,7 @@ module.exports = grammar({
         $.model_directive,
         $.effort_directive,
         $.approval_directive,
+        $.hooks_directive,
         $.history_directive,
         $.skills_directive,
         $.codemode_directive,
@@ -260,6 +261,7 @@ module.exports = grammar({
         $.model_directive,
         $.effort_directive,
         $.approval_directive,
+        $.hooks_directive,
         $.history_directive,
         $.skills_directive,
         $.codemode_directive,
@@ -807,6 +809,37 @@ module.exports = grammar({
 
     _approval_plain_value: ($) => token(/[^\n`]+/),
 
+    hooks_directive: ($) =>
+      choice(
+        seq(
+          ">",
+          "hooks",
+          ":",
+          optional(/[ \t]+/),
+          field("value", alias($._hooks_plain_value, $.hooks_plain_value)),
+          $._newline,
+        ),
+        seq(">", "hooks", ":", $._newline, field("body", $.hooks_body)),
+      ),
+
+    _hooks_plain_value: ($) => token(/[^\n`#]+/),
+
+    hooks_body: ($) =>
+      seq(
+        $._indent,
+        repeat1(choice($.hooks_field, $._newline)),
+        $._dedent,
+      ),
+
+    hooks_field: ($) =>
+      seq(
+        field("name", $.identifier),
+        ":",
+        optional(/[ \t]+/),
+        field("value", $.inline_python_expr),
+        $._newline,
+      ),
+
     history_directive: ($) =>
       choice(
         seq(
@@ -1005,7 +1038,7 @@ module.exports = grammar({
     profile_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.history_directive, $.skills_directive, $.codemode_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $._newline)),
+        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.hooks_directive, $.history_directive, $.skills_directive, $.codemode_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $._newline)),
         $._dedent,
       ),
 

@@ -129,6 +129,15 @@
   value: (history_plain_value) @string)
 (history_directive "history" @keyword)
 
+(hooks_directive
+  ">" @operator)
+(hooks_directive "hooks" @keyword)
+(hooks_plain_value) @constant.builtin
+(hooks_field
+  name: (identifier) @property)
+(hooks_field
+  value: (inline_python_expr) @string.special)
+
 (skills_directive
   ">" @operator)
 (skills_directive "skills" @keyword)

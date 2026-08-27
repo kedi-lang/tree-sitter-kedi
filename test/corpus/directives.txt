@@ -273,6 +273,48 @@ Skills policy in lexical scopes
           (text_segment))))))
 
 ==================
+Hook policy in lexical scopes
+==================
+
+> hooks:
+  user_prompt_submit: `redact_pii`
+  pre_tool_use: `[validate_path, audit_call]`
+
+> profile: audited:
+  > hooks: disabled
+
+@run():
+  > hooks: enabled
+  = done
+
+---
+
+(source_file
+  (hooks_directive
+    body: (hooks_body
+      (hooks_field
+        name: (identifier)
+        value: (inline_python_expr
+          code: (python_inline_body)))
+      (hooks_field
+        name: (identifier)
+        value: (inline_python_expr
+          code: (python_inline_body)))))
+  (profile_directive
+    name: (identifier)
+    body: (profile_body
+      (hooks_directive
+        value: (hooks_plain_value))))
+  (procedure_def
+    name: (identifier)
+    body: (block
+      (hooks_directive
+        value: (hooks_plain_value))
+      (return_stmt
+        value: (template_expr
+          (text_segment))))))
+
+==================
 Auto directive in procedure body
 ==================
 
