@@ -102,11 +102,14 @@ module.exports = grammar({
         $.profile_directive,
         $.use_directive,
         $.assign_stmt,
+        $.reassign_stmt,
         $.if_stmt,
         $.else_clause,
         $.loop_stmt,
+        $.map_clause,
         $.conditional_loop_stmt,
         $.assign_block_stmt,
+        $.reassign_block_stmt,
         $.raw_invoke_stmt,
         $.return_stmt,
         $.return_block_stmt,
@@ -266,11 +269,14 @@ module.exports = grammar({
         $.artifacts_directive,
         $.use_directive,
         $.assign_stmt,
+        $.reassign_stmt,
         $.if_stmt,
         $.else_clause,
         $.loop_stmt,
+        $.map_clause,
         $.conditional_loop_stmt,
         $.assign_block_stmt,
+        $.reassign_block_stmt,
         $.raw_invoke_stmt,
         $.return_stmt,
         $.return_block_stmt,
@@ -347,6 +353,19 @@ module.exports = grammar({
         $._newline,
       ),
 
+    reassign_stmt: ($) =>
+      prec(
+        3,
+        seq(
+          "[",
+          field("name", $.identifier),
+          "]",
+          ":=",
+          field("rhs", choice($.inline_python_expr, $.template_expr)),
+          $._newline,
+        ),
+      ),
+
     raw_invoke_stmt: ($) =>
       seq(
         field("target", $.assign_target),
@@ -416,6 +435,9 @@ module.exports = grammar({
         field("body", $.block),
       ),
 
+    map_clause: ($) =>
+      seq(">", "map", ":", $._newline, field("body", $.block)),
+
     conditional_loop_stmt: ($) =>
       choice(
         prec(
@@ -472,6 +494,22 @@ module.exports = grammar({
         field("code", $.python_code),
         "```",
         $._newline,
+      ),
+
+    reassign_block_stmt: ($) =>
+      prec(
+        3,
+        seq(
+          "[",
+          field("name", $.identifier),
+          "]",
+          ":=",
+          "```",
+          $._fenced_newline,
+          field("code", $.python_code),
+          "```",
+          $._newline,
+        ),
       ),
 
     return_block_stmt: ($) =>
@@ -551,16 +589,7 @@ module.exports = grammar({
     // Claim conditions share Kedi's native template vocabulary. Output
     // segments remain parseable here so the AST layer can report the
     // precise K-CONDITION-OUTPUT diagnostic instead of a generic ERROR.
-    condition_template_expr: ($) =>
-      repeat1(
-        choice(
-          $._condition_segment,
-          // A colon is ordinary claim text only when another segment
-          // follows it. A terminal colon belongs exclusively to the
-          // deterministic ``> if/loop: `expr`:`` forms above.
-          seq($.condition_colon_segment, $._condition_segment),
-        ),
-      ),
+    condition_template_expr: ($) => repeat1($._condition_segment),
 
     _condition_segment: ($) =>
       choice(
@@ -573,8 +602,6 @@ module.exports = grammar({
       ),
 
     condition_text_segment: ($) => $._condition_text,
-
-    condition_colon_segment: ($) => token(seq(":", /[ \t]*/)),
 
     _segment: ($) =>
       choice(

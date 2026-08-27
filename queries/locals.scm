@@ -46,3 +46,5 @@
 (type_ref name: (identifier) @local.reference)
 (type_apply name: (identifier) @local.reference)
 (eval_metric dataset: (identifier) @local.reference)
+(reassign_stmt name: (identifier) @local.reference)
+(reassign_block_stmt name: (identifier) @local.reference)

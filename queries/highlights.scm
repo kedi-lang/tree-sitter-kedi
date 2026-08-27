@@ -25,6 +25,7 @@
 
 ["@" "~" "<" ">"] @punctuation.special
 ["=" ":" "(" ")" "[" "]" "," "|" "->" "*"] @punctuation.delimiter
+":=" @operator
 ["```"] @punctuation.special
 "`" @punctuation.special
 
@@ -61,6 +62,7 @@
 "if" @keyword
 "else" @keyword
 "loop" @keyword
+"map" @keyword
 
 ; ----------------------------------------------------------------
 ; Procedure and type-definition names
@@ -77,6 +79,8 @@
 (module_import_name name: (identifier) @variable)
 (module_export_name name: (identifier) @variable)
 (assign_target name: (identifier) @variable)
+(reassign_stmt name: (identifier) @variable)
+(reassign_block_stmt name: (identifier) @variable)
 (loop_stmt binder: (identifier) @variable)
 (param name: (identifier) @variable.parameter)
 (type_field name: (identifier) @property)
@@ -93,7 +97,6 @@
   name: (identifier) @variable.builtin)
 (text_segment) @string
 (condition_text_segment) @string
-(condition_colon_segment) @string
 
 ; ----------------------------------------------------------------
 ; Type expressions

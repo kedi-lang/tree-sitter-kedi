@@ -193,3 +193,63 @@ Conditional loops and template conditions
           name: (identifier))
         rhs: (template_expr
           (text_segment))))))
+
+==================
+Reassignment expressions and fenced values
+==================
+
+[value: int] = `1`
+[value] := `2`
+[value] := ```
+return 3
+```
+
+---
+
+(source_file
+  (assign_stmt
+    (assign_target
+      (identifier)
+      (type_expr
+        (type_ref
+          (identifier))))
+    (inline_python_expr
+      (python_inline_body)))
+  (reassign_stmt
+    (identifier)
+    (inline_python_expr
+      (python_inline_body)))
+  (reassign_block_stmt
+    (identifier)
+    (python_code)))
+
+==================
+Loop map continuation
+==================
+
+> loop [item]: `items`:
+  [doubled: int] = `item * 2`
+> map:
+  `results.append(doubled)`
+
+---
+
+(source_file
+  (loop_stmt
+    (identifier)
+    (inline_python_expr
+      (python_inline_body))
+    (block
+      (assign_stmt
+        (assign_target
+          (identifier)
+          (type_expr
+            (type_ref
+              (identifier))))
+        (inline_python_expr
+          (python_inline_body)))))
+  (map_clause
+    (block
+      (backtick_line_stmt
+        (inline_python_expr
+          (python_inline_body))))))

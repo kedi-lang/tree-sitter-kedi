@@ -277,6 +277,19 @@ static TextScanResult scan_text_run(
             continue;
         }
 
+        if (!condition_mode && c == ':') {
+            // Ordinary colons belong to template text. Only ``:=`` starts a
+            // reassignment token, so look ahead without consuming it into
+            // the current text run.
+            lexer->mark_end(lexer);
+            advance(lexer);
+            if (lexer->lookahead == '=') {
+                return seen_text ? TEXT_SCAN_TEXT : TEXT_SCAN_NONE;
+            }
+            seen_text = true;
+            continue;
+        }
+
         if (c == ' ' || c == '\t') {
             advance(lexer);
             continue;
@@ -339,6 +352,7 @@ static TextScanResult scan_text_run(
     }
     // Whitespace-only lines are blank lines, never template text. Horizontal
     // whitespace is an extra and remains valid after a real text segment.
+    if (seen_text) lexer->mark_end(lexer);
     return seen_text ? TEXT_SCAN_TEXT : TEXT_SCAN_NONE;
 }
 
