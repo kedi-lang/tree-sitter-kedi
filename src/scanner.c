@@ -279,7 +279,7 @@ static TextScanResult scan_text_run(
 
         if (!condition_mode && c == ':') {
             // Ordinary colons belong to template text. Only ``:=`` starts a
-            // reassignment token, so look ahead without consuming it into
+            // assignment token, so look ahead without consuming it into
             // the current text run.
             lexer->mark_end(lexer);
             advance(lexer);

@@ -39,7 +39,7 @@ value = 3
       code: (python_inline_body))))
 
 ==================
-Assignment with fenced Python block RHS
+Variable initialization with fenced Python block RHS
 ==================
 
 @stats(numbers: list[int]) -> int:
@@ -66,8 +66,8 @@ Assignment with fenced Python block RHS
       (type_ref
         name: (identifier)))
     body: (block
-      (assign_block_stmt
-        (assign_target
+      (variable_init_block_stmt
+        (binding_target
           name: (identifier)
           type: (type_expr
             (type_ref
@@ -153,12 +153,12 @@ Multiple fenced blocks
   (procedure_def
     name: (identifier)
     body: (block
-      (assign_block_stmt
-        (assign_target
+      (variable_init_block_stmt
+        (binding_target
           name: (identifier))
         code: (python_code))
-      (assign_block_stmt
-        (assign_target
+      (variable_init_block_stmt
+        (binding_target
           name: (identifier))
         code: (python_code))
       (return_stmt

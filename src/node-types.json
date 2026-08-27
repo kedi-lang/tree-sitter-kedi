@@ -50,11 +50,11 @@
         "named": true
       },
       {
-        "type": "assign_block_stmt",
+        "type": "assignment_block_stmt",
         "named": true
       },
       {
-        "type": "assign_stmt",
+        "type": "assignment_stmt",
         "named": true
       },
       {
@@ -122,14 +122,6 @@
         "named": true
       },
       {
-        "type": "reassign_block_stmt",
-        "named": true
-      },
-      {
-        "type": "reassign_stmt",
-        "named": true
-      },
-      {
         "type": "return_block_stmt",
         "named": true
       },
@@ -164,6 +156,14 @@
       {
         "type": "use_directive",
         "named": true
+      },
+      {
+        "type": "variable_init_block_stmt",
+        "named": true
+      },
+      {
+        "type": "variable_init_stmt",
+        "named": true
       }
     ]
   },
@@ -188,11 +188,11 @@
         "named": true
       },
       {
-        "type": "assign_block_stmt",
+        "type": "assignment_block_stmt",
         "named": true
       },
       {
-        "type": "assign_stmt",
+        "type": "assignment_stmt",
         "named": true
       },
       {
@@ -268,14 +268,6 @@
         "named": true
       },
       {
-        "type": "reassign_block_stmt",
-        "named": true
-      },
-      {
-        "type": "reassign_stmt",
-        "named": true
-      },
-      {
         "type": "return_block_stmt",
         "named": true
       },
@@ -313,6 +305,14 @@
       },
       {
         "type": "validation_block",
+        "named": true
+      },
+      {
+        "type": "variable_init_block_stmt",
+        "named": true
+      },
+      {
+        "type": "variable_init_stmt",
         "named": true
       }
     ]
@@ -532,7 +532,7 @@
     "fields": {}
   },
   {
-    "type": "assign_block_stmt",
+    "type": "assignment_block_stmt",
     "named": true,
     "fields": {
       "code": {
@@ -544,51 +544,21 @@
             "named": true
           }
         ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "assign_target",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "assign_stmt",
-    "named": true,
-    "fields": {
-      "rhs": {
+      },
+      "name": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "inline_python_expr",
-            "named": true
-          },
-          {
-            "type": "template_expr",
+            "type": "identifier",
             "named": true
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "assign_target",
-          "named": true
-        }
-      ]
     }
   },
   {
-    "type": "assign_target",
+    "type": "assignment_stmt",
     "named": true,
     "fields": {
       "name": {
@@ -601,12 +571,16 @@
           }
         ]
       },
-      "type": {
+      "rhs": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
-            "type": "type_expr",
+            "type": "inline_python_expr",
+            "named": true
+          },
+          {
+            "type": "template_expr",
             "named": true
           }
         ]
@@ -657,6 +631,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "binding_target",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_expr",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -1916,63 +1916,7 @@
         "required": true,
         "types": [
           {
-            "type": "assign_target",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "reassign_block_stmt",
-    "named": true,
-    "fields": {
-      "code": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "python_code",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "reassign_stmt",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "rhs": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "inline_python_expr",
-            "named": true
-          },
-          {
-            "type": "template_expr",
+            "type": "binding_target",
             "named": true
           }
         ]
@@ -2799,6 +2743,62 @@
         },
         {
           "type": "test_case",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "variable_init_block_stmt",
+    "named": true,
+    "fields": {
+      "code": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "python_code",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "binding_target",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "variable_init_stmt",
+    "named": true,
+    "fields": {
+      "rhs": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "inline_python_expr",
+            "named": true
+          },
+          {
+            "type": "template_expr",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "binding_target",
           "named": true
         }
       ]

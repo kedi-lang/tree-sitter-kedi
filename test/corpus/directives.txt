@@ -138,7 +138,7 @@ History policy in lexical scopes
       (history_directive
         value: (history_plain_value))
       (raw_invoke_stmt
-        target: (assign_target
+        target: (binding_target
           name: (identifier))
         prompt: (template_prompt_expr
           (text_segment)))

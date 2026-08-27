@@ -46,8 +46,8 @@ Call segment with var argument
       (param
         name: (identifier)))
     body: (block
-      (assign_stmt
-        (assign_target
+      (variable_init_stmt
+        (binding_target
           name: (identifier)
           type: (type_expr
             (type_ref
@@ -82,8 +82,8 @@ Call with literal text argument and nested call
       (param
         name: (identifier)))
     body: (block
-      (assign_stmt
-        (assign_target
+      (variable_init_stmt
+        (binding_target
           name: (identifier))
         rhs: (template_expr
           (call_segment
@@ -216,8 +216,8 @@ Assign target distinguishable from template line starting with output
   (procedure_def
     name: (identifier)
     body: (block
-      (assign_stmt
-        (assign_target
+      (variable_init_stmt
+        (binding_target
           name: (identifier))
         rhs: (template_expr
           (text_segment)))
@@ -428,7 +428,7 @@ Whitespace-only procedure line is blank
             name: (identifier)))))))
 
 ==================
-Top-level assignment and top-level return
+Top-level variable initialization and top-level return
 ==================
 
 [global_city: str] = Paris
@@ -437,8 +437,8 @@ Top-level assignment and top-level return
 ---
 
 (source_file
-  (assign_stmt
-    (assign_target
+  (variable_init_stmt
+    (binding_target
       name: (identifier)
       type: (type_expr
         (type_ref

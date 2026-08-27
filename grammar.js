@@ -13,7 +13,7 @@
 module.exports = grammar({
   name: "kedi",
 
-  // `template_block_stmt` continuation lines and `[name] = …` assignments
+  // `template_block_stmt` continuation lines and `[name] = …` initializations
   // share a `[` prefix; disambiguation needs the `=` after the target.
   conflicts: ($) => [[$.template_block_stmt]],
 
@@ -101,15 +101,15 @@ module.exports = grammar({
         $.artifacts_directive,
         $.profile_directive,
         $.use_directive,
-        $.assign_stmt,
-        $.reassign_stmt,
+        $.variable_init_stmt,
+        $.assignment_stmt,
         $.if_stmt,
         $.else_clause,
         $.loop_stmt,
         $.map_clause,
         $.conditional_loop_stmt,
-        $.assign_block_stmt,
-        $.reassign_block_stmt,
+        $.variable_init_block_stmt,
+        $.assignment_block_stmt,
         $.raw_invoke_stmt,
         $.return_stmt,
         $.return_block_stmt,
@@ -268,15 +268,15 @@ module.exports = grammar({
         $.settings_directive,
         $.artifacts_directive,
         $.use_directive,
-        $.assign_stmt,
-        $.reassign_stmt,
+        $.variable_init_stmt,
+        $.assignment_stmt,
         $.if_stmt,
         $.else_clause,
         $.loop_stmt,
         $.map_clause,
         $.conditional_loop_stmt,
-        $.assign_block_stmt,
-        $.reassign_block_stmt,
+        $.variable_init_block_stmt,
+        $.assignment_block_stmt,
         $.raw_invoke_stmt,
         $.return_stmt,
         $.return_block_stmt,
@@ -343,17 +343,17 @@ module.exports = grammar({
     type_string: (_$) => token(choice(/"([^"\\\n]|\\.)*"/, /'([^'\\\n]|\\.)*'/)),
 
     // ============================================================
-    // Assignment & return
+    // Variable initialization, assignment & return
     // ============================================================
-    assign_stmt: ($) =>
+    variable_init_stmt: ($) =>
       seq(
-        $.assign_target,
+        $.binding_target,
         "=",
         field("rhs", choice($.inline_python_expr, $.template_expr)),
         $._newline,
       ),
 
-    reassign_stmt: ($) =>
+    assignment_stmt: ($) =>
       prec(
         3,
         seq(
@@ -368,13 +368,13 @@ module.exports = grammar({
 
     raw_invoke_stmt: ($) =>
       seq(
-        field("target", $.assign_target),
+        field("target", $.binding_target),
         "<<",
         field("prompt", $.template_prompt_expr),
         $._newline,
       ),
 
-    assign_target: ($) =>
+    binding_target: ($) =>
       seq(
         "[",
         field("name", $.identifier),
@@ -485,9 +485,9 @@ module.exports = grammar({
     python_block: ($) =>
       seq("```", $._fenced_newline, field("code", $.python_code), "```", $._newline),
 
-    assign_block_stmt: ($) =>
+    variable_init_block_stmt: ($) =>
       seq(
-        $.assign_target,
+        $.binding_target,
         "=",
         "```",
         $._fenced_newline,
@@ -496,7 +496,7 @@ module.exports = grammar({
         $._newline,
       ),
 
-    reassign_block_stmt: ($) =>
+    assignment_block_stmt: ($) =>
       prec(
         3,
         seq(
@@ -553,7 +553,7 @@ module.exports = grammar({
 
     template_line: ($) => seq($.template_expr, $._newline),
 
-    // In an assignment or return a sole `python` expression remains a
+    // In an initialization, assignment, or return a sole `python` expression remains a
     // native value. Bare expressions therefore enter a regular template
     // expression only alongside another segment. `>>` and `<<` have an
     // unambiguous prompt introducer and use template_prompt_expr instead.

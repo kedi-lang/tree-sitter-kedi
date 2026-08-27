@@ -11,7 +11,7 @@
 ;   - Type-field names within a `~Type(...)` definition.
 ;   - Parameter names within a `procedure_def`.
 ;   - Output-placeholder names (variables produced by the LLM call).
-;   - Assignment-target names.
+;   - Variable-initialization target names.
 ;
 ; References:
 ;   - `<input>` segment names.
@@ -33,7 +33,7 @@
 (type_def name: (identifier) @local.definition.type)
 (type_field name: (identifier) @local.definition.field)
 (param name: (identifier) @local.definition.parameter)
-(assign_target name: (identifier) @local.definition.var)
+(binding_target name: (identifier) @local.definition.var)
 (loop_stmt binder: (identifier) @local.definition.var)
 (output_segment name: (identifier) @local.definition.var)
 
@@ -46,5 +46,5 @@
 (type_ref name: (identifier) @local.reference)
 (type_apply name: (identifier) @local.reference)
 (eval_metric dataset: (identifier) @local.reference)
-(reassign_stmt name: (identifier) @local.reference)
-(reassign_block_stmt name: (identifier) @local.reference)
+(assignment_stmt name: (identifier) @local.reference)
+(assignment_block_stmt name: (identifier) @local.reference)

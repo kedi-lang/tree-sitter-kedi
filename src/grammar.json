@@ -104,11 +104,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "assign_stmt"
+          "name": "variable_init_stmt"
         },
         {
           "type": "SYMBOL",
-          "name": "reassign_stmt"
+          "name": "assignment_stmt"
         },
         {
           "type": "SYMBOL",
@@ -132,11 +132,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "assign_block_stmt"
+          "name": "variable_init_block_stmt"
         },
         {
           "type": "SYMBOL",
-          "name": "reassign_block_stmt"
+          "name": "assignment_block_stmt"
         },
         {
           "type": "SYMBOL",
@@ -901,11 +901,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "assign_stmt"
+          "name": "variable_init_stmt"
         },
         {
           "type": "SYMBOL",
-          "name": "reassign_stmt"
+          "name": "assignment_stmt"
         },
         {
           "type": "SYMBOL",
@@ -929,11 +929,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "assign_block_stmt"
+          "name": "variable_init_block_stmt"
         },
         {
           "type": "SYMBOL",
-          "name": "reassign_block_stmt"
+          "name": "assignment_block_stmt"
         },
         {
           "type": "SYMBOL",
@@ -1273,12 +1273,12 @@
         ]
       }
     },
-    "assign_stmt": {
+    "variable_init_stmt": {
       "type": "SEQ",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "assign_target"
+          "name": "binding_target"
         },
         {
           "type": "STRING",
@@ -1307,7 +1307,7 @@
         }
       ]
     },
-    "reassign_stmt": {
+    "assignment_stmt": {
       "type": "PREC",
       "value": 3,
       "content": {
@@ -1365,7 +1365,7 @@
           "name": "target",
           "content": {
             "type": "SYMBOL",
-            "name": "assign_target"
+            "name": "binding_target"
           }
         },
         {
@@ -1386,7 +1386,7 @@
         }
       ]
     },
-    "assign_target": {
+    "binding_target": {
       "type": "SEQ",
       "members": [
         {
@@ -1793,12 +1793,12 @@
         }
       ]
     },
-    "assign_block_stmt": {
+    "variable_init_block_stmt": {
       "type": "SEQ",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "assign_target"
+          "name": "binding_target"
         },
         {
           "type": "STRING",
@@ -1830,7 +1830,7 @@
         }
       ]
     },
-    "reassign_block_stmt": {
+    "assignment_block_stmt": {
       "type": "PREC",
       "value": 3,
       "content": {

@@ -16,8 +16,8 @@ Top-level if else and loop
 ---
 
 (source_file
-  (assign_stmt
-    (assign_target
+  (variable_init_stmt
+    (binding_target
       name: (identifier)
       type: (type_expr
         (type_ref
@@ -28,15 +28,15 @@ Top-level if else and loop
     condition: (inline_python_expr
       code: (python_inline_body))
     consequence: (block
-      (assign_stmt
-        (assign_target
+      (variable_init_stmt
+        (binding_target
           name: (identifier))
         rhs: (template_expr
           (text_segment)))))
   (else_clause
     body: (block
-      (assign_stmt
-        (assign_target
+      (variable_init_stmt
+        (binding_target
           name: (identifier))
         rhs: (template_expr
           (text_segment)))))
@@ -121,8 +121,8 @@ Adjacent control-flow statements
     condition: (inline_python_expr
       code: (python_inline_body))
     consequence: (block
-      (assign_stmt
-        (assign_target
+      (variable_init_stmt
+        (binding_target
           name: (identifier))
         rhs: (template_expr
           (text_segment)))))
@@ -131,8 +131,8 @@ Adjacent control-flow statements
     iterable: (inline_python_expr
       code: (python_inline_body))
     body: (block
-      (assign_stmt
-        (assign_target
+      (variable_init_stmt
+        (binding_target
           name: (identifier))
         rhs: (template_expr
           (input_segment
@@ -160,8 +160,8 @@ Conditional loops and template conditions
         name: (identifier))
       (condition_text_segment))
     consequence: (block
-      (assign_stmt
-        (assign_target
+      (variable_init_stmt
+        (binding_target
           name: (identifier))
         rhs: (template_expr
           (text_segment)))))
@@ -170,8 +170,8 @@ Conditional loops and template conditions
       (inline_python_expr
         code: (python_inline_body)))
     consequence: (block
-      (assign_stmt
-        (assign_target
+      (variable_init_stmt
+        (binding_target
           name: (identifier))
         rhs: (template_expr
           (text_segment)))))
@@ -188,14 +188,14 @@ Conditional loops and template conditions
         name: (identifier))
       (condition_text_segment))
     body: (block
-      (assign_stmt
-        (assign_target
+      (variable_init_stmt
+        (binding_target
           name: (identifier))
         rhs: (template_expr
           (text_segment))))))
 
 ==================
-Reassignment expressions and fenced values
+Assignment expressions and fenced values
 ==================
 
 [value: int] = `1`
@@ -207,19 +207,19 @@ return 3
 ---
 
 (source_file
-  (assign_stmt
-    (assign_target
+  (variable_init_stmt
+    (binding_target
       (identifier)
       (type_expr
         (type_ref
           (identifier))))
     (inline_python_expr
       (python_inline_body)))
-  (reassign_stmt
+  (assignment_stmt
     (identifier)
     (inline_python_expr
       (python_inline_body)))
-  (reassign_block_stmt
+  (assignment_block_stmt
     (identifier)
     (python_code)))
 
@@ -240,8 +240,8 @@ Loop map continuation
     (inline_python_expr
       (python_inline_body))
     (block
-      (assign_stmt
-        (assign_target
+      (variable_init_stmt
+        (binding_target
           (identifier)
           (type_expr
             (type_ref
