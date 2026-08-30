@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=77", "wheel"]
+requires = ["setuptools==84.0.0", "wheel==0.48.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -14,7 +14,7 @@ authors = [
   { name = "Doğukan Yiğit Polat", email = "yigit@neurograph.net" },
   { name = "Mert Sırakaya",        email = "mert@kedi-lang.org" },
 ]
-dependencies = ["tree-sitter>=0.25"]
+dependencies = ["tree-sitter==0.25.2"]
 keywords = ["kedi", "tree-sitter", "parser", "dsl"]
 classifiers = [
   "Programming Language :: Python :: 3",

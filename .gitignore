@@ -1,6 +1,5 @@
 node_modules/
 .venv/
-uv.lock
 build/
 dist/
 *.egg-info/
