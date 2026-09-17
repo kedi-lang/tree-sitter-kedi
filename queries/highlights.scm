@@ -208,6 +208,10 @@
   value: (artifacts_plain_value) @string)
 (artifacts_field
   value: (inline_python_expr) @string.special)
+(artifacts_field
+  name: (identifier) @_query_artifacts
+  value: (artifacts_plain_value) @constant.builtin
+  (#eq? @_query_artifacts "query_artifacts"))
 
 ; ----------------------------------------------------------------
 ; Python source embedded in Kedi (these regions get a Python
