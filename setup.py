@@ -13,6 +13,7 @@ extension declaration (which pyproject.toml currently doesn't ergonomically
 support as a single TOML stanza).
 """
 
+import sys
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -37,10 +38,9 @@ setup(
             include_dirs=["src"],
             # Match the warning settings the tree-sitter CLI uses when
             # compiling parser.c so we don't surface noise on user installs.
-            extra_compile_args=[
-                "-std=c11",
-                "-fPIC",
-            ],
+            extra_compile_args=(
+                [] if sys.platform == "win32" else ["-std=c11", "-fPIC"]
+            ),
         ),
     ],
 )

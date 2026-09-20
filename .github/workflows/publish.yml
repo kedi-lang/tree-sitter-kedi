@@ -14,13 +14,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  publish:
-    name: Build And Publish Workspace
+  validate:
+    name: Validate Release
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      id-token: write
 
     steps:
       - name: Check Out Repository
@@ -29,7 +25,7 @@ jobs:
       - name: Set Up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
-          python-version: "3.11"
+          python-version: "3.13"
 
       - name: Set Up uv
         uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
@@ -37,15 +33,113 @@ jobs:
           enable-cache: true
           version: "0.11.21"
 
-      - name: Validate Release
+      - name: Check Version Consistency
+        run: >-
+          python -c "import json, os, pathlib, tomllib;
+          pyproject = tomllib.loads(pathlib.Path('pyproject.toml').read_text())['project']['version'];
+          package = json.loads(pathlib.Path('package.json').read_text())['version'];
+          assert pyproject == package, (pyproject, package);
+          tag = os.environ.get('GITHUB_REF_NAME') if os.environ.get('GITHUB_REF_TYPE') == 'tag' else None;
+          assert tag is None or tag == f'v{pyproject}', (tag, pyproject)"
+
+      - name: Run Tests
         run: |
           uv sync --locked --all-extras
           npm ci
           npm test
 
-      - name: Build And Publish Root Project
-        shell: bash
-        run: |
-          rm -rf dist
-          uv build --sdist
-          uv publish dist/*
+  build-sdist:
+    name: Build Source Distribution
+    needs: validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check Out Repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Set Up uv
+        uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
+        with:
+          version: "0.11.21"
+
+      - name: Build Source Distribution
+        run: uv build --sdist --out-dir dist
+
+      - name: Upload Source Distribution
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: distribution-sdist
+          path: dist/*
+          if-no-files-found: error
+
+  build-wheels:
+    name: Build Wheel (${{ matrix.os }})
+    needs: validate
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+          - windows-latest
+          - windows-11-arm
+          - macos-15-intel
+          - macos-14
+
+    steps:
+      - name: Check Out Repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Set Up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.13"
+
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==4.1.1
+
+      - name: Build And Test Wheels
+        run: python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_BUILD: "cp310-* cp311-* cp312-* cp313-* cp314-*"
+          CIBW_TEST_REQUIRES: "tree-sitter==0.25.2"
+          CIBW_TEST_COMMAND: >-
+            python -c "from tree_sitter import Language, Parser;
+            import tree_sitter_kedi;
+            tree = Parser(Language(tree_sitter_kedi.language())).parse(b'= ready');
+            assert not tree.root_node.has_error"
+
+      - name: Upload Wheels
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: distribution-wheels-${{ strategy.job-index }}
+          path: wheelhouse/*.whl
+          if-no-files-found: error
+
+  publish:
+    name: Publish To PyPI
+    needs:
+      - build-sdist
+      - build-wheels
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Download Distributions
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: distribution-*
+          path: dist
+          merge-multiple: true
+
+      - name: Set Up uv
+        uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
+        with:
+          version: "0.11.21"
+
+      - name: Publish Distributions
+        run: uv publish dist/*
