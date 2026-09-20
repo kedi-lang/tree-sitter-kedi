@@ -38,9 +38,7 @@ setup(
             include_dirs=["src"],
             # Match the warning settings the tree-sitter CLI uses when
             # compiling parser.c so we don't surface noise on user installs.
-            extra_compile_args=(
-                [] if sys.platform == "win32" else ["-std=c11", "-fPIC"]
-            ),
+            extra_compile_args=([] if sys.platform == "win32" else ["-std=c11", "-fPIC"]),
         ),
     ],
 )
