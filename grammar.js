@@ -744,6 +744,16 @@ module.exports = grammar({
           ":",
           optional(/[ \t]+/),
           field("value", choice($.inline_python_expr, alias($._adapter_plain_value, $.adapter_plain_value))),
+          ":",
+          $._newline,
+          field("body", $.agent_body),
+        ),
+        seq(
+          ">",
+          "agent",
+          ":",
+          optional(/[ \t]+/),
+          field("value", choice($.inline_python_expr, alias($._adapter_plain_value, $.adapter_plain_value))),
           $._newline,
         ),
         seq(
@@ -756,6 +766,21 @@ module.exports = grammar({
       ),
 
     agent_body: ($) =>
+      seq(
+        $._indent,
+        repeat1(choice($.agent_field, $.agent_section, $._newline)),
+        $._dedent,
+      ),
+
+    agent_section: ($) =>
+      seq(
+        field("name", $.identifier),
+        ":",
+        $._newline,
+        field("body", $.agent_section_body),
+      ),
+
+    agent_section_body: ($) =>
       seq(
         $._indent,
         repeat1(choice($.agent_field, $._newline)),
@@ -781,7 +806,7 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _adapter_plain_value: ($) => token(/[^\n`]+/),
+    _adapter_plain_value: ($) => token(/[^\n`:#]+/),
 
     _agent_command_plain_value: ($) => token(/[^\n`#]+/),
 

@@ -364,11 +364,6 @@
     }
   },
   {
-    "type": "adapter_plain_value",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "agent_body",
     "named": true,
     "fields": {},
@@ -378,6 +373,10 @@
       "types": [
         {
           "type": "agent_field",
+          "named": true
+        },
+        {
+          "type": "agent_section",
           "named": true
         }
       ]
@@ -446,6 +445,47 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "agent_section",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "agent_section_body",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "agent_section_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "agent_field",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2979,6 +3019,10 @@
   {
     "type": "adapter",
     "named": false
+  },
+  {
+    "type": "adapter_plain_value",
+    "named": true
   },
   {
     "type": "agent",

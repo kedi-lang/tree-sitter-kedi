@@ -537,3 +537,41 @@ Profile subagent directive
         value: (positive_integer))
       (workflow_directive
         value: (identifier)))))
+
+==================
+Typed A2A agent connection
+==================
+
+> agent: a2a:
+  endpoint: https://example.com/agent
+  auth:
+    scheme: basic
+    username: kedi
+    password_env: A2A_PASSWORD
+  task_timeout: `120.0`
+
+---
+
+(source_file
+  (agent_directive
+    value: (adapter_plain_value)
+    body: (agent_body
+      (agent_field
+        name: (identifier)
+        value: (agent_command_plain_value))
+      (agent_section
+        name: (identifier)
+        body: (agent_section_body
+          (agent_field
+            name: (identifier)
+            value: (agent_command_plain_value))
+          (agent_field
+            name: (identifier)
+            value: (agent_command_plain_value))
+          (agent_field
+            name: (identifier)
+            value: (agent_command_plain_value))))
+      (agent_field
+        name: (identifier)
+        value: (inline_python_expr
+          code: (python_inline_body))))))
