@@ -182,6 +182,9 @@ CodeMode policy and limits in lexical scopes
     enabled: true
     max_nested_calls: 12
     request_timeout: 30
+    preload_tools:
+      lookup_release
+      list-versions
 
 @inspect():
   > codemode: disabled
@@ -205,7 +208,14 @@ CodeMode policy and limits in lexical scopes
             value: (settings_plain_value))
           (codemode_field
             name: (identifier)
-            value: (settings_plain_value))))))
+            value: (settings_plain_value))
+          (codemode_preload_tools_field
+            name: (identifier)
+            body: (codemode_preload_tools_body
+              (codemode_preload_tool_name
+                value: (codemode_tool_name))
+              (codemode_preload_tool_name
+                value: (codemode_tool_name))))))))
   (procedure_def
     name: (identifier)
     body: (block
@@ -575,3 +585,95 @@ Typed A2A agent connection
         name: (identifier)
         value: (inline_python_expr
           code: (python_inline_body))))))
+
+==================
+Native procedure tool metadata
+==================
+
+@fetch_release(version: str) -> str:
+  > tool:
+    name: lookup_release
+    description: Read one exact release.
+    risk: read_only
+    retries: 2
+    retry_on:
+      TimeoutError
+      ConnectionError
+  = `client.fetch(version)`
+
+---
+
+(source_file
+  (procedure_def
+    (identifier)
+    (param_list
+      (param
+        (identifier)
+        (type_expr
+          (type_ref
+            (identifier)))))
+    (type_expr
+      (type_ref
+        (identifier)))
+    (block
+      (tool_directive
+        (tool_body
+          (tool_field
+            (identifier)
+            (tool_plain_value))
+          (tool_field
+            (identifier)
+            (tool_plain_value))
+          (tool_field
+            (identifier)
+            (tool_plain_value))
+          (tool_field
+            (identifier)
+            (tool_plain_value))
+          (tool_retry_on
+            (tool_retry_body
+              (tool_exception_name
+                (identifier))
+              (tool_exception_name
+                (identifier))))))
+      (return_stmt
+        (inline_python_expr
+          (python_inline_body))))))
+
+==================
+Explicit adapter requirements in lexical scopes
+==================
+
+> requires: stream_events
+
+> profile: streaming:
+  > requires:
+    structured_output
+    tool_registration
+
+@inspect():
+  > requires: codemode
+  = ready
+
+---
+
+(source_file
+  (requires_directive
+    (identifier))
+  (profile_directive
+    (identifier)
+    (profile_body
+      (requires_directive
+        (requires_body
+          (requirement_name
+            (identifier))
+          (requirement_name
+            (identifier))))))
+  (procedure_def
+    (identifier)
+    (block
+      (requires_directive
+        (identifier))
+      (return_stmt
+        (template_expr
+          (text_segment))))))

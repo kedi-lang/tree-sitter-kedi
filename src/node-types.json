@@ -126,6 +126,10 @@
         "named": true
       },
       {
+        "type": "requires_directive",
+        "named": true
+      },
+      {
         "type": "return_block_stmt",
         "named": true
       },
@@ -151,6 +155,10 @@
       },
       {
         "type": "template_line",
+        "named": true
+      },
+      {
+        "type": "tool_directive",
         "named": true
       },
       {
@@ -273,6 +281,10 @@
       },
       {
         "type": "raw_invoke_stmt",
+        "named": true
+      },
+      {
+        "type": "requires_directive",
         "named": true
       },
       {
@@ -793,6 +805,10 @@
         {
           "type": "codemode_field",
           "named": true
+        },
+        {
+          "type": "codemode_preload_tools_field",
+          "named": true
         }
       ]
     }
@@ -857,6 +873,77 @@
     "type": "codemode_plain_value",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "codemode_preload_tool_name",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "codemode_tool_name",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "codemode_preload_tools_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "codemode_preload_tool_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "codemode_preload_tools_field",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "codemode_preload_tools_body",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "inline_python_expr",
+            "named": true
+          },
+          {
+            "type": "settings_plain_value",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "condition_template_expr",
@@ -1933,6 +2020,10 @@
           "named": true
         },
         {
+          "type": "requires_directive",
+          "named": true
+        },
+        {
           "type": "settings_directive",
           "named": true
         },
@@ -2041,6 +2132,63 @@
         "types": [
           {
             "type": "binding_target",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "requirement_name",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "requires_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "requirement_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "requires_directive",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "requires_body",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -2509,6 +2657,119 @@
     "type": "text_segment",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "tool_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "tool_field",
+          "named": true
+        },
+        {
+          "type": "tool_retry_on",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "tool_directive",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tool_body",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "tool_exception_name",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "tool_field",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tool_plain_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "tool_plain_value",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "tool_retry_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "tool_exception_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "tool_retry_on",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tool_retry_body",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "type_apply",
@@ -3054,6 +3315,10 @@
     "named": false
   },
   {
+    "type": "codemode_tool_name",
+    "named": true
+  },
+  {
     "type": "data",
     "named": false
   },
@@ -3147,6 +3412,14 @@
     "named": true
   },
   {
+    "type": "requires",
+    "named": false
+  },
+  {
+    "type": "retry_on",
+    "named": false
+  },
+  {
     "type": "settings",
     "named": false
   },
@@ -3164,6 +3437,10 @@
   },
   {
     "type": "test_data",
+    "named": false
+  },
+  {
+    "type": "tool",
     "named": false
   },
   {

@@ -96,6 +96,7 @@ module.exports = grammar({
         $.history_directive,
         $.skills_directive,
         $.codemode_directive,
+        $.requires_directive,
         $.system_directive,
         $.mcp_directive,
         $.settings_directive,
@@ -256,6 +257,7 @@ module.exports = grammar({
         $.type_def_stmt,
         $.auto_directive,
         $.optimize_directive,
+        $.tool_directive,
         $.agent_directive,
         $.adapter_directive,
         $.model_directive,
@@ -265,6 +267,7 @@ module.exports = grammar({
         $.history_directive,
         $.skills_directive,
         $.codemode_directive,
+        $.requires_directive,
         $.system_directive,
         $.mcp_directive,
         $.settings_directive,
@@ -287,6 +290,35 @@ module.exports = grammar({
         $.template_block_stmt,
         $.template_line,
       ),
+
+    tool_directive: ($) =>
+      seq(">", "tool", ":", $._newline, field("body", $.tool_body)),
+
+    tool_body: ($) =>
+      seq(
+        $._indent,
+        repeat1(choice($.tool_field, $.tool_retry_on, $._newline)),
+        $._dedent,
+      ),
+
+    tool_field: ($) =>
+      seq(
+        field("name", $.identifier),
+        ":",
+        optional(/[ \t]+/),
+        field("value", alias($._tool_plain_value, $.tool_plain_value)),
+        $._newline,
+      ),
+
+    tool_retry_on: ($) =>
+      seq("retry_on", ":", $._newline, field("body", $.tool_retry_body)),
+
+    tool_retry_body: ($) =>
+      seq($._indent, repeat1(choice($.tool_exception_name, $._newline)), $._dedent),
+
+    tool_exception_name: ($) => seq(field("name", $.identifier), $._newline),
+
+    _tool_plain_value: ($) => token(/[^\n#]+/),
 
     // ============================================================
     // Type definitions
@@ -945,8 +977,47 @@ module.exports = grammar({
     codemode_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.codemode_field, $._newline)),
+        repeat1(choice($.codemode_preload_tools_field, $.codemode_field, $._newline)),
         $._dedent,
+      ),
+
+    codemode_preload_tools_field: ($) =>
+      choice(
+        seq(
+          field("name", alias("preload_tools", $.identifier)),
+          ":",
+          optional(/[ \t]+/),
+          field(
+            "value",
+            choice(
+              $.inline_python_expr,
+              alias($._settings_plain_value, $.settings_plain_value),
+            ),
+          ),
+          $._newline,
+        ),
+        seq(
+          field("name", alias("preload_tools", $.identifier)),
+          ":",
+          $._newline,
+          field("body", $.codemode_preload_tools_body),
+        ),
+      ),
+
+    codemode_preload_tools_body: ($) =>
+      seq(
+        $._indent,
+        repeat1(choice($.codemode_preload_tool_name, $._newline)),
+        $._dedent,
+      ),
+
+    codemode_preload_tool_name: ($) =>
+      seq(
+        field(
+          "value",
+          alias(token(/[^\s#]+/), $.codemode_tool_name),
+        ),
+        $._newline,
       ),
 
     codemode_field: ($) =>
@@ -957,6 +1028,17 @@ module.exports = grammar({
         field("value", choice($.inline_python_expr, alias($._settings_plain_value, $.settings_plain_value))),
         $._newline,
       ),
+
+    requires_directive: ($) =>
+      choice(
+        seq(">", "requires", ":", field("name", $.identifier), $._newline),
+        seq(">", "requires", ":", $._newline, field("body", $.requires_body)),
+      ),
+
+    requires_body: ($) =>
+      seq($._indent, repeat1(choice($.requirement_name, $._newline)), $._dedent),
+
+    requirement_name: ($) => seq(field("name", $.identifier), $._newline),
 
     system_directive: ($) =>
       choice(
@@ -1063,7 +1145,7 @@ module.exports = grammar({
     profile_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.hooks_directive, $.history_directive, $.skills_directive, $.codemode_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $._newline)),
+        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.hooks_directive, $.history_directive, $.skills_directive, $.codemode_directive, $.requires_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $._newline)),
         $._dedent,
       ),
 
