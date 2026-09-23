@@ -46,6 +46,7 @@
 "approval" @keyword
 "codemode" @keyword
 "requires" @keyword
+"budget" @keyword
 "show" @keyword
 "tool" @keyword
 "system" @keyword
@@ -168,6 +169,8 @@
 (tool_exception_name name: (identifier) @type)
 (requires_directive name: (identifier) @constant)
 (requirement_name name: (identifier) @constant)
+(budget_field name: (identifier) @property)
+(budget_field value: (budget_integer) @number)
 (history_field name: (identifier) @property)
 (history_field value: (settings_plain_value) @string)
 (history_field value: (inline_python_expr) @string.special)

@@ -88,6 +88,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "budget_directive"
+        },
+        {
+          "type": "SYMBOL",
           "name": "system_directive"
         },
         {
@@ -902,6 +906,10 @@
         {
           "type": "SYMBOL",
           "name": "requires_directive"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "budget_directive"
         },
         {
           "type": "SYMBOL",
@@ -4235,6 +4243,109 @@
         }
       ]
     },
+    "budget_directive": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ">"
+        },
+        {
+          "type": "STRING",
+          "value": "budget"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "budget_body"
+          }
+        }
+      ]
+    },
+    "budget_body": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_indent"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "budget_field"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_newline"
+              }
+            ]
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_dedent"
+        }
+      ]
+    },
+    "budget_field": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "[ \\t]+"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "budget_integer"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        }
+      ]
+    },
+    "budget_integer": {
+      "type": "PATTERN",
+      "value": "[0-9]+"
+    },
     "system_directive": {
       "type": "CHOICE",
       "members": [
@@ -4832,6 +4943,10 @@
               {
                 "type": "SYMBOL",
                 "name": "requires_directive"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "budget_directive"
               },
               {
                 "type": "SYMBOL",

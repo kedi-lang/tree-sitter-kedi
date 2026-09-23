@@ -97,6 +97,7 @@ module.exports = grammar({
         $.skills_directive,
         $.codemode_directive,
         $.requires_directive,
+        $.budget_directive,
         $.system_directive,
         $.mcp_directive,
         $.settings_directive,
@@ -269,6 +270,7 @@ module.exports = grammar({
         $.skills_directive,
         $.codemode_directive,
         $.requires_directive,
+        $.budget_directive,
         $.system_directive,
         $.mcp_directive,
         $.settings_directive,
@@ -1050,6 +1052,17 @@ module.exports = grammar({
 
     requirement_name: ($) => seq(field("name", $.identifier), $._newline),
 
+    budget_directive: ($) =>
+      seq(">", "budget", ":", $._newline, field("body", $.budget_body)),
+
+    budget_body: ($) =>
+      seq($._indent, repeat1(choice($.budget_field, $._newline)), $._dedent),
+
+    budget_field: ($) =>
+      seq(field("name", $.identifier), ":", optional(/[ \t]+/), field("value", $.budget_integer), $._newline),
+
+    budget_integer: ($) => /[0-9]+/,
+
     system_directive: ($) =>
       choice(
         seq(
@@ -1155,7 +1168,7 @@ module.exports = grammar({
     profile_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.hooks_directive, $.history_directive, $.skills_directive, $.codemode_directive, $.requires_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $._newline)),
+        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.hooks_directive, $.history_directive, $.skills_directive, $.codemode_directive, $.requires_directive, $.budget_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $._newline)),
         $._dedent,
       ),
 

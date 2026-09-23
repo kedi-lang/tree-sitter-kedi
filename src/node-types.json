@@ -66,6 +66,10 @@
         "named": true
       },
       {
+        "type": "budget_directive",
+        "named": true
+      },
+      {
         "type": "codemode_directive",
         "named": true
       },
@@ -213,6 +217,10 @@
       },
       {
         "type": "backtick_line_stmt",
+        "named": true
+      },
+      {
+        "type": "budget_directive",
         "named": true
       },
       {
@@ -740,6 +748,63 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "budget_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "budget_field",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "budget_directive",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "budget_body",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "budget_field",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "budget_integer",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -1989,6 +2054,10 @@
         },
         {
           "type": "artifacts_directive",
+          "named": true
+        },
+        {
+          "type": "budget_directive",
           "named": true
         },
         {
@@ -3329,6 +3398,14 @@
     "type": "block_comment",
     "named": true,
     "extra": true
+  },
+  {
+    "type": "budget",
+    "named": false
+  },
+  {
+    "type": "budget_integer",
+    "named": true
   },
   {
     "type": "case",
