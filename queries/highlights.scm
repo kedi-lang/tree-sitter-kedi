@@ -46,6 +46,7 @@
 "approval" @keyword
 "codemode" @keyword
 "requires" @keyword
+"show" @keyword
 "tool" @keyword
 "system" @keyword
 "mcp" @keyword

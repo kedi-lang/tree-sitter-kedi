@@ -142,6 +142,10 @@
         "named": true
       },
       {
+        "type": "show_stmt",
+        "named": true
+      },
+      {
         "type": "skills_directive",
         "named": true
       },
@@ -297,6 +301,10 @@
       },
       {
         "type": "settings_directive",
+        "named": true
+      },
+      {
+        "type": "show_stmt",
         "named": true
       },
       {
@@ -2298,6 +2306,26 @@
     "fields": {}
   },
   {
+    "type": "show_stmt",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "inline_python_expr",
+            "named": true
+          },
+          {
+            "type": "template_expr",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "skills_body",
     "named": true,
     "fields": {},
@@ -3421,6 +3449,10 @@
   },
   {
     "type": "settings",
+    "named": false
+  },
+  {
+    "type": "show",
     "named": false
   },
   {

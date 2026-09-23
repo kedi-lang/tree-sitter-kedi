@@ -152,6 +152,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "show_stmt"
+        },
+        {
+          "type": "SYMBOL",
           "name": "return_stmt"
         },
         {
@@ -961,6 +965,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "show_stmt"
+        },
+        {
+          "type": "SYMBOL",
           "name": "return_stmt"
         },
         {
@@ -1635,6 +1643,44 @@
         {
           "type": "STRING",
           "value": "]"
+        }
+      ]
+    },
+    "show_stmt": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ">"
+        },
+        {
+          "type": "STRING",
+          "value": "show"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "inline_python_expr"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "template_expr"
+              }
+            ]
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
         }
       ]
     },

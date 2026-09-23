@@ -1,0 +1,33 @@
+==================
+Native show values
+==================
+
+> show: Hello.
+> show: `1 + 2`
+@display(value: int):
+  > show: The value is <value>.
+
+---
+
+(source_file
+  (show_stmt
+    (template_expr
+      (text_segment)))
+  (show_stmt
+    (inline_python_expr
+      (python_inline_body)))
+  (procedure_def
+    (identifier)
+    (param_list
+      (param
+        (identifier)
+        (type_expr
+          (type_ref
+            (identifier)))))
+    (block
+      (show_stmt
+        (template_expr
+          (text_segment)
+          (input_segment
+            (identifier))
+          (text_segment))))))

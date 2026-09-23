@@ -113,6 +113,7 @@ module.exports = grammar({
         $.variable_init_block_stmt,
         $.assignment_block_stmt,
         $.raw_invoke_stmt,
+        $.show_stmt,
         $.return_stmt,
         $.return_block_stmt,
         $.python_block,
@@ -283,6 +284,7 @@ module.exports = grammar({
         $.variable_init_block_stmt,
         $.assignment_block_stmt,
         $.raw_invoke_stmt,
+        $.show_stmt,
         $.return_stmt,
         $.return_block_stmt,
         $.python_block,
@@ -414,6 +416,13 @@ module.exports = grammar({
         field("name", $.identifier),
         optional(seq(":", field("type", $.type_expr))),
         "]",
+      ),
+
+    show_stmt: ($) =>
+      seq(
+        ">", "show", ":",
+        field("value", choice($.inline_python_expr, $.template_expr)),
+        $._newline,
       ),
 
     return_stmt: ($) =>
