@@ -144,7 +144,7 @@ Conditional loops and template conditions
 
 > if: <city> is in Turkey
   [result] = yes
-> if: `ready`
+> if: <`ready`>
   [classified] = yes
 > loop: `remaining > 0`:
   `remaining -= 1`
@@ -167,8 +167,9 @@ Conditional loops and template conditions
           (text_segment)))))
   (if_stmt
     condition: (condition_template_expr
-      (inline_python_expr
-        code: (python_inline_body)))
+      (python_expr_segment
+        (inline_python_expr
+          code: (python_inline_body))))
     consequence: (block
       (variable_init_stmt
         (binding_target

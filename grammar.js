@@ -629,9 +629,11 @@ module.exports = grammar({
 
     template_prompt_expr: ($) => repeat1($._segment),
 
-    // Claim conditions share Kedi's native template vocabulary. Output
-    // segments remain parseable here so the AST layer can report the
-    // precise K-CONDITION-OUTPUT diagnostic instead of a generic ERROR.
+    // Claim conditions share Kedi's native template vocabulary, except
+    // bare inline Python. Dynamic Python values must use `<`expr`>` so
+    // their position in the rendered claim is explicit. Output segments
+    // remain parseable here so the AST layer can report the precise
+    // K-CONDITION-OUTPUT diagnostic instead of a generic ERROR.
     condition_template_expr: ($) => repeat1($._condition_segment),
 
     _condition_segment: ($) =>
@@ -639,7 +641,6 @@ module.exports = grammar({
         $.input_segment,
         $.call_segment,
         $.python_expr_segment,
-        $.inline_python_expr,
         $.output_segment,
         $.condition_text_segment,
       ),

@@ -2361,10 +2361,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "inline_python_expr"
-        },
-        {
-          "type": "SYMBOL",
           "name": "output_segment"
         },
         {
