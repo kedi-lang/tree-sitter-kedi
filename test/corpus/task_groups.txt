@@ -1,0 +1,32 @@
+==================
+Ready processing and bare group await
+==================
+
+> task_group:
+  > await [answer]: first
+  > process:
+    > show: <answer>
+  > await: second
+> show: done
+
+---
+
+(source_file
+  (task_group_stmt
+    body: (task_group_body
+      (task_group_arm
+        wait: (await_stmt
+          binder: (identifier)
+          handle: (identifier))
+        process: (process_clause
+          body: (block
+            (show_stmt
+              value: (template_expr
+                (input_segment
+                  name: (identifier)))))))
+      (task_group_arm
+        wait: (await_stmt
+          handle: (identifier)))))
+  (show_stmt
+    value: (template_expr
+      (text_segment))))

@@ -124,6 +124,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "task_group_stmt"
+        },
+        {
+          "type": "SYMBOL",
           "name": "variable_init_stmt"
         },
         {
@@ -946,6 +950,10 @@
         {
           "type": "SYMBOL",
           "name": "await_stmt"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "task_group_stmt"
         },
         {
           "type": "SYMBOL",
@@ -2090,6 +2098,122 @@
         {
           "type": "STRING",
           "value": "map"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "block"
+          }
+        }
+      ]
+    },
+    "task_group_stmt": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ">"
+        },
+        {
+          "type": "STRING",
+          "value": "task_group"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "task_group_body"
+          }
+        }
+      ]
+    },
+    "task_group_body": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_indent"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "task_group_arm"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_newline"
+              }
+            ]
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_dedent"
+        }
+      ]
+    },
+    "task_group_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "wait",
+          "content": {
+            "type": "SYMBOL",
+            "name": "await_stmt"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "process",
+              "content": {
+                "type": "SYMBOL",
+                "name": "process_clause"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "process_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ">"
+        },
+        {
+          "type": "STRING",
+          "value": "process"
         },
         {
           "type": "STRING",
@@ -5906,6 +6030,9 @@
   "conflicts": [
     [
       "template_block_stmt"
+    ],
+    [
+      "task_group_arm"
     ]
   ],
   "precedences": [],

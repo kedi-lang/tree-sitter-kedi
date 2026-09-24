@@ -68,6 +68,8 @@
 "loop" @keyword
 "task" @keyword
 "await" @keyword
+"task_group" @keyword
+"process" @keyword
 "map" @keyword
 
 ; ----------------------------------------------------------------

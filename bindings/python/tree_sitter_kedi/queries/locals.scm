@@ -25,6 +25,7 @@
 (source_file) @local.scope
 (procedure_def) @local.scope
 (task_body) @local.scope
+(task_group_arm) @local.scope
 
 ; ----------------------------------------------------------------
 ; Definitions

@@ -162,6 +162,10 @@
         "named": true
       },
       {
+        "type": "task_group_stmt",
+        "named": true
+      },
+      {
         "type": "task_stmt",
         "named": true
       },
@@ -333,6 +337,10 @@
       },
       {
         "type": "system_directive",
+        "named": true
+      },
+      {
+        "type": "task_group_stmt",
         "named": true
       },
       {
@@ -2075,6 +2083,22 @@
     }
   },
   {
+    "type": "process_clause",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "profile_body",
     "named": true,
     "fields": {},
@@ -2655,6 +2679,63 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "task_group_arm",
+    "named": true,
+    "fields": {
+      "process": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "process_clause",
+            "named": true
+          }
+        ]
+      },
+      "wait": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "await_stmt",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "task_group_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "task_group_arm",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "task_group_stmt",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "task_group_body",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -3619,6 +3700,10 @@
     "named": true
   },
   {
+    "type": "process",
+    "named": false
+  },
+  {
     "type": "profile",
     "named": false
   },
@@ -3660,6 +3745,10 @@
   },
   {
     "type": "task",
+    "named": false
+  },
+  {
+    "type": "task_group",
     "named": false
   },
   {

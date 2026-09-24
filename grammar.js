@@ -15,7 +15,7 @@ module.exports = grammar({
 
   // `template_block_stmt` continuation lines and `[name] = …` initializations
   // share a `[` prefix; disambiguation needs the `=` after the target.
-  conflicts: ($) => [[$.template_block_stmt]],
+  conflicts: ($) => [[$.template_block_stmt], [$.task_group_arm]],
 
   // IMPORTANT: this list's order must match `enum TokenType` in src/scanner.c.
   //
@@ -106,6 +106,7 @@ module.exports = grammar({
         $.use_directive,
         $.task_stmt,
         $.await_stmt,
+        $.task_group_stmt,
         $.variable_init_stmt,
         $.assignment_stmt,
         $.if_stmt,
@@ -280,6 +281,7 @@ module.exports = grammar({
         $.use_directive,
         $.task_stmt,
         $.await_stmt,
+        $.task_group_stmt,
         $.variable_init_stmt,
         $.assignment_stmt,
         $.if_stmt,
@@ -508,6 +510,18 @@ module.exports = grammar({
 
     map_clause: ($) =>
       seq(">", "map", ":", $._newline, field("body", $.block)),
+
+    task_group_stmt: ($) =>
+      seq(">", "task_group", ":", $._newline, field("body", $.task_group_body)),
+
+    task_group_body: ($) =>
+      seq($._indent, repeat1(choice($.task_group_arm, $._newline)), $._dedent),
+
+    task_group_arm: ($) =>
+      seq(field("wait", $.await_stmt), optional(field("process", $.process_clause))),
+
+    process_clause: ($) =>
+      seq(">", "process", ":", $._newline, field("body", $.block)),
 
     conditional_loop_stmt: ($) =>
       choice(
