@@ -1,0 +1,55 @@
+==================
+Task captures and await result
+==================
+
+> task [review_job]: reviewer:
+  >> The issue in <change> is [issue: str].
+  The recommendation is [recommendation: str].
+> await [review]: review_job
+= `review.output.recommendation`
+
+---
+
+(source_file
+  (task_stmt
+    binder: (identifier)
+    subagent: (identifier)
+    body: (task_body
+      template: (template_block_stmt
+        head: (template_prompt_expr
+          (text_segment)
+          (input_segment
+            name: (identifier))
+          (text_segment)
+          (output_segment
+            name: (identifier)
+            type: (type_expr
+              (type_ref
+                name: (identifier))))
+          (text_segment))
+        continuation: (template_prompt_expr
+          (text_segment)
+          (output_segment
+            name: (identifier)
+            type: (type_expr
+              (type_ref
+                name: (identifier))))
+          (text_segment)))))
+  (await_stmt
+    binder: (identifier)
+    handle: (identifier))
+  (return_stmt
+    value: (inline_python_expr
+      code: (python_inline_body))))
+
+==================
+Bare await
+==================
+
+> await: review_job
+
+---
+
+(source_file
+  (await_stmt
+    handle: (identifier)))

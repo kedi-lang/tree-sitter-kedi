@@ -24,6 +24,7 @@
 
 (source_file) @local.scope
 (procedure_def) @local.scope
+(task_body) @local.scope
 
 ; ----------------------------------------------------------------
 ; Definitions
@@ -35,6 +36,8 @@
 (param name: (identifier) @local.definition.parameter)
 (binding_target name: (identifier) @local.definition.var)
 (loop_stmt binder: (identifier) @local.definition.var)
+(task_stmt binder: (identifier) @local.definition.var)
+(await_stmt binder: (identifier) @local.definition.var)
 (output_segment name: (identifier) @local.definition.var)
 
 ; ----------------------------------------------------------------
@@ -48,3 +51,4 @@
 (eval_metric dataset: (identifier) @local.reference)
 (assignment_stmt name: (identifier) @local.reference)
 (assignment_block_stmt name: (identifier) @local.reference)
+(await_stmt handle: (identifier) @local.reference)

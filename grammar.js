@@ -104,6 +104,8 @@ module.exports = grammar({
         $.artifacts_directive,
         $.profile_directive,
         $.use_directive,
+        $.task_stmt,
+        $.await_stmt,
         $.variable_init_stmt,
         $.assignment_stmt,
         $.if_stmt,
@@ -276,6 +278,8 @@ module.exports = grammar({
         $.settings_directive,
         $.artifacts_directive,
         $.use_directive,
+        $.task_stmt,
+        $.await_stmt,
         $.variable_init_stmt,
         $.assignment_stmt,
         $.if_stmt,
@@ -478,6 +482,28 @@ module.exports = grammar({
         ":",
         $._newline,
         field("body", $.block),
+      ),
+
+    task_stmt: ($) =>
+      seq(
+        ">", "task", "[", field("binder", $.identifier), "]", ":",
+        field("subagent", $.identifier), ":", $._newline,
+        field("body", $.task_body),
+      ),
+
+    task_body: ($) =>
+      seq(
+        $._indent,
+        field("template", $.template_block_stmt),
+        repeat(choice(field("extra_template", $.template_block_stmt), $.template_blank_line)),
+        $._dedent,
+      ),
+
+    await_stmt: ($) =>
+      seq(
+        ">", "await",
+        optional(seq("[", field("binder", $.identifier), "]")),
+        ":", field("handle", $.identifier), $._newline,
       ),
 
     map_clause: ($) =>

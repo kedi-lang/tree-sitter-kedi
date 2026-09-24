@@ -66,6 +66,8 @@
 "if" @keyword
 "else" @keyword
 "loop" @keyword
+"task" @keyword
+"await" @keyword
 "map" @keyword
 
 ; ----------------------------------------------------------------
@@ -86,6 +88,10 @@
 (assignment_stmt name: (identifier) @variable)
 (assignment_block_stmt name: (identifier) @variable)
 (loop_stmt binder: (identifier) @variable)
+(task_stmt binder: (identifier) @variable)
+(task_stmt subagent: (identifier) @type)
+(await_stmt binder: (identifier) @variable)
+(await_stmt handle: (identifier) @variable)
 (param name: (identifier) @variable.parameter)
 (type_field name: (identifier) @property)
 
