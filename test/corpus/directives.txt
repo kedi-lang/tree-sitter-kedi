@@ -368,7 +368,7 @@ Optimize directive with template span
 
 @solve(items: str) -> int:
   > optimize: solver:
-    Items: <items>
+    >> Items: <items>
     Pick the best.
     Reasoning: [reasoning: str]
     Total: [value: int]
@@ -393,24 +393,21 @@ Optimize directive with template span
       (optimize_directive
         name: (identifier)
         body: (optimize_body
-          (template_line
-            (template_expr
+          (template_block_stmt
+            head: (template_prompt_expr
               (text_segment)
               (input_segment
-                name: (identifier))))
-          (template_line
-            (template_expr
-              (text_segment)))
-          (template_line
-            (template_expr
+                name: (identifier)))
+            continuation: (template_prompt_expr
+              (text_segment))
+            continuation: (template_prompt_expr
               (text_segment)
               (output_segment
                 name: (identifier)
                 type: (type_expr
                   (type_ref
-                    name: (identifier))))))
-          (template_line
-            (template_expr
+                    name: (identifier)))))
+            continuation: (template_prompt_expr
               (text_segment)
               (output_segment
                 name: (identifier)
@@ -427,7 +424,7 @@ Optimize body allows whitespace-only blank lines
 
 @solve(items: str) -> int:
   > optimize: solver:
-    Items: <items>
+    >> Items: <items>
     
     Total: [value: int]
 
@@ -451,13 +448,13 @@ Optimize body allows whitespace-only blank lines
       (optimize_directive
         name: (identifier)
         body: (optimize_body
-          (template_line
-            (template_expr
+          (template_block_stmt
+            head: (template_prompt_expr
               (text_segment)
               (input_segment
-                name: (identifier))))
-          (template_line
-            (template_expr
+                name: (identifier)))
+            (template_blank_line)
+            continuation: (template_prompt_expr
               (text_segment)
               (output_segment
                 name: (identifier)

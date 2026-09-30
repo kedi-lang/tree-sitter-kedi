@@ -149,6 +149,7 @@ static uint32_t skip_leading_ws(TSLexer *lexer, bool *is_blank_line) {
     for (;;) {
         if (lexer->lookahead == ' ') { col += 1; advance(lexer); continue; }
         if (lexer->lookahead == '\t') { col += KEDI_TAB_WIDTH; advance(lexer); continue; }
+        if (lexer->lookahead == '\r') { advance(lexer); continue; }
         break;
     }
     if (lexer->lookahead == '\n') {
@@ -213,7 +214,7 @@ static void apply_indent_change(Scanner *s, uint32_t new_col) {
 // Returns true iff `c` terminates a TEXT run unconditionally.
 static inline bool is_unconditional_text_stop(int32_t c) {
     return c == '<'  || c == '['  || c == '`' ||
-           c == '>'  || c == ']'  || c == '\n' ||
+           c == '>'  || c == ']'  || c == '\n' || c == '\r' ||
            c == '#';
 }
 
@@ -250,6 +251,10 @@ static TextScanResult scan_text_run(
     for (;;) {
         int32_t c = lexer->lookahead;
         if (c == 0 && is_eof(lexer)) break;
+        if (c == '\r' && !seen_text) {
+            advance(lexer);
+            continue;
+        }
         if (c == '\n') {
             if (!seen_text && newline_valid) {
                 advance(lexer);
@@ -447,6 +452,13 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
     // 1. Drain queued INDENT / DEDENT tokens first.
     if (drain_pending(s, lexer, valid_symbols)) return true;
 
+    // Consume CRLF as one line ending before the regular newline/indent path.
+    if (lexer->lookahead == '\r' &&
+        (valid_symbols[KEDI_NEWLINE] || valid_symbols[KEDI_FENCED_NEWLINE])) {
+        advance(lexer);
+        if (lexer->lookahead != '\n') return false;
+    }
+
     // 2. EOF: emit a synthetic terminating NEWLINE once, then DEDENTs.
     if (is_eof(lexer)) {
         if (!s->eof_newline_emitted && valid_symbols[KEDI_NEWLINE]) {
@@ -500,8 +512,8 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
         !valid_symbols[KEDI_TEXT_IN_CALL] &&
         !valid_symbols[KEDI_CONDITION_TEXT] &&
         !valid_symbols[KEDI_FENCED_BODY] &&
-        (lexer->lookahead == ' ' || lexer->lookahead == '\t')) {
-        while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+        (lexer->lookahead == ' ' || lexer->lookahead == '\t' || lexer->lookahead == '\r')) {
+        while (lexer->lookahead == ' ' || lexer->lookahead == '\t' || lexer->lookahead == '\r') {
             advance(lexer);
         }
         if (lexer->lookahead != '\n' && !is_eof(lexer)) {

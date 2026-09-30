@@ -50,7 +50,7 @@ module.exports = grammar({
   //     followed by non-`#` — the standard "everything except the
   //     closing fence" trick.
   //   - `line_comment` (single `#` to EOL).
-  //   - `[ \t]` for horizontal whitespace.
+  //   - `[ \t\r]` for horizontal whitespace and the CR in CRLF endings.
   //   - `\n` so tree-sitter can fill the "gap" left when the external
   //     scanner advances past blank lines during NEWLINE indent-peek.
   //     The external NEWLINE token still wins when valid_symbols asks
@@ -60,7 +60,7 @@ module.exports = grammar({
   //     `\n`s during exploratory peek and tree-sitter needs to skip
   //     those bytes between the emitted NEWLINE token and the next
   //     real token.
-  extras: ($) => [$.block_comment, $.line_comment, /[ \t]/, /\n/],
+  extras: ($) => [$.block_comment, $.line_comment, /[ \t\r]/, /\n/],
 
   word: ($) => $.identifier,
 
@@ -615,8 +615,8 @@ module.exports = grammar({
     // `>>` opens a template block. Continuation rows at the same indent
     // (no leading `>>`) are part of that block until a non-template
     // statement or a new `>>` line. Bare template_line outside a block
-    // is invalid at procedure/top level; only `> optimize:` / `> auto:`
-    // bodies may use bare template rows.
+    // is invalid at procedure/top level and inside `> optimize:`.
+    // Only `> auto:` accepts bare rows as its code-generation specification.
     template_block_stmt: ($) =>
       seq(
         ">>",
@@ -753,12 +753,11 @@ module.exports = grammar({
     //     <indented free-text spec for an AI-generated procedure>
     //
     //   > optimize: <name>:
-    //     <indented template lines for prompt optimisation>
+    //     >> <template block for prompt optimisation>
     //
     // The `auto` body is a sequence of plain text lines (the prompt
-    // text). The `optimize` body is a sequence of template_lines
-    // (full Kedi template segments) — each line ends up as a span the
-    // GEPA optimizer can rewrite.
+    // text). The `optimize` body is one explicit template block;
+    // the GEPA optimizer can rewrite that span's prompt.
     // ============================================================
     auto_directive: ($) =>
       seq(
@@ -786,10 +785,9 @@ module.exports = grammar({
     optimize_body: ($) =>
       seq(
         $._indent,
-        choice(
-          $.template_block_stmt,
-          repeat1(choice($.template_line, $._newline)),
-        ),
+        repeat($._newline),
+        $.template_block_stmt,
+        repeat($._newline),
         $._dedent,
       ),
 

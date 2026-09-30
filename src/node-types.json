@@ -1775,15 +1775,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
-      "required": false,
+      "multiple": false,
+      "required": true,
       "types": [
         {
           "type": "template_block_stmt",
-          "named": true
-        },
-        {
-          "type": "template_line",
           "named": true
         }
       ]
