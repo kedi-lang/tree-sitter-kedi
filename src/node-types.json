@@ -3699,6 +3699,10 @@
     "named": false
   },
   {
+    "type": "instructions",
+    "named": false
+  },
+  {
     "type": "interrupt",
     "named": false
   },
@@ -3789,10 +3793,6 @@
   },
   {
     "type": "subagent",
-    "named": false
-  },
-  {
-    "type": "system",
     "named": false
   },
   {

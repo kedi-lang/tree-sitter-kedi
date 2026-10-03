@@ -22,6 +22,8 @@
   ">>" @keyword)
 (raw_invoke_stmt
   "<<" @keyword)
+(return_stmt "=" @keyword.return)
+(return_block_stmt "=" @keyword.return)
 
 ["@" "~" "<" ">"] @punctuation.special
 ["=" ":" "(" ")" "[" "]" "," "|" "->" "*"] @punctuation.delimiter
@@ -49,7 +51,7 @@
 "budget" @keyword
 "show" @keyword
 "tool" @keyword
-"system" @keyword
+"instructions" @keyword
 "mcp" @keyword
 "settings" @keyword
 "artifacts" @keyword

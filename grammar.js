@@ -806,13 +806,13 @@ module.exports = grammar({
     //   > model: haiku
     //   > model: `models['light']`
     //   > effort: low
-    //   > system: You are concise.
-    //   > system:
+    //   > instructions: You are concise.
+    //   > instructions:
     //     You are concise.
     //     Prefer answers for <audience>.
     //   > profile: profile_name:
     //     > model: opus
-    //     > system: You are concise.
+    //     > instructions: You are concise.
     //   > use: profile_name
     // ============================================================
     model_directive: ($) =>
@@ -1114,13 +1114,19 @@ module.exports = grammar({
       choice(
         seq(
           ">",
-          "system",
+          "instructions",
           ":",
           optional(/[ \t]+/),
           field("head", $.system_expr),
           $._newline,
         ),
-        seq(">", "system", ":", $._newline, field("body", $.system_body)),
+        seq(
+          ">",
+          "instructions",
+          ":",
+          $._newline,
+          field("body", $.system_body),
+        ),
       ),
 
     system_body: ($) =>

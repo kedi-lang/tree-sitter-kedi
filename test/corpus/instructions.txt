@@ -1,0 +1,36 @@
+==================
+Inline instruction directives
+==================
+> instructions: Be concise.
+> instructions: Be precise.
+
+---
+
+(source_file
+  (system_directive (system_expr (text_segment)))
+  (system_directive (system_expr (text_segment))))
+
+==================
+Multiline profile instructions with substitutions
+==================
+> profile: reviewer:
+  > instructions:
+    Use a <tone> tone.
+    Keep it short.
+
+---
+
+(source_file
+  (profile_directive
+    (identifier)
+    (profile_body
+      (system_directive
+        (system_body
+          (system_line
+            (system_expr
+              (text_segment)
+              (system_angle_segment)
+              (text_segment)))
+          (system_line
+            (system_expr
+              (text_segment))))))))
