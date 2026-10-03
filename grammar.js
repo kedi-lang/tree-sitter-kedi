@@ -105,6 +105,7 @@ module.exports = grammar({
         $.profile_directive,
         $.use_directive,
         $.task_stmt,
+        $.send_stmt,
         $.await_stmt,
         $.task_group_stmt,
         $.variable_init_stmt,
@@ -280,6 +281,7 @@ module.exports = grammar({
         $.artifacts_directive,
         $.use_directive,
         $.task_stmt,
+        $.send_stmt,
         $.await_stmt,
         $.task_group_stmt,
         $.variable_init_stmt,
@@ -506,6 +508,13 @@ module.exports = grammar({
         ">", "await",
         optional(seq("[", field("binder", $.identifier), "]")),
         ":", field("handle", $.identifier), $._newline,
+      ),
+
+    send_stmt: ($) =>
+      seq(
+        ">", field("operation", choice("send", "interrupt")), ":",
+        field("handle", $.identifier), ":", $._newline,
+        field("body", $.task_body),
       ),
 
     map_clause: ($) =>

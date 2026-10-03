@@ -146,6 +146,10 @@
         "named": true
       },
       {
+        "type": "send_stmt",
+        "named": true
+      },
+      {
         "type": "settings_directive",
         "named": true
       },
@@ -321,6 +325,10 @@
       },
       {
         "type": "return_stmt",
+        "named": true
+      },
+      {
+        "type": "send_stmt",
         "named": true
       },
       {
@@ -2367,6 +2375,46 @@
     }
   },
   {
+    "type": "send_stmt",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "task_body",
+            "named": true
+          }
+        ]
+      },
+      "handle": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "operation": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "interrupt",
+            "named": false
+          },
+          {
+            "type": "send",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "settings_body",
     "named": true,
     "fields": {},
@@ -3651,6 +3699,10 @@
     "named": false
   },
   {
+    "type": "interrupt",
+    "named": false
+  },
+  {
     "type": "line_comment",
     "named": true,
     "extra": true
@@ -3717,6 +3769,10 @@
   },
   {
     "type": "retry_on",
+    "named": false
+  },
+  {
+    "type": "send",
     "named": false
   },
   {

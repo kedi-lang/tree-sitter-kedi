@@ -68,6 +68,8 @@
 "loop" @keyword
 "task" @keyword
 "await" @keyword
+"send" @keyword
+"interrupt" @keyword
 "task_group" @keyword
 "process" @keyword
 "map" @keyword
@@ -94,6 +96,7 @@
 (task_stmt subagent: (identifier) @type)
 (await_stmt binder: (identifier) @variable)
 (await_stmt handle: (identifier) @variable)
+(send_stmt handle: (identifier) @variable)
 (param name: (identifier) @variable.parameter)
 (type_field name: (identifier) @property)
 

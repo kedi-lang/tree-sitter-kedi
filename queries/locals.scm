@@ -53,3 +53,4 @@
 (assignment_stmt name: (identifier) @local.reference)
 (assignment_block_stmt name: (identifier) @local.reference)
 (await_stmt handle: (identifier) @local.reference)
+(send_stmt handle: (identifier) @local.reference)

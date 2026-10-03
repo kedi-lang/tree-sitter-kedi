@@ -53,3 +53,33 @@ Bare await
 (source_file
   (await_stmt
     handle: (identifier)))
+
+==================
+Task input and redirection
+==================
+
+> send: review_job:
+  >> Include <notes>.
+> interrupt: review_job:
+  >> Review only <`scope.strip()`>.
+
+---
+
+(source_file
+  (send_stmt
+    handle: (identifier)
+    body: (task_body
+      template: (template_block_stmt
+        head: (template_prompt_expr
+          (text_segment)
+          (input_segment name: (identifier))
+          (text_segment)))))
+  (send_stmt
+    handle: (identifier)
+    body: (task_body
+      template: (template_block_stmt
+        head: (template_prompt_expr
+          (text_segment)
+          (python_expr_segment
+            (inline_python_expr code: (python_inline_body)))
+          (text_segment))))))
