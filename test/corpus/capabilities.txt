@@ -1,0 +1,101 @@
+==================
+Eager capability with owned tools and instructions
+==================
+> capability: source_reader:
+  ###
+  Read local evidence.
+  ###
+  > instructions: Cite the document.
+  > approval: allow
+  > use:
+    read_document
+    read_metadata
+  > requires: tool_registration
+
+---
+
+(source_file
+  (capability_directive
+    (identifier)
+    (capability_body
+      (block_comment)
+      (system_directive
+        (system_expr
+          (text_segment)))
+      (approval_directive
+        (approval_plain_value))
+      (use_directive
+        (use_directive_body
+          (use_tool_name
+            (identifier))
+          (use_tool_name
+            (identifier))))
+      (requires_directive
+        (identifier)))))
+
+==================
+Capability defer values
+==================
+> capability: eager:
+  > defer: false
+> capability: lazy:
+  > defer: true
+> capability: conditional:
+  > defer: `on_demand is not None`
+  > use: eager
+
+---
+
+(source_file
+  (capability_directive
+    (identifier)
+    (capability_body
+      (defer_directive)))
+  (capability_directive
+    (identifier)
+    (capability_body
+      (defer_directive)))
+  (capability_directive
+    (identifier)
+    (capability_body
+      (defer_directive
+        (inline_python_expr
+          (python_inline_body)))
+      (use_directive
+        (identifier)))))
+
+==================
+Capability composition through profiles
+==================
+> capability: citations:
+  > instructions: Cite the original evidence.
+> profile: reviewer:
+  > instructions: Review the proposed changes.
+  > use: citations
+> use:
+  reviewer
+  citations
+
+---
+
+(source_file
+  (capability_directive
+    (identifier)
+    (capability_body
+      (system_directive
+        (system_expr
+          (text_segment)))))
+  (profile_directive
+    (identifier)
+    (profile_body
+      (system_directive
+        (system_expr
+          (text_segment)))
+      (use_directive
+        (identifier))))
+  (use_directive
+    (use_directive_body
+      (use_tool_name
+        (identifier))
+      (use_tool_name
+        (identifier)))))

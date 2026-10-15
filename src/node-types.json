@@ -244,6 +244,10 @@
         "named": true
       },
       {
+        "type": "capability_directive",
+        "named": true
+      },
+      {
         "type": "codemode_directive",
         "named": true
       },
@@ -926,6 +930,127 @@
     }
   },
   {
+    "type": "capability_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "adapter_directive",
+          "named": true
+        },
+        {
+          "type": "agent_directive",
+          "named": true
+        },
+        {
+          "type": "approval_directive",
+          "named": true
+        },
+        {
+          "type": "artifacts_directive",
+          "named": true
+        },
+        {
+          "type": "budget_directive",
+          "named": true
+        },
+        {
+          "type": "codemode_directive",
+          "named": true
+        },
+        {
+          "type": "defer_directive",
+          "named": true
+        },
+        {
+          "type": "effort_directive",
+          "named": true
+        },
+        {
+          "type": "history_directive",
+          "named": true
+        },
+        {
+          "type": "hooks_directive",
+          "named": true
+        },
+        {
+          "type": "max_agents_directive",
+          "named": true
+        },
+        {
+          "type": "mcp_directive",
+          "named": true
+        },
+        {
+          "type": "model_directive",
+          "named": true
+        },
+        {
+          "type": "output_directive",
+          "named": true
+        },
+        {
+          "type": "requires_directive",
+          "named": true
+        },
+        {
+          "type": "settings_directive",
+          "named": true
+        },
+        {
+          "type": "skills_directive",
+          "named": true
+        },
+        {
+          "type": "subagent_directive",
+          "named": true
+        },
+        {
+          "type": "system_directive",
+          "named": true
+        },
+        {
+          "type": "use_directive",
+          "named": true
+        },
+        {
+          "type": "workflow_directive",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "capability_directive",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "capability_body",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "codemode_body",
     "named": true,
     "fields": {},
@@ -1137,6 +1262,30 @@
           {
             "type": "inline_python_expr",
             "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "defer_directive",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "false",
+            "named": false
+          },
+          {
+            "type": "inline_python_expr",
+            "named": true
+          },
+          {
+            "type": "true",
+            "named": false
           }
         ]
       }
@@ -3651,6 +3800,10 @@
     "named": true
   },
   {
+    "type": "capability",
+    "named": false
+  },
+  {
     "type": "case",
     "named": false
   },
@@ -3667,6 +3820,10 @@
     "named": false
   },
   {
+    "type": "defer",
+    "named": false
+  },
+  {
     "type": "effort",
     "named": false
   },
@@ -3676,6 +3833,10 @@
   },
   {
     "type": "export",
+    "named": false
+  },
+  {
+    "type": "false",
     "named": false
   },
   {
@@ -3809,6 +3970,10 @@
   },
   {
     "type": "tool",
+    "named": false
+  },
+  {
+    "type": "true",
     "named": false
   },
   {

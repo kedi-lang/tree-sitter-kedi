@@ -103,6 +103,7 @@ module.exports = grammar({
         $.settings_directive,
         $.artifacts_directive,
         $.profile_directive,
+        $.capability_directive,
         $.use_directive,
         $.task_stmt,
         $.send_stmt,
@@ -1223,6 +1224,25 @@ module.exports = grammar({
         $._indent,
         repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.hooks_directive, $.history_directive, $.skills_directive, $.codemode_directive, $.requires_directive, $.budget_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $._newline)),
         $._dedent,
+      ),
+
+    capability_directive: ($) =>
+      seq(
+        ">", "capability", ":", field("name", $.identifier), ":", $._newline,
+        field("body", $.capability_body),
+      ),
+
+    capability_body: ($) =>
+      seq(
+        $._indent,
+        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.hooks_directive, $.history_directive, $.skills_directive, $.codemode_directive, $.requires_directive, $.budget_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $.defer_directive, $._newline)),
+        $._dedent,
+      ),
+
+    defer_directive: ($) =>
+      seq(
+        ">", "defer", ":",
+        field("value", choice($.inline_python_expr, "true", "false")), $._newline,
       ),
 
     output_directive: ($) =>
