@@ -3696,13 +3696,22 @@
               "type": "FIELD",
               "name": "value",
               "content": {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_hooks_plain_value"
-                },
-                "named": true,
-                "value": "hooks_plain_value"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "inline_python_expr"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_hooks_plain_value"
+                    },
+                    "named": true,
+                    "value": "hooks_plain_value"
+                  }
+                ]
               }
             },
             {
@@ -3853,13 +3862,22 @@
               "type": "FIELD",
               "name": "value",
               "content": {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_history_plain_value"
-                },
-                "named": true,
-                "value": "history_plain_value"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "inline_python_expr"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_history_plain_value"
+                    },
+                    "named": true,
+                    "value": "history_plain_value"
+                  }
+                ]
               }
             },
             {
@@ -4024,13 +4042,22 @@
               "type": "FIELD",
               "name": "value",
               "content": {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_skills_plain_value"
-                },
-                "named": true,
-                "value": "skills_plain_value"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "inline_python_expr"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_skills_plain_value"
+                    },
+                    "named": true,
+                    "value": "skills_plain_value"
+                  }
+                ]
               }
             },
             {
@@ -4195,13 +4222,22 @@
               "type": "FIELD",
               "name": "value",
               "content": {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_codemode_plain_value"
-                },
-                "named": true,
-                "value": "codemode_plain_value"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "inline_python_expr"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_codemode_plain_value"
+                    },
+                    "named": true,
+                    "value": "codemode_plain_value"
+                  }
+                ]
               }
             },
             {

@@ -1,0 +1,20 @@
+==================
+Computed feature activation
+==================
+
+> history: `history_enabled`
+> skills: `skills_enabled`
+> codemode: `codemode_enabled`
+> hooks: `hooks_enabled`
+
+---
+
+(source_file
+  (history_directive
+    (inline_python_expr (python_inline_body)))
+  (skills_directive
+    (inline_python_expr (python_inline_body)))
+  (codemode_directive
+    (inline_python_expr (python_inline_body)))
+  (hooks_directive
+    (inline_python_expr (python_inline_body))))

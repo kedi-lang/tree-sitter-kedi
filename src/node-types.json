@@ -1090,6 +1090,10 @@
           {
             "type": "codemode_plain_value",
             "named": true
+          },
+          {
+            "type": "inline_python_expr",
+            "named": true
           }
         ]
       }
@@ -1475,6 +1479,10 @@
           {
             "type": "history_plain_value",
             "named": true
+          },
+          {
+            "type": "inline_python_expr",
+            "named": true
           }
         ]
       }
@@ -1550,6 +1558,10 @@
         "types": [
           {
             "type": "hooks_plain_value",
+            "named": true
+          },
+          {
+            "type": "inline_python_expr",
             "named": true
           }
         ]
@@ -2682,6 +2694,10 @@
         "multiple": false,
         "required": false,
         "types": [
+          {
+            "type": "inline_python_expr",
+            "named": true
+          },
           {
             "type": "skills_plain_value",
             "named": true
