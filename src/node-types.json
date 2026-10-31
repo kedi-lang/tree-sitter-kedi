@@ -958,6 +958,10 @@
           "named": true
         },
         {
+          "type": "capability_if_stmt",
+          "named": true
+        },
+        {
           "type": "codemode_directive",
           "named": true
         },
@@ -1044,6 +1048,42 @@
         "types": [
           {
             "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "capability_if_stmt",
+    "named": true,
+    "fields": {
+      "alternative": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "capability_body",
+            "named": true
+          }
+        ]
+      },
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "inline_python_expr",
+            "named": true
+          }
+        ]
+      },
+      "consequence": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "capability_body",
             "named": true
           }
         ]
@@ -2324,6 +2364,10 @@
           "named": true
         },
         {
+          "type": "profile_if_stmt",
+          "named": true
+        },
+        {
           "type": "requires_directive",
           "named": true
         },
@@ -2374,6 +2418,42 @@
         "types": [
           {
             "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "profile_if_stmt",
+    "named": true,
+    "fields": {
+      "alternative": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "profile_body",
+            "named": true
+          }
+        ]
+      },
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "inline_python_expr",
+            "named": true
+          }
+        ]
+      },
+      "consequence": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "profile_body",
             "named": true
           }
         ]

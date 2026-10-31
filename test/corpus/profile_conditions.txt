@@ -1,0 +1,151 @@
+==================
+Profile guard without else followed by another member
+==================
+> profile: selected:
+  > if: `ready`:
+    > model: first
+  > agent: codex
+
+---
+
+(source_file
+  (profile_directive
+    (identifier)
+    (profile_body
+      (profile_if_stmt
+        (inline_python_expr
+          (python_inline_body))
+        (profile_body
+          (model_directive
+            (model_plain_value))))
+      (agent_directive
+        (adapter_plain_value)))))
+
+==================
+Capability guard without else followed by another member
+==================
+> capability: selected:
+  > if: `ready`:
+    > instructions: Cite sources.
+  > approval: allow
+
+---
+
+(source_file
+  (capability_directive
+    (identifier)
+    (capability_body
+      (capability_if_stmt
+        (inline_python_expr
+          (python_inline_body))
+        (capability_body
+          (system_directive
+            (system_expr
+              (text_segment)))))
+      (approval_directive
+        (approval_plain_value)))))
+
+==================
+Profile if else with multiple settings
+==================
+> profile: main:
+  > if: `prefer_fast`:
+    > model: fast-model
+    > effort: high
+  > else:
+    > model: smart-model
+
+---
+
+(source_file
+  (profile_directive
+    (identifier)
+    (profile_body
+      (profile_if_stmt
+        (inline_python_expr
+          (python_inline_body))
+        (profile_body
+          (model_directive
+            (model_plain_value))
+          (effort_directive
+            (effort_plain_value)))
+        (profile_body
+          (model_directive
+            (model_plain_value)))))))
+
+==================
+Nested guards bind else at the corresponding indentation
+==================
+> profile: nested:
+  > if: `outer`:
+    > if: `inner`:
+      > model: first
+    > else:
+      > model: second
+  > else:
+    > model: third
+  > effort: medium
+
+---
+
+(source_file
+  (profile_directive
+    (identifier)
+    (profile_body
+      (profile_if_stmt
+        (inline_python_expr
+          (python_inline_body))
+        (profile_body
+          (profile_if_stmt
+            (inline_python_expr
+              (python_inline_body))
+            (profile_body
+              (model_directive
+                (model_plain_value)))
+            (profile_body
+              (model_directive
+                (model_plain_value)))))
+        (profile_body
+          (model_directive
+            (model_plain_value))))
+      (effort_directive
+        (effort_plain_value)))))
+
+==================
+Capability conditions can select owned resources and loading policy
+==================
+> capability: evidence:
+  > if: `on_demand`:
+    > defer: true
+    > instructions: Retrieve sources before answering.
+    > use: read_source
+  > else:
+    > if: `allow_reading`:
+      > approval: allow
+      > use: read_source
+
+---
+
+(source_file
+  (capability_directive
+    (identifier)
+    (capability_body
+      (capability_if_stmt
+        (inline_python_expr
+          (python_inline_body))
+        (capability_body
+          (defer_directive)
+          (system_directive
+            (system_expr
+              (text_segment)))
+          (use_directive
+            (identifier)))
+        (capability_body
+          (capability_if_stmt
+            (inline_python_expr
+              (python_inline_body))
+            (capability_body
+              (approval_directive
+                (approval_plain_value))
+              (use_directive
+                (identifier)))))))))

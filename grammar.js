@@ -15,7 +15,12 @@ module.exports = grammar({
 
   // `template_block_stmt` continuation lines and `[name] = …` initializations
   // share a `[` prefix; disambiguation needs the `=` after the target.
-  conflicts: ($) => [[$.template_block_stmt], [$.task_group_arm]],
+  // An optional configuration else and the next member share `>`; retain
+  // both parses until the directive keyword distinguishes them.
+  conflicts: ($) => [
+    [$.template_block_stmt], [$.task_group_arm],
+    [$.profile_if_stmt], [$.capability_if_stmt],
+  ],
 
   // IMPORTANT: this list's order must match `enum TokenType` in src/scanner.c.
   //
@@ -1222,7 +1227,7 @@ module.exports = grammar({
     profile_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.hooks_directive, $.history_directive, $.skills_directive, $.codemode_directive, $.requires_directive, $.budget_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $._newline)),
+        repeat1(choice($.profile_if_stmt, $.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.hooks_directive, $.history_directive, $.skills_directive, $.codemode_directive, $.requires_directive, $.budget_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $._newline)),
         $._dedent,
       ),
 
@@ -1235,8 +1240,22 @@ module.exports = grammar({
     capability_body: ($) =>
       seq(
         $._indent,
-        repeat1(choice($.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.hooks_directive, $.history_directive, $.skills_directive, $.codemode_directive, $.requires_directive, $.budget_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $.defer_directive, $._newline)),
+        repeat1(choice($.capability_if_stmt, $.agent_directive, $.adapter_directive, $.model_directive, $.effort_directive, $.approval_directive, $.hooks_directive, $.history_directive, $.skills_directive, $.codemode_directive, $.requires_directive, $.budget_directive, $.system_directive, $.mcp_directive, $.settings_directive, $.artifacts_directive, $.output_directive, $.subagent_directive, $.max_agents_directive, $.workflow_directive, $.use_directive, $.defer_directive, $._newline)),
         $._dedent,
+      ),
+
+    profile_if_stmt: ($) =>
+      seq(
+        ">", "if", ":", field("condition", $.inline_python_expr), ":", $._newline,
+        field("consequence", $.profile_body),
+        optional(seq(">", "else", ":", $._newline, field("alternative", $.profile_body))),
+      ),
+
+    capability_if_stmt: ($) =>
+      seq(
+        ">", "if", ":", field("condition", $.inline_python_expr), ":", $._newline,
+        field("consequence", $.capability_body),
+        optional(seq(">", "else", ":", $._newline, field("alternative", $.capability_body))),
       ),
 
     defer_directive: ($) =>
