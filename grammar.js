@@ -1274,7 +1274,31 @@ module.exports = grammar({
       seq(">", "max_agents", ":", field("value", $.positive_integer), $._newline),
 
     workflow_directive: ($) =>
-      seq(">", "workflow", ":", field("value", $.identifier), $._newline),
+      choice(
+        seq(">", "workflow", ":", field("value", $.identifier), $._newline),
+        seq(">", "workflow", ":", $._newline, field("body", $.workflow_body)),
+      ),
+
+    workflow_body: ($) =>
+      seq(
+        $._indent,
+        repeat1(choice($.workflow_mode_directive, $.workflow_tools_directive, $._newline)),
+        $._dedent,
+      ),
+
+    workflow_mode_directive: ($) =>
+      seq(">", "mode", ":", field("value", $.identifier), $._newline),
+
+    workflow_tools_directive: ($) =>
+      choice(
+        seq(">", "tools", ":", field("name", $.identifier), $._newline),
+        seq(">", "tools", ":", $._newline, field("body", $.workflow_tools_body)),
+      ),
+
+    workflow_tools_body: ($) =>
+      seq($._indent, repeat1(choice($.workflow_tool_name, $._newline)), $._dedent),
+
+    workflow_tool_name: ($) => seq(field("name", $.identifier), $._newline),
 
     positive_integer: (_) => /[1-9][0-9]*/,
 

@@ -546,6 +546,45 @@ Profile subagent directive
         value: (identifier)))))
 
 ==================
+Workflow block with mode and tools
+==================
+
+> profile: orchestrator:
+  > workflow:
+    > mode: delegate
+    > tools:
+      wait_subagent
+      cancel_subagent
+
+> profile: single:
+  > workflow:
+    > tools: wait_subagent
+
+---
+
+(source_file
+  (profile_directive
+    name: (identifier)
+    body: (profile_body
+      (workflow_directive
+        body: (workflow_body
+          (workflow_mode_directive
+            value: (identifier))
+          (workflow_tools_directive
+            body: (workflow_tools_body
+              (workflow_tool_name
+                name: (identifier))
+              (workflow_tool_name
+                name: (identifier))))))))
+  (profile_directive
+    name: (identifier)
+    body: (profile_body
+      (workflow_directive
+        body: (workflow_body
+          (workflow_tools_directive
+            name: (identifier)))))))
+
+==================
 Typed A2A agent connection
 ==================
 

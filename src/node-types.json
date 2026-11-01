@@ -3767,12 +3767,114 @@
     }
   },
   {
+    "type": "workflow_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "workflow_mode_directive",
+          "named": true
+        },
+        {
+          "type": "workflow_tools_directive",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "workflow_directive",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "workflow_body",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "workflow_mode_directive",
     "named": true,
     "fields": {
       "value": {
         "multiple": false,
         "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "workflow_tool_name",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "workflow_tools_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "workflow_tool_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "workflow_tools_directive",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "workflow_tools_body",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": false,
         "types": [
           {
             "type": "identifier",
@@ -3989,6 +4091,10 @@
     "named": false
   },
   {
+    "type": "mode",
+    "named": false
+  },
+  {
     "type": "model",
     "named": false
   },
@@ -4066,6 +4172,10 @@
   },
   {
     "type": "tool",
+    "named": false
+  },
+  {
+    "type": "tools",
     "named": false
   },
   {
