@@ -119,3 +119,29 @@ Eval with data, test_data, and metric
         body: (eval_entry_body
           (return_stmt
             value: (inline_python_expr code: (python_inline_body))))))))
+
+==================
+Eval entry followed by a blank line and a main return
+==================
+
+@eval: solver:
+  > metric: exact(cases):
+    = `x == 1`
+
+= `1`
+
+---
+
+(source_file
+  (validation_block
+    kw: (validation_keyword)
+    procedure: (identifier)
+    body: (validation_body
+      (eval_metric
+        name: (identifier)
+        dataset: (identifier)
+        body: (eval_entry_body
+          (return_stmt
+            value: (inline_python_expr code: (python_inline_body)))))))
+  (return_stmt
+    value: (inline_python_expr code: (python_inline_body))))

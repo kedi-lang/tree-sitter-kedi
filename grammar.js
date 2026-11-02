@@ -1422,10 +1422,12 @@ module.exports = grammar({
         field("body", $.eval_entry_body),
       ),
 
+    // Blank lines after the return arrive as extra newlines before the dedent.
     eval_entry_body: ($) =>
       seq(
         $._indent,
         choice($.return_stmt, $.return_block_stmt),
+        repeat($._newline),
         $._dedent,
       ),
 
