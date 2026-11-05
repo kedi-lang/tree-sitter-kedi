@@ -9,11 +9,11 @@ Usage:
     tree = parser.parse(open("program.kedi", "rb").read())
 """
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 
-    def language() -> Any: ...
+    def language() -> object: ...
 
 else:
     from ._binding import language
