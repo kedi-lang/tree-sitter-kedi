@@ -97,13 +97,13 @@ jobs:
           python-version: "3.13"
 
       - name: Install cibuildwheel
-        run: python -m pip install cibuildwheel==4.1.1
+        run: python -m pip install cibuildwheel==4.3.5
 
       - name: Build And Test Wheels
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_BUILD: "cp310-* cp311-* cp312-* cp313-* cp314-*"
-          CIBW_TEST_REQUIRES: "tree-sitter==0.25.2"
+          CIBW_TEST_REQUIRES: "tree-sitter==0.26.0"
           CIBW_TEST_COMMAND: >-
             python -c "from tree_sitter import Language, Parser;
             import tree_sitter_kedi;

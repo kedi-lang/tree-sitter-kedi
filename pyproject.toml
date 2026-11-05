@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools==84.0.0", "wheel==0.48.0"]
+requires = ["setuptools==84.2.1", "wheel==0.48.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "tree-sitter-kedi"
-version = "0.4.3"
+version = "0.4.4"
 description = "Kedi grammar for tree-sitter"
 readme = "README.md"
 license = "Apache-2.0"
@@ -14,7 +14,7 @@ authors = [
   { name = "Doğukan Yiğit Polat", email = "yigit@neurograph.net" },
   { name = "Mert Sırakaya",        email = "mert@kedi-lang.org" },
 ]
-dependencies = ["tree-sitter==0.25.2"]
+dependencies = ["tree-sitter==0.26.0"]
 keywords = ["kedi", "tree-sitter", "parser", "dsl"]
 classifiers = [
   "Programming Language :: Python :: 3",
