@@ -85,7 +85,7 @@ jobs:
           - windows-latest
           - windows-11-arm
           - macos-15-intel
-          - macos-14
+          - macos-15
 
     steps:
       - name: Check Out Repository
