@@ -713,3 +713,96 @@ Explicit adapter requirements in lexical scopes
       (return_stmt
         (template_expr
           (text_segment))))))
+
+================================================================================
+Evolve group in a procedure
+================================================================================
+
+@solve(problem: str) -> str:
+  > evolve: planner:
+    >> Break <problem> into steps: [steps: list[str]]
+    [plan] << Turn <steps> into a short numbered plan.
+
+  = <plan>
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (procedure_def
+    (identifier)
+    (param_list
+      (param
+        (identifier)
+        (type_expr
+          (type_ref
+            (identifier)))))
+    (type_expr
+      (type_ref
+        (identifier)))
+    (block
+      (evolve_directive
+        (identifier)
+        (block
+          (template_block_stmt
+            (template_prompt_expr
+              (text_segment)
+              (input_segment
+                (identifier))
+              (text_segment)
+              (output_segment
+                (identifier)
+                (type_expr
+                  (type_apply
+                    (identifier)
+                    (type_arg
+                      (type_ref
+                        (identifier))))))))
+          (raw_invoke_stmt
+            (binding_target
+              (identifier))
+            (template_prompt_expr
+              (text_segment)
+              (input_segment
+                (identifier))
+              (text_segment)))))
+      (return_stmt
+        (template_expr
+          (input_segment
+            (identifier)))))))
+
+================================================================================
+Evolve group at top level with control flow
+================================================================================
+
+> evolve: greeting:
+  [name: str] = `"Ada"`
+  > if: `len(name) > 2`:
+    >> Say hello to <name> as [greeting].
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (evolve_directive
+    (identifier)
+    (block
+      (variable_init_stmt
+        (binding_target
+          (identifier)
+          (type_expr
+            (type_ref
+              (identifier))))
+        (inline_python_expr
+          (python_inline_body)))
+      (if_stmt
+        (inline_python_expr
+          (python_inline_body))
+        (block
+          (template_block_stmt
+            (template_prompt_expr
+              (text_segment)
+              (input_segment
+                (identifier))
+              (text_segment)
+              (output_segment
+                (identifier))
+              (text_segment))))))))

@@ -36,6 +36,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "evolve_directive"
+        },
+        {
+          "type": "SYMBOL",
           "name": "module_import"
         },
         {
@@ -882,6 +886,10 @@
         {
           "type": "SYMBOL",
           "name": "optimize_directive"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "evolve_directive"
         },
         {
           "type": "SYMBOL",
@@ -3102,6 +3110,47 @@
         {
           "type": "SYMBOL",
           "name": "_dedent"
+        }
+      ]
+    },
+    "evolve_directive": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ">"
+        },
+        {
+          "type": "STRING",
+          "value": "evolve"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "block"
+          }
         }
       ]
     },

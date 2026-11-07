@@ -89,6 +89,7 @@ module.exports = grammar({
         $.procedure_def,
         $.type_def,
         $.package_directive,
+        $.evolve_directive,
         $.module_import,
         $.module_export,
         $.validation_block,
@@ -269,6 +270,7 @@ module.exports = grammar({
         $.type_def_stmt,
         $.auto_directive,
         $.optimize_directive,
+        $.evolve_directive,
         $.tool_directive,
         $.agent_directive,
         $.adapter_directive,
@@ -804,6 +806,19 @@ module.exports = grammar({
         $.template_block_stmt,
         repeat($._newline),
         $._dedent,
+      ),
+
+    // `> evolve: name:` names a scope-transparent region whose body a validated form can
+    // replace at run time. The body is an ordinary statement block.
+    evolve_directive: ($) =>
+      seq(
+        ">",
+        "evolve",
+        ":",
+        field("name", $.identifier),
+        ":",
+        $._newline,
+        field("body", $.block),
       ),
 
     // ============================================================
