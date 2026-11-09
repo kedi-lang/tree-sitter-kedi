@@ -4,20 +4,19 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tree-sitter-kedi"
-version = "0.4.6"
+version = "0.4.7"
 description = "Kedi grammar for tree-sitter"
 readme = "README.md"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
 requires-python = ">=3.10"
+# PyPI shows the Author field in full but only the first address of Author-email, so names and
+# addresses are separate entries.
 authors = [
-  { name = "Doğukan Yiğit Polat", email = "yigit@neurograph.net" },
-  { name = "Mert Sırakaya",        email = "mert@kedi-lang.org" },
-]
-# PyPI shows only the first author and the first maintainer, so the two lists differ in order.
-maintainers = [
-  { name = "Mert Sırakaya",        email = "mert@kedi-lang.org" },
-  { name = "Doğukan Yiğit Polat", email = "yigit@neurograph.net" },
+    {name = "Doğukan Yiğit Polat"},
+    {name = "Mert Sırakaya"},
+    {email = "yigit@neurograph.net"},
+    {email = "mert@kedi-lang.org"},
 ]
 dependencies = ["tree-sitter==0.26.0"]
 keywords = ["kedi", "tree-sitter", "parser", "dsl"]
