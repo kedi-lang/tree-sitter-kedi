@@ -1,0 +1,11 @@
+> profile: coordinator:
+  #        ^ label
+  > subagent: reviewer
+  #           ^ label
+
+> use: coordinator
+#      ^ label
+
+> task [review_job]: reviewer:
+  #                  ^ label
+  >> Review the change.
