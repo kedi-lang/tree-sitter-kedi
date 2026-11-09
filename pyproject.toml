@@ -14,6 +14,11 @@ authors = [
   { name = "Doğukan Yiğit Polat", email = "yigit@neurograph.net" },
   { name = "Mert Sırakaya",        email = "mert@kedi-lang.org" },
 ]
+# PyPI shows only the first author and the first maintainer, so the two lists differ in order.
+maintainers = [
+  { name = "Mert Sırakaya",        email = "mert@kedi-lang.org" },
+  { name = "Doğukan Yiğit Polat", email = "yigit@neurograph.net" },
+]
 dependencies = ["tree-sitter==0.26.0"]
 keywords = ["kedi", "tree-sitter", "parser", "dsl"]
 classifiers = [
