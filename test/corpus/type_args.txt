@@ -1,0 +1,37 @@
+==================
+Numeric and ellipsis type arguments
+==================
+
+[t: Literal[1, -2, 1.5]] = `1`
+[p: tuple[int, ...]] = `(1, 2)`
+
+---
+
+(source_file
+  (variable_init_stmt
+    (binding_target
+      name: (identifier)
+      type: (type_expr
+        (type_apply
+          name: (identifier)
+          args: (type_arg
+            (type_number))
+          args: (type_arg
+            (type_number))
+          args: (type_arg
+            (type_number)))))
+    rhs: (inline_python_expr
+      code: (python_inline_body)))
+  (variable_init_stmt
+    (binding_target
+      name: (identifier)
+      type: (type_expr
+        (type_apply
+          name: (identifier)
+          args: (type_arg
+            (type_ref
+              name: (identifier)))
+          args: (type_arg
+            (type_ellipsis)))))
+    rhs: (inline_python_expr
+      code: (python_inline_body))))

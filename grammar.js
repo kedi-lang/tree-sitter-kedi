@@ -374,7 +374,8 @@ module.exports = grammar({
 
     _type_expr_term: ($) => choice($.type_union, $.type_apply, $.type_ref),
 
-    type_arg: ($) => choice($.type_python, $.type_string, $._type_expr_term),
+    type_arg: ($) =>
+      choice($.type_python, $.type_string, $.type_number, $.type_ellipsis, $._type_expr_term),
 
     type_union: ($) =>
       prec.left(
@@ -395,6 +396,11 @@ module.exports = grammar({
     type_python: ($) => seq("`", field("code", $.python_inline_body), "`"),
 
     type_string: (_$) => token(choice(/"([^"\\\n]|\\.)*"/, /'([^'\\\n]|\\.)*'/)),
+
+    // Literal and Annotated arguments: 1, -1, 1.5, 2e3; `...` as in tuple[int, ...].
+    type_number: (_$) => token(seq(optional("-"), /(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?/)),
+
+    type_ellipsis: (_$) => "...",
 
     // ============================================================
     // Variable initialization, assignment & return

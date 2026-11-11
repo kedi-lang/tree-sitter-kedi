@@ -3425,6 +3425,14 @@
           "named": true
         },
         {
+          "type": "type_ellipsis",
+          "named": true
+        },
+        {
+          "type": "type_number",
+          "named": true
+        },
+        {
           "type": "type_python",
           "named": true
         },
@@ -4219,6 +4227,14 @@
   {
     "type": "true",
     "named": false
+  },
+  {
+    "type": "type_ellipsis",
+    "named": true
+  },
+  {
+    "type": "type_number",
+    "named": true
   },
   {
     "type": "type_string",

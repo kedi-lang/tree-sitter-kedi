@@ -1411,6 +1411,14 @@
         },
         {
           "type": "SYMBOL",
+          "name": "type_number"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type_ellipsis"
+        },
+        {
+          "type": "SYMBOL",
           "name": "_type_expr_term"
         }
       ]
@@ -1538,6 +1546,34 @@
           }
         ]
       }
+    },
+    "type_number": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "-"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "PATTERN",
+            "value": "(\\d+(\\.\\d*)?|\\.\\d+)([eE][+-]?\\d+)?"
+          }
+        ]
+      }
+    },
+    "type_ellipsis": {
+      "type": "STRING",
+      "value": "..."
     },
     "variable_init_stmt": {
       "type": "SEQ",
