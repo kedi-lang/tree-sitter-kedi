@@ -269,14 +269,13 @@ static TextScanResult scan_text_run(
             // A condition's final colon is structural. Mark the token end
             // before looking ahead; tree-sitter rewinds speculative advances
             // to this mark when we return the preceding CONDITION_TEXT.
-            if (!seen_text) return TEXT_SCAN_NONE;
             lexer->mark_end(lexer);
             advance(lexer);
             while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
                 advance(lexer);
             }
             if (lexer->lookahead == '\n' || (lexer->lookahead == 0 && is_eof(lexer))) {
-                return TEXT_SCAN_TEXT;
+                return seen_text ? TEXT_SCAN_TEXT : TEXT_SCAN_NONE;
             }
             seen_text = true;
             continue;
@@ -362,6 +361,9 @@ static TextScanResult scan_text_run(
 }
 
 static bool scan_system_angle_segment(TSLexer *lexer) {
+    while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+        lexer->advance(lexer, /*skip=*/true);
+    }
     if (lexer->lookahead != '<') return false;
     advance(lexer);
     bool saw_body = false;
@@ -435,7 +437,10 @@ static bool scan_fenced_body(TSLexer *lexer) {
         // Not a close fence. Advance through any remaining chars of this
         // line plus the trailing '\n', then include them in the body by
         // updating mark_end.
-        while (lexer->lookahead != 0 && lexer->lookahead != '\n') advance(lexer);
+        while (lexer->lookahead != '\n' && !is_eof(lexer)) {
+            if (lexer->lookahead == 0) return false;
+            advance(lexer);
+        }
         if (lexer->lookahead == '\n') {
             advance(lexer);
         } else if (is_eof(lexer)) {

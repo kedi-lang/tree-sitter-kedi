@@ -11,6 +11,26 @@ Inline instruction directives
   (system_directive (system_expr (text_segment))))
 
 ==================
+Adjacent instruction substitutions separated by spaces
+==================
+> instructions: Use <first> <last> now.
+> instructions: <first> <`last`>
+
+---
+
+(source_file
+  (system_directive
+    (system_expr
+      (text_segment)
+      (system_angle_segment)
+      (system_angle_segment)
+      (text_segment)))
+  (system_directive
+    (system_expr
+      (system_angle_segment)
+      (system_angle_segment))))
+
+==================
 Multiline profile instructions with substitutions
 ==================
 > profile: reviewer:

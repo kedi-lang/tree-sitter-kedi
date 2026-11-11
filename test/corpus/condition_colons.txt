@@ -1,0 +1,46 @@
+==================
+Internal colons after substitutions in template conditions
+==================
+
+> if: The time <hour>:<minute> is in the morning
+  > show: morning
+> if: The ratio <a> :1 is above 2
+  > show: above
+> loop: <t>: still too early
+  > show: waiting
+
+---
+
+(source_file
+  (if_stmt
+    (condition_template_expr
+      (condition_text_segment)
+      (input_segment
+        (identifier))
+      (condition_text_segment)
+      (input_segment
+        (identifier))
+      (condition_text_segment))
+    (block
+      (show_stmt
+        (template_expr
+          (text_segment)))))
+  (if_stmt
+    (condition_template_expr
+      (condition_text_segment)
+      (input_segment
+        (identifier))
+      (condition_text_segment))
+    (block
+      (show_stmt
+        (template_expr
+          (text_segment)))))
+  (conditional_loop_stmt
+    (condition_template_expr
+      (input_segment
+        (identifier))
+      (condition_text_segment))
+    (block
+      (show_stmt
+        (template_expr
+          (text_segment))))))
