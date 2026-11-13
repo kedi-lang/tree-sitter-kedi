@@ -47,6 +47,8 @@
 
 (input_segment name: (identifier) @local.reference)
 (call_segment name: (identifier) @local.reference)
+(reference_segment name: (identifier) @local.reference)
+(reference_call name: (identifier) @local.reference)
 (type_ref name: (identifier) @local.reference)
 (type_apply name: (identifier) @local.reference)
 (eval_metric dataset: (identifier) @local.reference)

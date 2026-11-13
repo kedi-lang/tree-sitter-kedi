@@ -24,6 +24,10 @@
         "named": true
       },
       {
+        "type": "reference_segment",
+        "named": true
+      },
+      {
         "type": "text_segment",
         "named": true
       }
@@ -1279,6 +1283,10 @@
         },
         {
           "type": "python_expr_segment",
+          "named": true
+        },
+        {
+          "type": "reference_segment",
           "named": true
         }
       ]
@@ -2557,6 +2565,58 @@
     }
   },
   {
+    "type": "reference_call",
+    "named": true,
+    "fields": {
+      "args": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "call_arg_list",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "reference_segment",
+    "named": true,
+    "fields": {
+      "call": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "reference_call",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "requirement_name",
     "named": true,
     "fields": {
@@ -3119,6 +3179,10 @@
         },
         {
           "type": "python_expr_segment",
+          "named": true
+        },
+        {
+          "type": "reference_segment",
           "named": true
         },
         {

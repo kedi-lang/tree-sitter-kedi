@@ -462,3 +462,64 @@ Top-level backtick-line statement (side effect)
   (backtick_line_stmt
     (inline_python_expr
       code: (python_inline_body))))
+
+==================
+References in prompts and claims
+==================
+
+@p(cat1, spec):
+    >> Does <<cat1>> match <<spec>>? Compare <<image(<name>.png)>> [ok: bool]
+    [x] << Describe <<cat1>>
+    > if: <<cat1>> shows a cat
+        > show: yes
+
+---
+
+(source_file
+  (procedure_def
+    name: (identifier)
+    params: (param_list
+      (param
+        name: (identifier))
+      (param
+        name: (identifier)))
+    body: (block
+      (template_block_stmt
+        head: (template_prompt_expr
+          (text_segment)
+          (reference_segment
+            name: (identifier))
+          (text_segment)
+          (reference_segment
+            name: (identifier))
+          (text_segment)
+          (reference_segment
+            call: (reference_call
+              name: (identifier)
+              args: (call_arg_list
+                (call_arg
+                  (template_arg
+                    (input_segment
+                      name: (identifier))
+                    (text_in_call_segment))))))
+          (output_segment
+            name: (identifier)
+            type: (type_expr
+              (type_ref
+                name: (identifier))))))
+      (raw_invoke_stmt
+        target: (binding_target
+          name: (identifier))
+        prompt: (template_prompt_expr
+          (text_segment)
+          (reference_segment
+            name: (identifier))))
+      (if_stmt
+        condition: (condition_template_expr
+          (reference_segment
+            name: (identifier))
+          (condition_text_segment))
+        consequence: (block
+          (show_stmt
+            value: (template_expr
+              (text_segment))))))))

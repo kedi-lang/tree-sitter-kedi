@@ -434,12 +434,17 @@ module.exports = grammar({
         $._newline,
       ),
 
+    // `[x] << ...` is a raw invoke, never an output capture followed by a
+    // `<<reference>>`.
     binding_target: ($) =>
-      seq(
-        "[",
-        field("name", $.identifier),
-        optional(seq(":", field("type", $.type_expr))),
-        "]",
+      prec(
+        1,
+        seq(
+          "[",
+          field("name", $.identifier),
+          optional(seq(":", field("type", $.type_expr))),
+          "]",
+        ),
       ),
 
     show_stmt: ($) =>
@@ -669,6 +674,7 @@ module.exports = grammar({
       choice(
         repeat1(
           choice(
+            $.reference_segment,
             $.input_segment,
             $.call_segment,
             $.python_expr_segment,
@@ -679,6 +685,7 @@ module.exports = grammar({
         seq(
           repeat1(
             choice(
+              $.reference_segment,
               $.input_segment,
               $.call_segment,
               $.python_expr_segment,
@@ -703,6 +710,7 @@ module.exports = grammar({
 
     _condition_segment: ($) =>
       choice(
+        $.reference_segment,
         $.input_segment,
         $.call_segment,
         $.python_expr_segment,
@@ -714,6 +722,7 @@ module.exports = grammar({
 
     _segment: ($) =>
       choice(
+        $.reference_segment,
         $.input_segment,
         $.call_segment,
         $.python_expr_segment,
@@ -736,6 +745,26 @@ module.exports = grammar({
         ">",
       ),
 
+    // `<<name>>` and `<<proc(...)>>` pass a value by reference: the prompt
+    // text gets the value's ID and the value is attached to the model
+    // context. Only model prompts (template lines, invokes, claims) accept
+    // references. The other template positions parse them too, so the AST
+    // layer can report a precise context error instead of a generic ERROR.
+    reference_segment: ($) =>
+      seq(
+        "<<",
+        choice(field("name", $.identifier), field("call", $.reference_call)),
+        ">>",
+      ),
+
+    reference_call: ($) =>
+      seq(
+        field("name", $.identifier),
+        "(",
+        optional(field("args", $.call_arg_list)),
+        ")",
+      ),
+
     call_arg_list: ($) => sep1($.call_arg, ","),
 
     // Call arguments are either a single pure `python_expr` (passed as a
@@ -749,6 +778,7 @@ module.exports = grammar({
     template_arg: ($) =>
       repeat1(
         choice(
+          $.reference_segment,
           $.input_segment,
           $.output_segment,
           $.call_segment,
