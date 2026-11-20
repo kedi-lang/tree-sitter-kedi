@@ -182,9 +182,9 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _package_plain_value: ($) => token(/[^\n#]+/),
+    _package_plain_value: ($) => token(/[^\r\n#]+/),
 
-    _package_dependency_value: ($) => token(/[^\n#]+/),
+    _package_dependency_value: ($) => token(/[^\r\n#]+/),
 
     module_import: ($) =>
       choice(
@@ -338,7 +338,7 @@ module.exports = grammar({
 
     tool_exception_name: ($) => seq(field("name", $.identifier), $._newline),
 
-    _tool_plain_value: ($) => token(/[^\n#]+/),
+    _tool_plain_value: ($) => token(/[^\r\n#]+/),
 
     // ============================================================
     // Type definitions
@@ -882,7 +882,7 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _model_plain_value: ($) => token(/[^\n`]+/),
+    _model_plain_value: ($) => token(/[^\r\n`#]+/),
 
     agent_directive: ($) =>
       choice(
@@ -954,9 +954,9 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _adapter_plain_value: ($) => token(/[^\n`:#]+/),
+    _adapter_plain_value: ($) => token(/[^\r\n`:#]+/),
 
-    _agent_command_plain_value: ($) => token(/[^\n`#]+/),
+    _agent_command_plain_value: ($) => token(/[^\r\n`#]+/),
 
     effort_directive: ($) =>
       seq(
@@ -968,7 +968,7 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _effort_plain_value: ($) => token(/[^\n`]+/),
+    _effort_plain_value: ($) => token(/[^\r\n`#]+/),
 
     approval_directive: ($) =>
       seq(
@@ -980,7 +980,7 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _approval_plain_value: ($) => token(/[^\n`]+/),
+    _approval_plain_value: ($) => token(/[^\r\n`#]+/),
 
     hooks_directive: ($) =>
       choice(
@@ -995,7 +995,7 @@ module.exports = grammar({
         seq(">", "hooks", ":", $._newline, field("body", $.hooks_body)),
       ),
 
-    _hooks_plain_value: ($) => token(/[^\n`#]+/),
+    _hooks_plain_value: ($) => token(/[^\r\n`#]+/),
 
     hooks_body: ($) =>
       seq(
@@ -1026,7 +1026,7 @@ module.exports = grammar({
         seq(">", "history", ":", $._newline, field("body", $.history_body)),
       ),
 
-    _history_plain_value: ($) => token(/[^\n`#]+/),
+    _history_plain_value: ($) => token(/[^\r\n`#]+/),
 
     history_body: ($) =>
       seq(
@@ -1057,7 +1057,7 @@ module.exports = grammar({
         seq(">", "skills", ":", $._newline, field("body", $.skills_body)),
       ),
 
-    _skills_plain_value: ($) => token(/[^\n`#]+/),
+    _skills_plain_value: ($) => token(/[^\r\n`#]+/),
 
     skills_body: ($) =>
       seq(
@@ -1088,7 +1088,7 @@ module.exports = grammar({
         seq(">", "codemode", ":", $._newline, field("body", $.codemode_body)),
       ),
 
-    _codemode_plain_value: ($) => token(/[^\n`#]+/),
+    _codemode_plain_value: ($) => token(/[^\r\n`#]+/),
 
     codemode_body: ($) =>
       seq(
@@ -1220,7 +1220,7 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _mcp_plain_value: ($) => token(/[^\n`#]+/),
+    _mcp_plain_value: ($) => token(/[^\r\n`#]+/),
 
     settings_directive: ($) =>
       seq(">", "settings", ":", $._newline, field("body", $.settings_body)),
@@ -1241,7 +1241,7 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _settings_plain_value: ($) => token(/[^\n`#]+/),
+    _settings_plain_value: ($) => token(/[^\r\n`#]+/),
 
     artifacts_directive: ($) =>
       seq(">", "artifacts", ":", $._newline, field("body", $.artifacts_body)),
@@ -1262,7 +1262,7 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _artifacts_plain_value: ($) => token(/[^\n`#]+/),
+    _artifacts_plain_value: ($) => token(/[^\r\n`#]+/),
 
     profile_directive: ($) =>
       seq(
@@ -1494,7 +1494,7 @@ module.exports = grammar({
 
     identifier: ($) => /[A-Za-z_][A-Za-z0-9_]*/,
 
-    line_comment: ($) => token(seq("#", /[^\n]*/)),
+    line_comment: ($) => token(seq("#", /[^\r\n]*/)),
 
     block_comment: ($) =>
       token(seq("###", repeat(choice(/[^#]/, /#[^#]/, /##[^#]/)), "###")),

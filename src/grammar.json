@@ -408,14 +408,14 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n#]+"
+        "value": "[^\\r\\n#]+"
       }
     },
     "_package_dependency_value": {
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n#]+"
+        "value": "[^\\r\\n#]+"
       }
     },
     "module_import": {
@@ -1228,7 +1228,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n#]+"
+        "value": "[^\\r\\n#]+"
       }
     },
     "type_def": {
@@ -3344,7 +3344,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "agent_directive": {
@@ -3708,14 +3708,14 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`:#]+"
+        "value": "[^\\r\\n`:#]+"
       }
     },
     "_agent_command_plain_value": {
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "effort_directive": {
@@ -3777,7 +3777,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "approval_directive": {
@@ -3839,7 +3839,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "hooks_directive": {
@@ -3935,7 +3935,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "hooks_body": {
@@ -4101,7 +4101,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "history_body": {
@@ -4281,7 +4281,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "skills_body": {
@@ -4461,7 +4461,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "codemode_body": {
@@ -5179,7 +5179,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "settings_directive": {
@@ -5299,7 +5299,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "artifacts_directive": {
@@ -5419,7 +5419,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "profile_directive": {
@@ -6810,7 +6810,7 @@
           },
           {
             "type": "PATTERN",
-            "value": "[^\\n]*"
+            "value": "[^\\r\\n]*"
           }
         ]
       }
