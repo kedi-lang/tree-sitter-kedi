@@ -442,11 +442,16 @@ static bool scan_system_angle_segment(TSLexer *lexer) {
 static bool scan_fenced_body(TSLexer *lexer) {
     lexer->mark_end(lexer);
     for (;;) {
-        if (lexer->lookahead == 0 && is_eof(lexer)) {
-            // Unterminated fence: take everything up to EOF as the body.
-            // The grammar will then fail to match the close fence and
-            // surface an ERROR.
-            return true;
+        if (is_eof(lexer)) {
+            // Unterminated fence: no close fence before EOF. Refuse the
+            // token instead of taking everything up to EOF as the body:
+            // during error recovery every symbol is valid, so an
+            // unterminated body would otherwise swallow all following
+            // statements into a bogus python_block (and a later real
+            // statement would come out as a stray python_code node).
+            // Refusing lets the parser report the unclosed fence and
+            // keep parsing the rest of the file normally.
+            return false;
         }
 
         // Peek the current line: is it a close fence?
@@ -477,14 +482,10 @@ static bool scan_fenced_body(TSLexer *lexer) {
 
         // Not a close fence. Advance through any remaining chars of this
         // line plus the trailing '\n', then include them in the body by
-        // updating mark_end.
+        // updating mark_end. A line with no trailing newline ends the
+        // scan at EOF, where the top of the loop refuses the token.
         while (lexer->lookahead != '\n' && !is_eof(lexer)) advance(lexer);
-        if (lexer->lookahead == '\n') {
-            advance(lexer);
-        } else if (is_eof(lexer)) {
-            lexer->mark_end(lexer);
-            return true;
-        }
+        if (lexer->lookahead == '\n') advance(lexer);
         lexer->mark_end(lexer);
     }
 }
