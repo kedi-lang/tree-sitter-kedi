@@ -49,11 +49,17 @@ module.exports = grammar({
 
   // Extras run between tokens. We include:
   //
-  //   - `block_comment` (`###`-delimited multi-line). Body matches any
-  //     char-sequence that does not contain three consecutive `#`s: each
-  //     character is either non-`#`, `#` followed by non-`#`, or `##`
-  //     followed by non-`#` — the standard "everything except the
-  //     closing fence" trick.
+  //   - `block_comment` (`###`-delimited multi-line). Only a line that
+  //     is exactly `###` (optional indent / trailing whitespace) opens
+  //     or closes the comment. A `###` that shares its line with other
+  //     text (`#### Section`, `### text`, `###x`) is body content
+  //     inside a comment and an ordinary `#` comment outside one, so
+  //     `####` headings no longer swallow the code between them. The
+  //     body alternatives match any sequence that is not a bare `###`
+  //     line: non-`#`, `#`/`##` followed by non-`#`, or a `###` that
+  //     is part of a longer line (`####...`, `###x`, `### word`).
+  //     (A `###` after code on the same line still opens a comment:
+  //     a grammar token cannot anchor to a line start.)
   //   - `line_comment` (single `#` to EOL).
   //   - `[ \t\r]` for horizontal whitespace and the CR in CRLF endings.
   //   - `\n` so tree-sitter can fill the "gap" left when the external
@@ -1497,7 +1503,26 @@ module.exports = grammar({
     line_comment: ($) => token(seq("#", /[^\r\n]*/)),
 
     block_comment: ($) =>
-      token(seq("###", repeat(choice(/[^#]/, /#[^#]/, /##[^#]/)), "###")),
+      token(
+        seq(
+          "###",
+          /[ \t\r]*/,
+          "\n",
+          repeat(
+            choice(
+              /[^#]/,
+              /#[^#]/,
+              /##[^#]/,
+              /####[^#\n]*/,
+              /###[^#\n \t\r]/,
+              /###[ \t\r]+[^ \t\r\n]/,
+            ),
+          ),
+          "###",
+          /[ \t\r]*/,
+          optional("\n"),
+        ),
+      ),
   },
 });
 

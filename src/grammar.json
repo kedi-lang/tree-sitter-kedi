@@ -6825,6 +6825,14 @@
             "value": "###"
           },
           {
+            "type": "PATTERN",
+            "value": "[ \\t\\r]*"
+          },
+          {
+            "type": "STRING",
+            "value": "\n"
+          },
+          {
             "type": "REPEAT",
             "content": {
               "type": "CHOICE",
@@ -6840,6 +6848,18 @@
                 {
                   "type": "PATTERN",
                   "value": "##[^#]"
+                },
+                {
+                  "type": "PATTERN",
+                  "value": "####[^#\\n]*"
+                },
+                {
+                  "type": "PATTERN",
+                  "value": "###[^#\\n \\t\\r]"
+                },
+                {
+                  "type": "PATTERN",
+                  "value": "###[ \\t\\r]+[^ \\t\\r\\n]"
                 }
               ]
             }
@@ -6847,6 +6867,22 @@
           {
             "type": "STRING",
             "value": "###"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[ \\t\\r]*"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "\n"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           }
         ]
       }
