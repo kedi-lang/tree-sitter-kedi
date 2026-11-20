@@ -496,10 +496,13 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
     if (drain_pending(s, lexer, valid_symbols)) return true;
 
     // Consume CRLF as one line ending before the regular newline/indent path.
+    // A lone '\r' at EOF is a line ending too: fall through to the EOF
+    // path below instead of returning false. A lone '\r' followed by
+    // other content stays a (whitespace) non-ending, as before.
     if (lexer->lookahead == '\r' &&
         (valid_symbols[KEDI_NEWLINE] || valid_symbols[KEDI_FENCED_NEWLINE])) {
         advance(lexer);
-        if (lexer->lookahead != '\n') return false;
+        if (lexer->lookahead != '\n' && !is_eof(lexer)) return false;
     }
 
     // 2. EOF: emit a synthetic terminating NEWLINE once, then DEDENTs.
@@ -561,6 +564,15 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
         }
         if (lexer->lookahead != '\n' && !is_eof(lexer)) {
             return false;
+        }
+        if (is_eof(lexer)) {
+            // This is the terminating NEWLINE: mark it emitted and
+            // queue the EOF dedents (phantom levels excluded) so the
+            // EOF path below does not over-count them.
+            s->eof_newline_emitted = true;
+            queue_eof_dedents(s);
+            lexer->result_symbol = KEDI_NEWLINE;
+            return true;
         }
         // Fall through to the regular newline handling below.
     }
@@ -649,6 +661,15 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
             lexer->result_symbol = call_mode
                 ? KEDI_TEXT_IN_CALL
                 : (condition_mode ? KEDI_CONDITION_TEXT : KEDI_TEXT);
+            return true;
+        }
+        if (text_result == TEXT_SCAN_NONE && is_eof(lexer) &&
+            valid_symbols[KEDI_NEWLINE]) {
+            // Trailing horizontal whitespace at EOF after a text scan
+            // found nothing (see above): terminate the statement.
+            s->eof_newline_emitted = true;
+            queue_eof_dedents(s);
+            lexer->result_symbol = KEDI_NEWLINE;
             return true;
         }
     }
