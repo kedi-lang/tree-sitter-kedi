@@ -293,6 +293,7 @@ module.exports = grammar({
         $.mcp_directive,
         $.settings_directive,
         $.artifacts_directive,
+        $.profile_directive,
         $.use_directive,
         $.task_stmt,
         $.send_stmt,
@@ -404,7 +405,16 @@ module.exports = grammar({
     type_string: (_$) => token(choice(/"([^"\\\n]|\\.)*"/, /'([^'\\\n]|\\.)*'/)),
 
     // Literal and Annotated arguments: 1, -1, 1.5, 2e3; `...` as in tuple[int, ...].
-    type_number: (_$) => token(seq(optional("-"), /(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?/)),
+    // Reject leading zeros ('01', '007'): kedi's literal_eval raises
+    // SyntaxError on them, so the grammar must not accept them either
+    // (Literal[01] was parseable here while kedi rejected it).
+    type_number: (_$) =>
+      token(
+        seq(
+          optional("-"),
+          /(0|[1-9]\d*)(\.\d*)?([eE][+-]?\d+)?|\.\d+([eE][+-]?\d+)?/,
+        ),
+      ),
 
     type_ellipsis: (_$) => "...",
 

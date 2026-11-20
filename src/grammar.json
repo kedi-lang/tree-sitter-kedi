@@ -957,6 +957,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "profile_directive"
+        },
+        {
+          "type": "SYMBOL",
           "name": "use_directive"
         },
         {
@@ -1566,7 +1570,7 @@
           },
           {
             "type": "PATTERN",
-            "value": "(\\d+(\\.\\d*)?|\\.\\d+)([eE][+-]?\\d+)?"
+            "value": "(0|[1-9]\\d*)(\\.\\d*)?([eE][+-]?\\d+)?|\\.\\d+([eE][+-]?\\d+)?"
           }
         ]
       }
