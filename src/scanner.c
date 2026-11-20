@@ -97,12 +97,21 @@ void tree_sitter_kedi_external_scanner_deserialize(void *payload, const char *bu
     Scanner *s = (Scanner *)payload;
     scanner_reset(s);
     if (length == 0) return;
-    unsigned pos = 0;
-    s->indent_depth = (uint8_t)buffer[pos++];
-    uint16_t lo = (uint8_t)buffer[pos++];
-    uint16_t hi = (uint8_t)buffer[pos++];
+    // Validate the whole header before mutating `s`: a crafted or
+    // version-skewed buffer must never drive out-of-bounds reads or
+    // writes. Layout: [depth, pending_lo, pending_hi, eof_newline,
+    // indent_stack[depth] as 2 bytes per entry]. On invalid input `s`
+    // stays in the initial state (depth 1, column 0) from scanner_reset.
+    if (length < 4) return;
+    uint8_t depth = (uint8_t)buffer[0];
+    if (depth < 1 || depth > KEDI_INDENT_STACK_MAX) return;
+    if (length < 4u + 2u * (unsigned)depth) return;
+    s->indent_depth = depth;
+    uint16_t lo = (uint8_t)buffer[1];
+    uint16_t hi = (uint8_t)buffer[2];
     s->pending = (int16_t)(lo | (hi << 8));
-    s->eof_newline_emitted = buffer[pos++] != 0;
+    s->eof_newline_emitted = buffer[3] != 0;
+    unsigned pos = 4;
     for (uint8_t i = 0; i < s->indent_depth; i++) {
         uint16_t blo = (uint8_t)buffer[pos++];
         uint16_t bhi = (uint8_t)buffer[pos++];
