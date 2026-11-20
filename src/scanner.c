@@ -203,6 +203,14 @@ static uint32_t skip_leading_ws(TSLexer *lexer, bool *is_blank_line) {
 }
 
 static void apply_indent_change(Scanner *s, uint32_t new_col) {
+    // Columns are stored as uint16_t (the serialize format is 2 bytes
+    // per stack entry). Saturate instead of truncating: a 70000-column
+    // line used to wrap to 4464 and a 65536-column line to 0, so a
+    // shallower following line was wrongly kept inside the block.
+    // Saturating keeps the ordering (deeper stays deeper) and the
+    // serialize format unchanged; two distinct columns above 65535
+    // compare equal, which only affects pathological inputs.
+    if (new_col > UINT16_MAX) new_col = UINT16_MAX;
     uint16_t top = s->indent_stack[s->indent_depth - 1];
     if ((uint32_t)top == new_col) return;
     if (new_col > top) {
