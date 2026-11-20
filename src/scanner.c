@@ -70,6 +70,7 @@ static void scanner_reset(Scanner *s) {
 
 void *tree_sitter_kedi_external_scanner_create(void) {
     Scanner *s = (Scanner *)malloc(sizeof(Scanner));
+    if (s == NULL) return NULL;
     scanner_reset(s);
     return s;
 }
