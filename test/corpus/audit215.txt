@@ -1,0 +1,86 @@
+==================
+Nested procedure: phantom indent must not close the outer block
+==================
+
+@outer():
+    @inner():
+        hello
+            deeper
+    = `1`
+
+---
+
+(source_file
+  (procedure_def
+    (identifier)
+    (block
+      (procedure_def
+        (identifier)
+        (block
+          (template_line
+            (template_expr
+              (text_segment)))
+          (template_line
+            (template_expr
+              (text_segment)))))
+      (return_stmt
+        (inline_python_expr
+          (python_inline_body))))))
+
+==================
+Nested procedure: two phantom indents must not close the outer block
+==================
+
+@outer():
+    @inner():
+        hello
+            deeper
+                deepest
+    = `1`
+
+---
+
+(source_file
+  (procedure_def
+    (identifier)
+    (block
+      (procedure_def
+        (identifier)
+        (block
+          (template_line
+            (template_expr
+              (text_segment)))
+          (template_line
+            (template_expr
+              (text_segment)))
+          (template_line
+            (template_expr
+              (text_segment)))))
+      (return_stmt
+        (inline_python_expr
+          (python_inline_body))))))
+
+==================
+Template deeper line then return at block indent
+==================
+
+@f():
+    hello
+        deeper text
+    = `1`
+
+---
+
+(source_file
+  (procedure_def
+    (identifier)
+    (block
+      (template_line
+        (template_expr
+          (text_segment)))
+      (template_line
+        (template_expr
+          (text_segment)))
+      (return_stmt
+        (inline_python_expr
+          (python_inline_body))))))

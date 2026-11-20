@@ -216,7 +216,11 @@ static void apply_indent_change(Scanner *s, uint32_t new_col) {
     if (new_col > top) {
         if (s->indent_depth < KEDI_INDENT_STACK_MAX) {
             s->indent_stack[s->indent_depth++] = (uint16_t)new_col;
-            s->pending = 1;
+            // Accumulate: a previous INDENT may still be queued because
+            // it was never valid in the parser state (e.g. a deeper
+            // template continuation line). Overwriting it with 1 would
+            // lose one queued INDENT per extra push.
+            s->pending = s->pending < 0 ? 1 : (int16_t)(s->pending + 1);
         }
         return;
     }
@@ -226,7 +230,26 @@ static void apply_indent_change(Scanner *s, uint32_t new_col) {
         i--;
         dedents++;
     }
-    s->pending = (int16_t)-dedents;
+    // Levels pushed while their INDENT was still queued were never
+    // opened in the parser's view (the topmost `pending` levels, when
+    // pending > 0). Pop those silently from the stack now; only the
+    // remaining levels need DEDENT tokens. Without this, a dedent
+    // counted the never-opened level too and closed one block too many.
+    int16_t unopened = s->pending > 0 ? s->pending : 0;
+    int16_t silent = dedents < unopened ? dedents : unopened;
+    s->indent_depth -= (uint8_t)silent;
+    s->pending = (int16_t)-(dedents - silent);
+}
+
+// Queue the DEDENTs needed to close every open block at EOF, without
+// counting levels whose INDENT was never emitted (same reasoning as
+// the dedent branch of apply_indent_change).
+static void queue_eof_dedents(Scanner *s) {
+    int16_t unopened = s->pending > 0 ? s->pending : 0;
+    int16_t total = (int16_t)(s->indent_depth - 1);
+    int16_t silent = total < unopened ? total : unopened;
+    s->indent_depth -= (uint8_t)silent;
+    s->pending = (int16_t)-(total - silent);
 }
 
 // Returns true iff `c` terminates a TEXT run unconditionally.
@@ -570,7 +593,7 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
                 continue;
             }
             if (is_eof(lexer)) {
-                s->pending = (int16_t)-(int16_t)(s->indent_depth - 1);
+                queue_eof_dedents(s);
                 lexer->result_symbol = KEDI_NEWLINE;
                 return true;
             }
@@ -620,7 +643,7 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
             if (new_col != UINT32_MAX) {
                 apply_indent_change(s, new_col);
             } else if (is_eof(lexer)) {
-                s->pending = (int16_t)-(int16_t)(s->indent_depth - 1);
+                queue_eof_dedents(s);
             }
             lexer->result_symbol = KEDI_NEWLINE;
             return true;
