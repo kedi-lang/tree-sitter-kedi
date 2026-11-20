@@ -451,23 +451,43 @@ static bool scan_system_angle_segment(TSLexer *lexer) {
 // How a fenced-body scan can end without a body token.
 typedef enum {
     FENCED_OK,        // body scanned up to a close fence
-    FENCED_UNTERMINATED, // EOF reached with no close fence
+    FENCED_UNTERMINATED, // EOF, scan started at a line start: a genuine
+                         // (possibly unterminated) fence
+    FENCED_UNTERMINATED_SPECULATIVE, // EOF, scan started mid-line: the
+                         // parser is probing during error recovery
     FENCED_NUL,       // NUL byte inside the body
 } FencedBodyResult;
 
 static FencedBodyResult scan_fenced_body(TSLexer *lexer) {
+    // A genuine fenced body always starts at the beginning of a line:
+    // the grammar puts a FENCED_NEWLINE between the open fence and the
+    // body. A scan starting mid-line is therefore necessarily
+    // speculative — the parser hit something unexpected and is probing
+    // whether a fenced body could follow. Remember which one this is:
+    // on EOF without a close fence the two cases need opposite
+    // handling (see step 5 in scan()).
+    const uint32_t start_col = lexer->get_column(lexer);
     lexer->mark_end(lexer);
     for (;;) {
         if (is_eof(lexer)) {
-            // Unterminated fence: no close fence before EOF. Refuse the
-            // token instead of taking everything up to EOF as the body:
-            // during error recovery every symbol is valid, so an
-            // unterminated body would otherwise swallow all following
-            // statements into a bogus python_block (and a later real
-            // statement would come out as a stray python_code node).
-            // Refusing lets the parser report the unclosed fence and
-            // keep parsing the rest of the file normally.
-            return FENCED_UNTERMINATED;
+            // Unterminated fence: no close fence before EOF.
+            if (start_col == 0) {
+                // Genuine fence: refuse the token instead of taking
+                // everything up to EOF as the body. During error
+                // recovery every symbol is valid, so an unterminated
+                // body would otherwise swallow all following
+                // statements into a bogus python_block (and a later
+                // real statement would come out as a stray
+                // python_code node). Refusing lets the parser report
+                // the unclosed fence and keep parsing the rest of the
+                // file normally.
+                return FENCED_UNTERMINATED;
+            }
+            // Speculative scan: the caller returns the swallowed body
+            // as a token (base-commit behaviour) so the parser rejects
+            // it and produces a single ERROR node starting at the scan
+            // position — the shape kedi's diagnostics rely on.
+            return FENCED_UNTERMINATED_SPECULATIVE;
         }
 
         // Peek the current line: is it a close fence?
@@ -506,11 +526,14 @@ static FencedBodyResult scan_fenced_body(TSLexer *lexer) {
         // line plus the trailing '\n', then include them in the body by
         // updating mark_end — but only when more input follows. If this
         // line runs to EOF, leave mark_end at the previous line break:
-        // the scan is about to refuse the token (unterminated fence),
-        // and a later fallback token (e.g. the TEXT path's EOF NEWLINE)
-        // must not span the unconsumed trailing line. Spanning it let
-        // a stray `>` in `= text >` vanish inside a NEWLINE token and
-        // turned invalid syntax into a clean parse.
+        // for a genuine unterminated fence the scan is about to refuse
+        // the token, and a later fallback token (e.g. the TEXT path's
+        // EOF NEWLINE) must not span the unconsumed trailing line.
+        // Spanning it let a stray `>` in `= text >` vanish inside a
+        // NEWLINE token and turned invalid syntax into a clean parse.
+        // (For a speculative unterminated scan the caller marks the end
+        // at EOF itself before returning the token, so the discipline
+        // here does not shorten that token.)
         // A NUL byte inside the body refuses the token too: kedi's
         // contract is that NUL in Python source fails cleanly with an
         // error node (test_nul_in_python_source_fails_without_hanging),
@@ -647,16 +670,26 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
     }
 
     // 5. FENCED_BODY: scan raw body bytes between open and close fences.
-    // An unterminated fence fails fast: return false instead of falling
-    // through to the angle / text paths. The failed scan has already
-    // advanced the lexer to EOF, and the TEXT path's EOF branch would
-    // otherwise emit a NEWLINE token spanning the swallowed garbage
-    // (e.g. the stray `>` in `= text >`), silently turning invalid
-    // syntax into a clean parse. Failing fast lets the parser report
-    // the error. A NUL inside the body falls through instead: the TEXT
-    // path then produces a token the parser rejects, which recovers
-    // cleanly (the NUL line becomes an ERROR node and the rest of the
-    // fenced block still parses, as on the base commit).
+    // An unterminated fence is handled by where the scan started:
+    // - genuine fence (scan started at a line start): fail fast and
+    //   return false instead of falling through to the angle / text
+    //   paths. The failed scan has already advanced the lexer to EOF,
+    //   and the TEXT path's EOF branch would otherwise emit a NEWLINE
+    //   token spanning the swallowed garbage, silently turning invalid
+    //   syntax into a clean parse. Failing fast lets the parser report
+    //   the error and keep parsing the rest of the file normally, so an
+    //   unterminated fence no longer swallows following statements.
+    // - speculative scan (scan started mid-line): return the swallowed
+    //   body as a token, as on the base commit. The parser rejects it,
+    //   which yields a single ERROR node starting at the scan position
+    //   — the shape kedi's diagnostics rely on (the `(` span of an
+    //   invalid import, the `` `` `` of an empty inline Python expr).
+    //   The lexer is at EOF here; mark_end there so the token spans
+    //   the whole swallowed body. A NUL inside the body falls through
+    //   instead: the TEXT path then produces a token the parser
+    //   rejects, which recovers cleanly (the NUL line becomes an ERROR
+    //   node and the rest of the fenced block still parses, as on the
+    //   base commit).
     if (valid_symbols[KEDI_FENCED_BODY]) {
         FencedBodyResult body = scan_fenced_body(lexer);
         if (body == FENCED_OK) {
@@ -664,6 +697,11 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
             return true;
         }
         if (body == FENCED_UNTERMINATED) return false;
+        if (body == FENCED_UNTERMINATED_SPECULATIVE) {
+            lexer->mark_end(lexer);
+            lexer->result_symbol = KEDI_FENCED_BODY;
+            return true;
+        }
     }
 
     // 6. SYSTEM_ANGLE_SEGMENT: system instructions support only
