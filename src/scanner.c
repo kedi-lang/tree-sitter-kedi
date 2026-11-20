@@ -315,7 +315,8 @@ static TextScanResult scan_text_run(
             while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
                 advance(lexer);
             }
-            if (lexer->lookahead == '\n' || (lexer->lookahead == 0 && is_eof(lexer))) {
+            if (lexer->lookahead == '\n' || lexer->lookahead == '\r' ||
+                (lexer->lookahead == 0 && is_eof(lexer))) {
                 return seen_text ? TEXT_SCAN_TEXT : TEXT_SCAN_NONE;
             }
             seen_text = true;
@@ -356,12 +357,14 @@ static TextScanResult scan_text_run(
             advance(lexer);
             int32_t nxt = lexer->lookahead;
             if (nxt == 0 && is_eof(lexer)) break;
-            if (nxt == '\n') {
+            if (nxt == '\n' || nxt == '\r') {
                 // `\<newline>` is a line continuation: absorb the
                 // newline and the leading whitespace of the next line
                 // into the text token. The Python unescape later
-                // collapses `\<newline>` into a single space.
+                // collapses `\<newline>` into a single space. A CRLF
+                // ending is the same continuation.
                 advance(lexer);
+                if (nxt == '\r' && lexer->lookahead == '\n') advance(lexer);
                 while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
                     advance(lexer);
                 }
@@ -377,7 +380,13 @@ static TextScanResult scan_text_run(
                 while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
                     advance(lexer);
                 }
-                if (lexer->lookahead == '\n') {
+                if (lexer->lookahead == '\r') {
+                    advance(lexer);
+                    if (lexer->lookahead == '\n') advance(lexer);
+                    while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+                        advance(lexer);
+                    }
+                } else if (lexer->lookahead == '\n') {
                     advance(lexer);
                     while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
                         advance(lexer);
@@ -465,7 +474,13 @@ static bool scan_fenced_body(TSLexer *lexer) {
                     advance(lexer);
                     if (lexer->lookahead != '`') {
                         while (lexer->lookahead == ' ' || lexer->lookahead == '\t') advance(lexer);
-                        if (lexer->lookahead == '\n' || (lexer->lookahead == 0 && is_eof(lexer))) {
+                        if (lexer->lookahead == '\r') {
+                            advance(lexer);
+                            if (lexer->lookahead == '\n' || is_eof(lexer)) is_close = true;
+                            // Otherwise the '\r' is body content on this
+                            // line; the line-consumption below takes it.
+                        } else if (lexer->lookahead == '\n' ||
+                                   (lexer->lookahead == 0 && is_eof(lexer))) {
                             is_close = true;
                         }
                     }
