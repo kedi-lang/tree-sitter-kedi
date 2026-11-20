@@ -448,7 +448,14 @@ static bool scan_system_angle_segment(TSLexer *lexer) {
 //
 // The body may be empty (zero bytes) when the open and close fences are
 // adjacent.
-static bool scan_fenced_body(TSLexer *lexer) {
+// How a fenced-body scan can end without a body token.
+typedef enum {
+    FENCED_OK,        // body scanned up to a close fence
+    FENCED_UNTERMINATED, // EOF reached with no close fence
+    FENCED_NUL,       // NUL byte inside the body
+} FencedBodyResult;
+
+static FencedBodyResult scan_fenced_body(TSLexer *lexer) {
     lexer->mark_end(lexer);
     for (;;) {
         if (is_eof(lexer)) {
@@ -460,7 +467,7 @@ static bool scan_fenced_body(TSLexer *lexer) {
             // statement would come out as a stray python_code node).
             // Refusing lets the parser report the unclosed fence and
             // keep parsing the rest of the file normally.
-            return false;
+            return FENCED_UNTERMINATED;
         }
 
         // Peek the current line: is it a close fence?
@@ -492,16 +499,29 @@ static bool scan_fenced_body(TSLexer *lexer) {
             // mark_end was set at the start of this line before we
             // peeked, so the body excludes the close fence. Tree-sitter
             // resets the lexer to mark_end when we return true.
-            return true;
+            return FENCED_OK;
         }
 
         // Not a close fence. Advance through any remaining chars of this
         // line plus the trailing '\n', then include them in the body by
-        // updating mark_end. A line with no trailing newline ends the
-        // scan at EOF, where the top of the loop refuses the token.
-        while (lexer->lookahead != '\n' && !is_eof(lexer)) advance(lexer);
+        // updating mark_end — but only when more input follows. If this
+        // line runs to EOF, leave mark_end at the previous line break:
+        // the scan is about to refuse the token (unterminated fence),
+        // and a later fallback token (e.g. the TEXT path's EOF NEWLINE)
+        // must not span the unconsumed trailing line. Spanning it let
+        // a stray `>` in `= text >` vanish inside a NEWLINE token and
+        // turned invalid syntax into a clean parse.
+        // A NUL byte inside the body refuses the token too: kedi's
+        // contract is that NUL in Python source fails cleanly with an
+        // error node (test_nul_in_python_source_fails_without_hanging),
+        // so the body must not silently swallow it. (NUL in comments
+        // and template text is still tolerated elsewhere.)
+        while (lexer->lookahead != '\n' && !is_eof(lexer)) {
+            if (lexer->lookahead == 0) return FENCED_NUL;
+            advance(lexer);
+        }
         if (lexer->lookahead == '\n') advance(lexer);
-        lexer->mark_end(lexer);
+        if (!is_eof(lexer)) lexer->mark_end(lexer);
     }
 }
 
@@ -627,11 +647,23 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
     }
 
     // 5. FENCED_BODY: scan raw body bytes between open and close fences.
+    // An unterminated fence fails fast: return false instead of falling
+    // through to the angle / text paths. The failed scan has already
+    // advanced the lexer to EOF, and the TEXT path's EOF branch would
+    // otherwise emit a NEWLINE token spanning the swallowed garbage
+    // (e.g. the stray `>` in `= text >`), silently turning invalid
+    // syntax into a clean parse. Failing fast lets the parser report
+    // the error. A NUL inside the body falls through instead: the TEXT
+    // path then produces a token the parser rejects, which recovers
+    // cleanly (the NUL line becomes an ERROR node and the rest of the
+    // fenced block still parses, as on the base commit).
     if (valid_symbols[KEDI_FENCED_BODY]) {
-        if (scan_fenced_body(lexer)) {
+        FencedBodyResult body = scan_fenced_body(lexer);
+        if (body == FENCED_OK) {
             lexer->result_symbol = KEDI_FENCED_BODY;
             return true;
         }
+        if (body == FENCED_UNTERMINATED) return false;
     }
 
     // 6. SYSTEM_ANGLE_SEGMENT: system instructions support only
