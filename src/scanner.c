@@ -176,17 +176,17 @@ static uint32_t skip_leading_ws(TSLexer *lexer, bool *is_blank_line) {
     //   - `####...` — line comment.
     advance(lexer);
     if (lexer->lookahead != '#') {
-        while (lexer->lookahead != 0 && lexer->lookahead != '\n') advance(lexer);
+        while (!is_eof(lexer) && lexer->lookahead != '\n') advance(lexer);
         return UINT32_MAX;
     }
     advance(lexer);
     if (lexer->lookahead != '#') {
-        while (lexer->lookahead != 0 && lexer->lookahead != '\n') advance(lexer);
+        while (!is_eof(lexer) && lexer->lookahead != '\n') advance(lexer);
         return UINT32_MAX;
     }
     advance(lexer);
     if (lexer->lookahead == '#') {
-        while (lexer->lookahead != 0 && lexer->lookahead != '\n') advance(lexer);
+        while (!is_eof(lexer) && lexer->lookahead != '\n') advance(lexer);
         return UINT32_MAX;
     }
     // Exactly `###`. Trailing horizontal WS allowed, then `\n` / EOF.
@@ -198,7 +198,7 @@ static uint32_t skip_leading_ws(TSLexer *lexer, bool *is_blank_line) {
         // re-scans from the previous token's end.
         return UINT32_MAX;
     }
-    while (lexer->lookahead != 0 && lexer->lookahead != '\n') advance(lexer);
+    while (!is_eof(lexer) && lexer->lookahead != '\n') advance(lexer);
     return UINT32_MAX;
 }
 
@@ -408,7 +408,7 @@ static bool scan_system_angle_segment(TSLexer *lexer) {
     if (lexer->lookahead != '<') return false;
     advance(lexer);
     bool saw_body = false;
-    while (lexer->lookahead != 0 && lexer->lookahead != '\n') {
+    while (!is_eof(lexer) && lexer->lookahead != '\n') {
         if (lexer->lookahead == '>') {
             advance(lexer);
             lexer->mark_end(lexer);
@@ -478,10 +478,7 @@ static bool scan_fenced_body(TSLexer *lexer) {
         // Not a close fence. Advance through any remaining chars of this
         // line plus the trailing '\n', then include them in the body by
         // updating mark_end.
-        while (lexer->lookahead != '\n' && !is_eof(lexer)) {
-            if (lexer->lookahead == 0) return false;
-            advance(lexer);
-        }
+        while (lexer->lookahead != '\n' && !is_eof(lexer)) advance(lexer);
         if (lexer->lookahead == '\n') {
             advance(lexer);
         } else if (is_eof(lexer)) {
