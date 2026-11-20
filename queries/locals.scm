@@ -40,6 +40,7 @@
 (task_stmt binder: (identifier) @local.definition.var)
 (await_stmt binder: (identifier) @local.definition.var)
 (output_segment name: (identifier) @local.definition.var)
+(eval_data name: (identifier) @local.definition.var)
 
 ; ----------------------------------------------------------------
 ; References
