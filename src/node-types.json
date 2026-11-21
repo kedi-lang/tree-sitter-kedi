@@ -134,6 +134,10 @@
         "named": true
       },
       {
+        "type": "profile_directive",
+        "named": true
+      },
+      {
         "type": "python_block",
         "named": true
       },

@@ -70,6 +70,7 @@ static void scanner_reset(Scanner *s) {
 
 void *tree_sitter_kedi_external_scanner_create(void) {
     Scanner *s = (Scanner *)malloc(sizeof(Scanner));
+    if (s == NULL) return NULL;
     scanner_reset(s);
     return s;
 }
@@ -96,12 +97,21 @@ void tree_sitter_kedi_external_scanner_deserialize(void *payload, const char *bu
     Scanner *s = (Scanner *)payload;
     scanner_reset(s);
     if (length == 0) return;
-    unsigned pos = 0;
-    s->indent_depth = (uint8_t)buffer[pos++];
-    uint16_t lo = (uint8_t)buffer[pos++];
-    uint16_t hi = (uint8_t)buffer[pos++];
+    // Validate the whole header before mutating `s`: a crafted or
+    // version-skewed buffer must never drive out-of-bounds reads or
+    // writes. Layout: [depth, pending_lo, pending_hi, eof_newline,
+    // indent_stack[depth] as 2 bytes per entry]. On invalid input `s`
+    // stays in the initial state (depth 1, column 0) from scanner_reset.
+    if (length < 4) return;
+    uint8_t depth = (uint8_t)buffer[0];
+    if (depth < 1 || depth > KEDI_INDENT_STACK_MAX) return;
+    if (length < 4u + 2u * (unsigned)depth) return;
+    s->indent_depth = depth;
+    uint16_t lo = (uint8_t)buffer[1];
+    uint16_t hi = (uint8_t)buffer[2];
     s->pending = (int16_t)(lo | (hi << 8));
-    s->eof_newline_emitted = buffer[pos++] != 0;
+    s->eof_newline_emitted = buffer[3] != 0;
+    unsigned pos = 4;
     for (uint8_t i = 0; i < s->indent_depth; i++) {
         uint16_t blo = (uint8_t)buffer[pos++];
         uint16_t bhi = (uint8_t)buffer[pos++];
@@ -166,17 +176,17 @@ static uint32_t skip_leading_ws(TSLexer *lexer, bool *is_blank_line) {
     //   - `####...` — line comment.
     advance(lexer);
     if (lexer->lookahead != '#') {
-        while (lexer->lookahead != 0 && lexer->lookahead != '\n') advance(lexer);
+        while (!is_eof(lexer) && lexer->lookahead != '\n') advance(lexer);
         return UINT32_MAX;
     }
     advance(lexer);
     if (lexer->lookahead != '#') {
-        while (lexer->lookahead != 0 && lexer->lookahead != '\n') advance(lexer);
+        while (!is_eof(lexer) && lexer->lookahead != '\n') advance(lexer);
         return UINT32_MAX;
     }
     advance(lexer);
     if (lexer->lookahead == '#') {
-        while (lexer->lookahead != 0 && lexer->lookahead != '\n') advance(lexer);
+        while (!is_eof(lexer) && lexer->lookahead != '\n') advance(lexer);
         return UINT32_MAX;
     }
     // Exactly `###`. Trailing horizontal WS allowed, then `\n` / EOF.
@@ -188,17 +198,29 @@ static uint32_t skip_leading_ws(TSLexer *lexer, bool *is_blank_line) {
         // re-scans from the previous token's end.
         return UINT32_MAX;
     }
-    while (lexer->lookahead != 0 && lexer->lookahead != '\n') advance(lexer);
+    while (!is_eof(lexer) && lexer->lookahead != '\n') advance(lexer);
     return UINT32_MAX;
 }
 
 static void apply_indent_change(Scanner *s, uint32_t new_col) {
+    // Columns are stored as uint16_t (the serialize format is 2 bytes
+    // per stack entry). Saturate instead of truncating: a 70000-column
+    // line used to wrap to 4464 and a 65536-column line to 0, so a
+    // shallower following line was wrongly kept inside the block.
+    // Saturating keeps the ordering (deeper stays deeper) and the
+    // serialize format unchanged; two distinct columns above 65535
+    // compare equal, which only affects pathological inputs.
+    if (new_col > UINT16_MAX) new_col = UINT16_MAX;
     uint16_t top = s->indent_stack[s->indent_depth - 1];
     if ((uint32_t)top == new_col) return;
     if (new_col > top) {
         if (s->indent_depth < KEDI_INDENT_STACK_MAX) {
             s->indent_stack[s->indent_depth++] = (uint16_t)new_col;
-            s->pending = 1;
+            // Accumulate: a previous INDENT may still be queued because
+            // it was never valid in the parser state (e.g. a deeper
+            // template continuation line). Overwriting it with 1 would
+            // lose one queued INDENT per extra push.
+            s->pending = s->pending < 0 ? 1 : (int16_t)(s->pending + 1);
         }
         return;
     }
@@ -208,7 +230,26 @@ static void apply_indent_change(Scanner *s, uint32_t new_col) {
         i--;
         dedents++;
     }
-    s->pending = (int16_t)-dedents;
+    // Levels pushed while their INDENT was still queued were never
+    // opened in the parser's view (the topmost `pending` levels, when
+    // pending > 0). Pop those silently from the stack now; only the
+    // remaining levels need DEDENT tokens. Without this, a dedent
+    // counted the never-opened level too and closed one block too many.
+    int16_t unopened = s->pending > 0 ? s->pending : 0;
+    int16_t silent = dedents < unopened ? dedents : unopened;
+    s->indent_depth -= (uint8_t)silent;
+    s->pending = (int16_t)-(dedents - silent);
+}
+
+// Queue the DEDENTs needed to close every open block at EOF, without
+// counting levels whose INDENT was never emitted (same reasoning as
+// the dedent branch of apply_indent_change).
+static void queue_eof_dedents(Scanner *s) {
+    int16_t unopened = s->pending > 0 ? s->pending : 0;
+    int16_t total = (int16_t)(s->indent_depth - 1);
+    int16_t silent = total < unopened ? total : unopened;
+    s->indent_depth -= (uint8_t)silent;
+    s->pending = (int16_t)-(total - silent);
 }
 
 // Returns true iff `c` terminates a TEXT run unconditionally.
@@ -274,7 +315,8 @@ static TextScanResult scan_text_run(
             while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
                 advance(lexer);
             }
-            if (lexer->lookahead == '\n' || (lexer->lookahead == 0 && is_eof(lexer))) {
+            if (lexer->lookahead == '\n' || lexer->lookahead == '\r' ||
+                (lexer->lookahead == 0 && is_eof(lexer))) {
                 return seen_text ? TEXT_SCAN_TEXT : TEXT_SCAN_NONE;
             }
             seen_text = true;
@@ -315,12 +357,14 @@ static TextScanResult scan_text_run(
             advance(lexer);
             int32_t nxt = lexer->lookahead;
             if (nxt == 0 && is_eof(lexer)) break;
-            if (nxt == '\n') {
+            if (nxt == '\n' || nxt == '\r') {
                 // `\<newline>` is a line continuation: absorb the
                 // newline and the leading whitespace of the next line
                 // into the text token. The Python unescape later
-                // collapses `\<newline>` into a single space.
+                // collapses `\<newline>` into a single space. A CRLF
+                // ending is the same continuation.
                 advance(lexer);
+                if (nxt == '\r' && lexer->lookahead == '\n') advance(lexer);
                 while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
                     advance(lexer);
                 }
@@ -336,7 +380,13 @@ static TextScanResult scan_text_run(
                 while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
                     advance(lexer);
                 }
-                if (lexer->lookahead == '\n') {
+                if (lexer->lookahead == '\r') {
+                    advance(lexer);
+                    if (lexer->lookahead == '\n') advance(lexer);
+                    while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+                        advance(lexer);
+                    }
+                } else if (lexer->lookahead == '\n') {
                     advance(lexer);
                     while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
                         advance(lexer);
@@ -367,7 +417,7 @@ static bool scan_system_angle_segment(TSLexer *lexer) {
     if (lexer->lookahead != '<') return false;
     advance(lexer);
     bool saw_body = false;
-    while (lexer->lookahead != 0 && lexer->lookahead != '\n') {
+    while (!is_eof(lexer) && lexer->lookahead != '\n') {
         if (lexer->lookahead == '>') {
             advance(lexer);
             lexer->mark_end(lexer);
@@ -398,14 +448,51 @@ static bool scan_system_angle_segment(TSLexer *lexer) {
 //
 // The body may be empty (zero bytes) when the open and close fences are
 // adjacent.
-static bool scan_fenced_body(TSLexer *lexer) {
+// How a fenced-body scan can end without a body token.
+typedef enum {
+    FENCED_OK,        // body scanned up to a close fence
+    FENCED_UNTERMINATED, // EOF, scan did not start mid-line at content:
+                         // a genuine fence, or a probe at a boundary
+    FENCED_UNTERMINATED_SPECULATIVE, // EOF, scan started mid-line at
+                         // actual content: the parser is probing during
+                         // error recovery
+    FENCED_NUL,       // NUL byte inside the body
+} FencedBodyResult;
+
+static FencedBodyResult scan_fenced_body(TSLexer *lexer) {
+    // Where the scan starts decides how an unterminated fence is
+    // handled (see step 5 in scan()). A genuine fenced body always
+    // starts at the beginning of a line — the grammar puts a
+    // FENCED_NEWLINE between the open fence and the body — so a scan
+    // starting mid-line at actual content is a speculative probe: the
+    // parser hit something unexpected and is asking whether a fenced
+    // body could follow. A scan starting at a line start, or at
+    // whitespace, is not inside body content — the parser is at a
+    // structural boundary — so refusing the token lets normal recovery
+    // handle the boundary instead of swallowing the following
+    // statements into a bogus body.
+    const uint32_t start_col = lexer->get_column(lexer);
+    const uint32_t start_lookahead = lexer->lookahead;
     lexer->mark_end(lexer);
     for (;;) {
-        if (lexer->lookahead == 0 && is_eof(lexer)) {
-            // Unterminated fence: take everything up to EOF as the body.
-            // The grammar will then fail to match the close fence and
-            // surface an ERROR.
-            return true;
+        if (is_eof(lexer)) {
+            // Unterminated fence: no close fence before EOF. Return
+            // the swallowed body as a token only when the scan started
+            // mid-line at actual content (the speculative probe); the
+            // caller returns it and the parser rejects it into a
+            // single ERROR node starting at the scan position — the
+            // shape kedi's diagnostics rely on. Otherwise refuse the
+            // token: an unterminated body would swallow all following
+            // statements into a bogus python_block (and a later real
+            // statement would come out as a stray python_code node),
+            // while refusing lets the parser report the unclosed
+            // fence and keep parsing the rest of the file normally.
+            const bool starts_at_content =
+                start_col > 0 && start_lookahead != ' ' &&
+                start_lookahead != '\t' && start_lookahead != '\n' &&
+                start_lookahead != '\r';
+            return starts_at_content ? FENCED_UNTERMINATED_SPECULATIVE
+                                     : FENCED_UNTERMINATED;
         }
 
         // Peek the current line: is it a close fence?
@@ -419,7 +506,13 @@ static bool scan_fenced_body(TSLexer *lexer) {
                     advance(lexer);
                     if (lexer->lookahead != '`') {
                         while (lexer->lookahead == ' ' || lexer->lookahead == '\t') advance(lexer);
-                        if (lexer->lookahead == '\n' || (lexer->lookahead == 0 && is_eof(lexer))) {
+                        if (lexer->lookahead == '\r') {
+                            advance(lexer);
+                            if (lexer->lookahead == '\n' || is_eof(lexer)) is_close = true;
+                            // Otherwise the '\r' is body content on this
+                            // line; the line-consumption below takes it.
+                        } else if (lexer->lookahead == '\n' ||
+                                   (lexer->lookahead == 0 && is_eof(lexer))) {
                             is_close = true;
                         }
                     }
@@ -431,23 +524,32 @@ static bool scan_fenced_body(TSLexer *lexer) {
             // mark_end was set at the start of this line before we
             // peeked, so the body excludes the close fence. Tree-sitter
             // resets the lexer to mark_end when we return true.
-            return true;
+            return FENCED_OK;
         }
 
         // Not a close fence. Advance through any remaining chars of this
         // line plus the trailing '\n', then include them in the body by
-        // updating mark_end.
+        // updating mark_end — but only when more input follows. If this
+        // line runs to EOF, leave mark_end at the previous line break:
+        // the scan may be about to refuse the token (unterminated
+        // fence), and a later fallback token (e.g. the TEXT path's EOF
+        // NEWLINE) must not span the unconsumed trailing line.
+        // Spanning it let a stray `>` in `= text >` vanish inside a
+        // NEWLINE token and turned invalid syntax into a clean parse.
+        // (When the caller does return the token for a speculative
+        // scan, it marks the end at EOF itself, so the discipline here
+        // does not shorten that token.)
+        // A NUL byte inside the body refuses the token too: kedi's
+        // contract is that NUL in Python source fails cleanly with an
+        // error node (test_nul_in_python_source_fails_without_hanging),
+        // so the body must not silently swallow it. (NUL in comments
+        // and template text is still tolerated elsewhere.)
         while (lexer->lookahead != '\n' && !is_eof(lexer)) {
-            if (lexer->lookahead == 0) return false;
+            if (lexer->lookahead == 0) return FENCED_NUL;
             advance(lexer);
         }
-        if (lexer->lookahead == '\n') {
-            advance(lexer);
-        } else if (is_eof(lexer)) {
-            lexer->mark_end(lexer);
-            return true;
-        }
-        lexer->mark_end(lexer);
+        if (lexer->lookahead == '\n') advance(lexer);
+        if (!is_eof(lexer)) lexer->mark_end(lexer);
     }
 }
 
@@ -458,10 +560,13 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
     if (drain_pending(s, lexer, valid_symbols)) return true;
 
     // Consume CRLF as one line ending before the regular newline/indent path.
+    // A lone '\r' at EOF is a line ending too: fall through to the EOF
+    // path below instead of returning false. A lone '\r' followed by
+    // other content stays a (whitespace) non-ending, as before.
     if (lexer->lookahead == '\r' &&
         (valid_symbols[KEDI_NEWLINE] || valid_symbols[KEDI_FENCED_NEWLINE])) {
         advance(lexer);
-        if (lexer->lookahead != '\n') return false;
+        if (lexer->lookahead != '\n' && !is_eof(lexer)) return false;
     }
 
     // 2. EOF: emit a synthetic terminating NEWLINE once, then DEDENTs.
@@ -524,6 +629,15 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
         if (lexer->lookahead != '\n' && !is_eof(lexer)) {
             return false;
         }
+        if (is_eof(lexer)) {
+            // This is the terminating NEWLINE: mark it emitted and
+            // queue the EOF dedents (phantom levels excluded) so the
+            // EOF path below does not over-count them.
+            s->eof_newline_emitted = true;
+            queue_eof_dedents(s);
+            lexer->result_symbol = KEDI_NEWLINE;
+            return true;
+        }
         // Fall through to the regular newline handling below.
     }
     if (lexer->lookahead == '\n' && valid_symbols[KEDI_NEWLINE]) {
@@ -552,7 +666,7 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
                 continue;
             }
             if (is_eof(lexer)) {
-                s->pending = (int16_t)-(int16_t)(s->indent_depth - 1);
+                queue_eof_dedents(s);
                 lexer->result_symbol = KEDI_NEWLINE;
                 return true;
             }
@@ -561,8 +675,35 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
     }
 
     // 5. FENCED_BODY: scan raw body bytes between open and close fences.
+    // An unterminated fence is handled by where the scan started (see
+    // scan_fenced_body): a scan that started mid-line at actual content
+    // is a speculative probe — return the swallowed body as a token, as
+    // on the base commit. The parser rejects it, which yields a single
+    // ERROR node starting at the scan position — the shape kedi's
+    // diagnostics rely on (the `(` span of an invalid import, the
+    // `` `` `` of an empty inline Python expr). The lexer is at EOF
+    // here; mark_end there so the token spans the whole swallowed body.
+    // Any other unterminated scan fails fast and returns false instead
+    // of falling through to the angle / text paths: the failed scan has
+    // already advanced the lexer to EOF, and the TEXT path's EOF branch
+    // would otherwise emit a NEWLINE token spanning the swallowed
+    // garbage, silently turning invalid syntax into a clean parse.
+    // Failing fast lets the parser report the error and keep parsing
+    // the rest of the file normally, so an unterminated fence no longer
+    // swallows following statements. A NUL inside the body falls
+    // through instead: the TEXT path then produces a token the parser
+    // rejects, which recovers cleanly (the NUL line becomes an ERROR
+    // node and the rest of the fenced block still parses, as on the
+    // base commit).
     if (valid_symbols[KEDI_FENCED_BODY]) {
-        if (scan_fenced_body(lexer)) {
+        FencedBodyResult body = scan_fenced_body(lexer);
+        if (body == FENCED_OK) {
+            lexer->result_symbol = KEDI_FENCED_BODY;
+            return true;
+        }
+        if (body == FENCED_UNTERMINATED) return false;
+        if (body == FENCED_UNTERMINATED_SPECULATIVE) {
+            lexer->mark_end(lexer);
             lexer->result_symbol = KEDI_FENCED_BODY;
             return true;
         }
@@ -602,7 +743,7 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
             if (new_col != UINT32_MAX) {
                 apply_indent_change(s, new_col);
             } else if (is_eof(lexer)) {
-                s->pending = (int16_t)-(int16_t)(s->indent_depth - 1);
+                queue_eof_dedents(s);
             }
             lexer->result_symbol = KEDI_NEWLINE;
             return true;
@@ -611,6 +752,15 @@ bool tree_sitter_kedi_external_scanner_scan(void *payload, TSLexer *lexer, const
             lexer->result_symbol = call_mode
                 ? KEDI_TEXT_IN_CALL
                 : (condition_mode ? KEDI_CONDITION_TEXT : KEDI_TEXT);
+            return true;
+        }
+        if (text_result == TEXT_SCAN_NONE && is_eof(lexer) &&
+            valid_symbols[KEDI_NEWLINE]) {
+            // Trailing horizontal whitespace at EOF after a text scan
+            // found nothing (see above): terminate the statement.
+            s->eof_newline_emitted = true;
+            queue_eof_dedents(s);
+            lexer->result_symbol = KEDI_NEWLINE;
             return true;
         }
     }

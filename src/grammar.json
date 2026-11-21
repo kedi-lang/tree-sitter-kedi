@@ -408,14 +408,14 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n#]+"
+        "value": "[^\\r\\n#]+"
       }
     },
     "_package_dependency_value": {
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n#]+"
+        "value": "[^\\r\\n#]+"
       }
     },
     "module_import": {
@@ -957,6 +957,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "profile_directive"
+        },
+        {
+          "type": "SYMBOL",
           "name": "use_directive"
         },
         {
@@ -1228,7 +1232,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n#]+"
+        "value": "[^\\r\\n#]+"
       }
     },
     "type_def": {
@@ -1566,7 +1570,7 @@
           },
           {
             "type": "PATTERN",
-            "value": "(\\d+(\\.\\d*)?|\\.\\d+)([eE][+-]?\\d+)?"
+            "value": "(0|[1-9]\\d*)(\\.\\d*)?([eE][+-]?\\d+)?|\\.\\d+([eE][+-]?\\d+)?"
           }
         ]
       }
@@ -3344,7 +3348,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "agent_directive": {
@@ -3708,14 +3712,14 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`:#]+"
+        "value": "[^\\r\\n`:#]+"
       }
     },
     "_agent_command_plain_value": {
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "effort_directive": {
@@ -3777,7 +3781,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "approval_directive": {
@@ -3839,7 +3843,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "hooks_directive": {
@@ -3935,7 +3939,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "hooks_body": {
@@ -4101,7 +4105,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "history_body": {
@@ -4281,7 +4285,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "skills_body": {
@@ -4461,7 +4465,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "codemode_body": {
@@ -5179,7 +5183,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "settings_directive": {
@@ -5299,7 +5303,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "artifacts_directive": {
@@ -5419,7 +5423,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\n`#]+"
+        "value": "[^\\r\\n`#]+"
       }
     },
     "profile_directive": {
@@ -6810,7 +6814,7 @@
           },
           {
             "type": "PATTERN",
-            "value": "[^\\n]*"
+            "value": "[^\\r\\n]*"
           }
         ]
       }
@@ -6823,6 +6827,14 @@
           {
             "type": "STRING",
             "value": "###"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[ \\t\\r]*"
+          },
+          {
+            "type": "STRING",
+            "value": "\n"
           },
           {
             "type": "REPEAT",
@@ -6840,6 +6852,18 @@
                 {
                   "type": "PATTERN",
                   "value": "##[^#]"
+                },
+                {
+                  "type": "PATTERN",
+                  "value": "####[^#\\n]*"
+                },
+                {
+                  "type": "PATTERN",
+                  "value": "###[^#\\n \\t\\r]"
+                },
+                {
+                  "type": "PATTERN",
+                  "value": "###[ \\t\\r]+[^ \\t\\r\\n]"
                 }
               ]
             }
@@ -6847,6 +6871,22 @@
           {
             "type": "STRING",
             "value": "###"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[ \\t\\r]*"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "\n"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           }
         ]
       }

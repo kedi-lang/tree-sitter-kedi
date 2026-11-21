@@ -49,11 +49,17 @@ module.exports = grammar({
 
   // Extras run between tokens. We include:
   //
-  //   - `block_comment` (`###`-delimited multi-line). Body matches any
-  //     char-sequence that does not contain three consecutive `#`s: each
-  //     character is either non-`#`, `#` followed by non-`#`, or `##`
-  //     followed by non-`#` — the standard "everything except the
-  //     closing fence" trick.
+  //   - `block_comment` (`###`-delimited multi-line). Only a line that
+  //     is exactly `###` (optional indent / trailing whitespace) opens
+  //     or closes the comment. A `###` that shares its line with other
+  //     text (`#### Section`, `### text`, `###x`) is body content
+  //     inside a comment and an ordinary `#` comment outside one, so
+  //     `####` headings no longer swallow the code between them. The
+  //     body alternatives match any sequence that is not a bare `###`
+  //     line: non-`#`, `#`/`##` followed by non-`#`, or a `###` that
+  //     is part of a longer line (`####...`, `###x`, `### word`).
+  //     (A `###` after code on the same line still opens a comment:
+  //     a grammar token cannot anchor to a line start.)
   //   - `line_comment` (single `#` to EOL).
   //   - `[ \t\r]` for horizontal whitespace and the CR in CRLF endings.
   //   - `\n` so tree-sitter can fill the "gap" left when the external
@@ -182,9 +188,9 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _package_plain_value: ($) => token(/[^\n#]+/),
+    _package_plain_value: ($) => token(/[^\r\n#]+/),
 
-    _package_dependency_value: ($) => token(/[^\n#]+/),
+    _package_dependency_value: ($) => token(/[^\r\n#]+/),
 
     module_import: ($) =>
       choice(
@@ -287,6 +293,7 @@ module.exports = grammar({
         $.mcp_directive,
         $.settings_directive,
         $.artifacts_directive,
+        $.profile_directive,
         $.use_directive,
         $.task_stmt,
         $.send_stmt,
@@ -338,7 +345,7 @@ module.exports = grammar({
 
     tool_exception_name: ($) => seq(field("name", $.identifier), $._newline),
 
-    _tool_plain_value: ($) => token(/[^\n#]+/),
+    _tool_plain_value: ($) => token(/[^\r\n#]+/),
 
     // ============================================================
     // Type definitions
@@ -398,7 +405,16 @@ module.exports = grammar({
     type_string: (_$) => token(choice(/"([^"\\\n]|\\.)*"/, /'([^'\\\n]|\\.)*'/)),
 
     // Literal and Annotated arguments: 1, -1, 1.5, 2e3; `...` as in tuple[int, ...].
-    type_number: (_$) => token(seq(optional("-"), /(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?/)),
+    // Reject leading zeros ('01', '007'): kedi's literal_eval raises
+    // SyntaxError on them, so the grammar must not accept them either
+    // (Literal[01] was parseable here while kedi rejected it).
+    type_number: (_$) =>
+      token(
+        seq(
+          optional("-"),
+          /(0|[1-9]\d*)(\.\d*)?([eE][+-]?\d+)?|\.\d+([eE][+-]?\d+)?/,
+        ),
+      ),
 
     type_ellipsis: (_$) => "...",
 
@@ -882,7 +898,7 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _model_plain_value: ($) => token(/[^\n`]+/),
+    _model_plain_value: ($) => token(/[^\r\n`#]+/),
 
     agent_directive: ($) =>
       choice(
@@ -954,9 +970,9 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _adapter_plain_value: ($) => token(/[^\n`:#]+/),
+    _adapter_plain_value: ($) => token(/[^\r\n`:#]+/),
 
-    _agent_command_plain_value: ($) => token(/[^\n`#]+/),
+    _agent_command_plain_value: ($) => token(/[^\r\n`#]+/),
 
     effort_directive: ($) =>
       seq(
@@ -968,7 +984,7 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _effort_plain_value: ($) => token(/[^\n`]+/),
+    _effort_plain_value: ($) => token(/[^\r\n`#]+/),
 
     approval_directive: ($) =>
       seq(
@@ -980,7 +996,7 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _approval_plain_value: ($) => token(/[^\n`]+/),
+    _approval_plain_value: ($) => token(/[^\r\n`#]+/),
 
     hooks_directive: ($) =>
       choice(
@@ -995,7 +1011,7 @@ module.exports = grammar({
         seq(">", "hooks", ":", $._newline, field("body", $.hooks_body)),
       ),
 
-    _hooks_plain_value: ($) => token(/[^\n`#]+/),
+    _hooks_plain_value: ($) => token(/[^\r\n`#]+/),
 
     hooks_body: ($) =>
       seq(
@@ -1026,7 +1042,7 @@ module.exports = grammar({
         seq(">", "history", ":", $._newline, field("body", $.history_body)),
       ),
 
-    _history_plain_value: ($) => token(/[^\n`#]+/),
+    _history_plain_value: ($) => token(/[^\r\n`#]+/),
 
     history_body: ($) =>
       seq(
@@ -1057,7 +1073,7 @@ module.exports = grammar({
         seq(">", "skills", ":", $._newline, field("body", $.skills_body)),
       ),
 
-    _skills_plain_value: ($) => token(/[^\n`#]+/),
+    _skills_plain_value: ($) => token(/[^\r\n`#]+/),
 
     skills_body: ($) =>
       seq(
@@ -1088,7 +1104,7 @@ module.exports = grammar({
         seq(">", "codemode", ":", $._newline, field("body", $.codemode_body)),
       ),
 
-    _codemode_plain_value: ($) => token(/[^\n`#]+/),
+    _codemode_plain_value: ($) => token(/[^\r\n`#]+/),
 
     codemode_body: ($) =>
       seq(
@@ -1220,7 +1236,7 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _mcp_plain_value: ($) => token(/[^\n`#]+/),
+    _mcp_plain_value: ($) => token(/[^\r\n`#]+/),
 
     settings_directive: ($) =>
       seq(">", "settings", ":", $._newline, field("body", $.settings_body)),
@@ -1241,7 +1257,7 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _settings_plain_value: ($) => token(/[^\n`#]+/),
+    _settings_plain_value: ($) => token(/[^\r\n`#]+/),
 
     artifacts_directive: ($) =>
       seq(">", "artifacts", ":", $._newline, field("body", $.artifacts_body)),
@@ -1262,7 +1278,7 @@ module.exports = grammar({
         $._newline,
       ),
 
-    _artifacts_plain_value: ($) => token(/[^\n`#]+/),
+    _artifacts_plain_value: ($) => token(/[^\r\n`#]+/),
 
     profile_directive: ($) =>
       seq(
@@ -1494,10 +1510,29 @@ module.exports = grammar({
 
     identifier: ($) => /[A-Za-z_][A-Za-z0-9_]*/,
 
-    line_comment: ($) => token(seq("#", /[^\n]*/)),
+    line_comment: ($) => token(seq("#", /[^\r\n]*/)),
 
     block_comment: ($) =>
-      token(seq("###", repeat(choice(/[^#]/, /#[^#]/, /##[^#]/)), "###")),
+      token(
+        seq(
+          "###",
+          /[ \t\r]*/,
+          "\n",
+          repeat(
+            choice(
+              /[^#]/,
+              /#[^#]/,
+              /##[^#]/,
+              /####[^#\n]*/,
+              /###[^#\n \t\r]/,
+              /###[ \t\r]+[^ \t\r\n]/,
+            ),
+          ),
+          "###",
+          /[ \t\r]*/,
+          optional("\n"),
+        ),
+      ),
   },
 });
 
